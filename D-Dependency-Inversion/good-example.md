@@ -1,53 +1,52 @@
-﻿<div dir="rtl">
+<div dir="rtl">
 
-# شرح الكود النظيف: good-example.md ✅
+# شرح التصميم البرمجي المتوافق (Good Design): good-example.md
 
-في ملف الكود [good.dart](code/good.dart)، قمنا بتطبيق مبدأ الـ **DIP** والـ **Dependency Injection** لفصل المكونات كالتالي:
+في ملف الكود [good.dart](code/good.dart)، قمنا بتطبيق مبدأ عكس الاعتمادية (DIP) وحقن الاعتمادية (Dependency Injection) لفصل المكونات وحماية منطق العمل كالتالي:
 
 ---
 
-## 🏗️ إزاي صلحنا الكود؟
+## بنية الحل البرمجي الجديد
 
-1. **بنينا البريزة القياسية (`DatabaseService`)**:
-   عملنا `abstract class` اسمه `DatabaseService` فيه ميثود اسمها `saveStudent`. ده التجريد (Abstraction) اللي بيحمي السيستم.
+1. **إنشاء واجهة برمجية موحدة لقاعدة البيانات (`DatabaseService`)**:
+   قمنا بإنشاء كلاس مجرد (Abstract Class) باسم `DatabaseService` يحتوي على دالة `saveStudent`. يمثل هذا الكلاس التجريد (Abstraction) الذي يربط بين منطق النظام والبنية التحتية لحفظ البيانات.
 
-2. **عكسنا اتجاه الأسهم (Inversion)**:
-   - كلاس `MySqlDatabase` وكلاس `MongoDatabase` بقوا يعملوا `implements DatabaseService`. يعني بقوا هما اللي معتمدين على الـ Abstraction وينحنوا ليه.
-   - كلاس البيزنس `StudentEnrollmentSystem` مبقاش يعرف أي حاجة عن MySQL أو Mongo. هو بيعتمد بس على الواجهة `DatabaseService`.
+2. **عكس اتجاه الاعتمادية (Inversion)**:
+   - أصبحت الكلاسات المادية الخاصة بقواعد البيانات (`MySqlDatabase` و `MongoDatabase`) تنفذ (Implement) الواجهة `DatabaseService`. أي أنها أصبحت خاضعة للتصميم التجريدي العام وتعتمد عليه.
+   - كلاس منطق العمل `StudentEnrollmentSystem` لم يعد يعتمد على التفاصيل الفنية لقواعد البيانات (MySQL أو Mongo)؛ حيث أصبح يعتمد فقط على الواجهة المجردة `DatabaseService`.
 
-3. **حقن الاعتمادية (Dependency Injection)**:
-   بدل ما كلاس البيزنس ينشئ الداتا بيز بنفسه، بقينا نباصي ليه الداتا بيز جاهزة في الكونسركتور:
+3. **تطبيق آلية حقن الاعتمادية (Dependency Injection)**:
+   بدلاً من قيام كلاس منطق العمل بإنشاء كائن قاعدة البيانات داخليًا، أصبح يستقبله كمعامل جاهز في المشيد (Constructor):
    ```dart
    StudentEnrollmentSystem(this._databaseService);
    ```
 
 ---
 
-## 🎉 الفوائد والرشاقة المعمارية (Benefits)
+## الفوائد والرشاقة المعمارية المكتسبة
 
-* **استبدال حر في ثواني (Hot Swapping)**:
-  لما الجامعة قررت تنقل لـ MongoDB، كل اللي عملناه هو كتابة كلاس `MongoDatabase` جديد بيطبق الـ `DatabaseService` (تمديد - OCP). 
-  ورحنا للـ `main` وباصينا الـ `MongoDatabase` للكونسركتور بس:
-  ```dart
-  final system = StudentEnrollmentSystem(MongoDatabase());
-  ```
-  **هل عدلنا حرف واحد جوة كلاس `StudentEnrollmentSystem`؟** لا! كود البيزنس الحساس فضل مقفول ومحمي 100%.
+* **سهولة استبدال المكونات (Hot Swapping)**:
+   عندما تقرر المؤسسة الانتقال لقاعدة بيانات MongoDB، نكتفي بكتابة كلاس `MongoDatabase` جديد ينفذ الواجهة `DatabaseService` (تمديد سلوك النظام - OCP). 
+   ثم نقوم بحقنه في الدالة الرئيسية `main` كالتالي:
+   ```dart
+   final system = StudentEnrollmentSystem(MongoDatabase());
+   ```
+   نلاحظ أننا لم نقم بتعديل أي سطر داخل كلاس منطق العمل `StudentEnrollmentSystem`؛ مما يضمن بقاء الكود الأساسي الحساس محميًا ومستقرًا بنسبة 100%.
 
-* **سهولة عمل الـ Unit Tests (Testability)**:
-  دلوقتي تقدر تعمل Mock لكلاس قاعدة البيانات في ثواني:
-  ```dart
-  class MockDatabase implements DatabaseService {
-    bool saveCalled = false;
-    @override
-    void saveStudent(String id, String name) {
-      saveCalled = true; // مش بنكلم سيرفر حقيقي، بنسجل بس إن الميثود اتنادت!
-    }
-  }
-  ```
-  وتقدر تعمل تيست للبيزنس لوحده وفي أجزاء من الثانية ومن غير ما تحتاج سيرفر داتا بيز شغال!
+* **سهولة اختبار المكونات (Testability)**:
+   أصبح بإمكاننا إجراء اختبارات وحدة سريعة ومستقلة عبر إنشاء كائن محاكاة (Mock) لقاعدة البيانات في ثوانٍ معدودة:
+   ```dart
+   class MockDatabase implements DatabaseService {
+     bool saveCalled = false;
+     @override
+     void saveStudent(String id, String name) {
+       saveCalled = true; // لا يتم الاتصال بخادم حقيقي، نكتفي بالتحقق من استدعاء الدالة فقط
+     }
+   }
+   ```
+   يتيح ذلك اختبار منطق العمل بأمان وسرعة ودون الحاجة لوجود خادم قاعدة بيانات نشط أثناء الاختبار.
 
-* **فصل كامل للبيزنس عن البنية التحتية (Infrastructure)**:
-  لو غيرنا السيرفرات، غيرنا الباكيند، أو عملنا أي تحديثات تقنية، كود البيزنس هيفضل مستقر وصامد ومحدش هيقدر يبوظه.
-
+* **الفصل التام بين منطق العمل والبنية التحتية (Infrastructure)**:
+   أي تحديث تقني أو استبدال لخوادم تخزين البيانات سيقتصر أثره على الطبقات الخدمية الخارجية فقط، بينما تظل طبقة منطق العمل الأساسية مستقلة ومحمية من التغيير.
 
 </div>

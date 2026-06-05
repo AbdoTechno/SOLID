@@ -1,8 +1,8 @@
-﻿<div dir="rtl">
+<div dir="rtl">
 
-# شرح الكود سطر بسطر لمبدأ LSP: code-explanation.md 📝
+# شرح الكود سطرًا بسطر لمبدأ LSP: code-explanation.md
 
-شرح تفصيلي للكود النظيف المكتوب في ملف [good.dart](code/good.dart) سطر بسطر:
+شرح تفصيلي للتصميم البرمجي المتوافق المكتوب في ملف [good.dart](code/good.dart):
 
 ---
 
@@ -16,8 +16,8 @@ abstract class Student {
   void study();
 }
 ```
-- **`Student`**: ده كلاس أب مشترك لكل الطلاب.
-- **`study()`**: ميثود تجريدية (Abstract Method). بما إن كل الطلاب بيذاكروا (بطريقتهم)، فالميثود دي فرضناها كعقد على أي طالب يدخل الكلية. كلاس `AuditorStudent` وكلاس `ScholarshipCandidate` مجبرين يكتبوا السلوك بتاعها.
+- **`Student`**: الكلاس الأساسي المشترك لجميع فئات الطلاب في النظام.
+- **`study()`**: دالة مجردة (Abstract Method). بما أن جميع الطلاب يشتركون في صفة الدراسة وحضور المحاضرات (كلٌ وفق أسلوبه)، تم الإعلان عنها كعقد برمجي يلتزم به أي كلاس يرث من `Student`.
 
 ---
 
@@ -30,8 +30,8 @@ abstract class ScholarshipCandidate extends Student {
   void applyForScholarship();
 }
 ```
-- **`extends Student`**: هو كلاس ابن من `Student` بس هو برضه كلاس تجريدي (`abstract`).
-- **`applyForScholarship()`**: دي ميثود جديدة ضفناها هنا **بس**. ده معناه إن كلاسات الطلاب اللي هتورث من `ScholarshipCandidate` هي بس اللي هيكون عندها إمكانية تقديم المنح.
+- **`extends Student`**: كلاس مجرد يرث من الكلاس الأساسي `Student`.
+- **`applyForScholarship()`**: دالة إضافية مخصصة لفئة الطلاب المؤهلين لتقديم طلبات المنح الدراسية فقط. ويضمن هذا الفصل عدم إتاحة ميزة التقديم للمنح للفئات غير المؤهلة.
 
 ---
 
@@ -53,8 +53,8 @@ class RegularStudent extends ScholarshipCandidate {
   }
 }
 ```
-- بيرث من `ScholarshipCandidate` يعني وارث ميثود الـ `study` وميثود الـ `applyForScholarship`.
-- عملنا `@override` للاتنين وكتبنا كود حقيقي من غير ما نرمي Exceptions.
+- يرث من الكلاس الوسيط `ScholarshipCandidate`؛ وبالتالي يرث كلتا الدالتين: دالة الدراسة ودالة التقديم للمنحة.
+- يعيد تعريف الدالتين (`@override`) ويحدد سلوكهما الفعلي دون إلقاء استثناءات أو أخطاء.
 
 ### الطالب المستمع `AuditorStudent`
 ```dart
@@ -67,12 +67,12 @@ class AuditorStudent extends Student {
   }
 }
 ```
-- بيرث من `Student` مباشرة. ده معناه إنه وارث ميثود `study()` **بس**.
-- ميثود `applyForScholarship` مش موجودة عنده أصلاً. وبكدة ريحنا الكلاس ده من إنه يكتب كود مش بتاعه أو يرمي Exception عشان يلغي سلوك موروث.
+- يرث من كلاس الأب `Student` مباشرة؛ وبالتالي لا يرث سوى دالة الدراسة `study()`.
+- لا يحتوي الكلاس على دالة التقديم للمنحة، مما يقيه من الاضطرار لكتابة وظائف غير متوافقة مع طبيعته أو إلقاء استثناءات لتعطيل سلوك موروث غير مرغوب فيه.
 
 ---
 
-## 4. ميثود المعالجة والـ `main`
+## 4. دالة المعالجة الفنية ونقطة الانطلاق `main()`
 
 ```dart
 void processScholarshipApplications(List<ScholarshipCandidate> candidates) {
@@ -81,15 +81,13 @@ void processScholarshipApplications(List<ScholarshipCandidate> candidates) {
   }
 }
 ```
-- الميثود دي بقت تطلب `List<ScholarshipCandidate>` بدل `List<Student>`. كدة الـ Compiler بيضمن إن أي عنصر يدخل اللوب دي هو مؤهل تماماً وعنده ميثود `applyForScholarship` حقيقية ومستحيل يرمي Exception.
+- تم تحديد نوع المدخلات في الدالة لتستقبل قائمة من نوع `List<ScholarshipCandidate>` بدلاً من القائمة العامة للطلاب. يضمن ذلك على مستوى المترجم (Compile-time) أن كافة العناصر الممررة تدعم دالة التقديم للمنحة ولن تتسبب في حدوث أخطاء أثناء التشغيل.
 
 ```dart
   final List<ScholarshipCandidate> scholarshipCandidates = allStudents
       .whereType<ScholarshipCandidate>()
       .toList();
 ```
-- في الـ `main` بنستخدم `whereType<ScholarshipCandidate>()` عشان نلتقط الطلاب المؤهلين للمنح فقط من اللستة العامة ونباصيهم لـ `processScholarshipApplications` بأمان تام.
-- ده كود نظيف ومتوقع ومحترم للـ LSP بنسبة 100%.
-
+- في الدالة الرئيسية `main` يتم استخدام الدالة `whereType<ScholarshipCandidate>()` لتصفية قائمة الطلاب العامة واقتطاع الطلاب المؤهلين للمنح فقط وتمريرهم للدالة المعنية بأمان تام، بما يتوافق بالكامل مع معايير مبدأ LSP.
 
 </div>

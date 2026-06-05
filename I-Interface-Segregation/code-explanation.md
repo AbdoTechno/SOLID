@@ -1,26 +1,26 @@
-﻿<div dir="rtl">
+<div dir="rtl">
 
-# شرح الكود سطر بسطر لمبدأ ISP: code-explanation.md 📝
+# شرح الكود سطرًا بسطر لمبدأ ISP: code-explanation.md
 
-شرح تفصيلي للكود النظيف المكتوب في ملف [good.dart](code/good.dart) سطر بسطر:
+شرح تفصيلي للتصميم البرمجي المتوافق المكتوب في ملف [good.dart](code/good.dart):
 
 ---
 
-## 1. تقسيم الواجهات لـ 4 عقود منفصلة
+## 1. تقسيم الواجهات البرمجية إلى أربعة عقود منفصلة
 
 ```dart
 abstract class ClassAttendee {
   void attendClass();
 }
 ```
-- **واجهة `ClassAttendee`**: مخصصة فقط لأي شخص بيحضر محاضرات. فيها ميثود واحدة وهي `attendClass()`.
+- **واجهة `ClassAttendee`**: مخصصة فقط لكل من يحضر المحاضرات الفعالة. تحتوي على دالة واحدة هي `attendClass()`.
 
 ```dart
 abstract class AssignmentSubmitter {
   void submitAssignment();
 }
 ```
-- **واجهة `AssignmentSubmitter`**: مخصصة فقط للناس اللي بتسلم واجبات وتكليفات. فيها ميثود `submitAssignment()`.
+- **واجهة `AssignmentSubmitter`**: مخصصة فقط لمن تسند إليهم تكليفات وواجبات دراسية لتسليمها. تحتوي على دالة `submitAssignment()`.
 
 ```dart
 abstract class CourseInstructor {
@@ -28,14 +28,14 @@ abstract class CourseInstructor {
   void gradeExams();
 }
 ```
-- **واجهة `CourseInstructor`**: مخصصة للمدرسين اللي بيدرسوا ويصححوا الامتحانات. فيها ميثودس: `teachCourse` و `gradeExams`.
+- **واجهة `CourseInstructor`**: مخصصة للهيئة التدريسية التي تتولى إلقاء المحاضرات وتصحيح الاختبارات. تحتوي على دالتين: `teachCourse` و `gradeExams`.
 
 ```dart
 abstract class SalariedEmployee {
   void calculateSalary();
 }
 ```
-- **واجهة `SalariedEmployee`**: مخصصة للموظفين اللي بيقبضوا مرتبات من الإدارة. فيها ميثود `calculateSalary`.
+- **واجهة `SalariedEmployee`**: مخصصة لكل من يتقاضى راتبًا ماليًا من إدارة المؤسسة. تحتوي على دالة `calculateSalary()`.
 
 ---
 
@@ -46,8 +46,8 @@ class Student implements ClassAttendee, AssignmentSubmitter {
   final String name;
   Student(this.name);
 ```
-- **`implements ClassAttendee, AssignmentSubmitter`**: الطالب بيختار يطبق العقدين دول بس. هو بيحضر محاضرات وبيسلم واجبات.
-- **التنفيذ**: الكلاس بيعمل `@override` لميثود `attendClass` وميثود `submitAssignment` ويكتب اللوجيك بتاعهم الحقيقي. ومفيش أي ميثودس زيادة أو ميتة مفروضة عليه.
+- **`implements ClassAttendee, AssignmentSubmitter`**: يقوم كلاس الطالب بتنفيذ هاتين الواجهتين فقط لمطابقتهما لاختصاصه ودوره الأكاديمي الفعلي.
+- **التنفيذ**: يلتزم الكلاس بإعادة تعريف ودعم دالة حضور المحاضرة ودالة تسليم الواجب، دون وجود أي دوال إضافية غير مرغوب فيها.
 
 ---
 
@@ -58,9 +58,9 @@ class Teacher implements ClassAttendee, CourseInstructor, SalariedEmployee {
   final String name;
   Teacher(this.name);
 ```
-- **`implements ClassAttendee, CourseInstructor, SalariedEmployee`**: الدكتور بيحضر المدرج (`ClassAttendee`) بس عشان يشرح مش عشان يقعد يسمع، وبيدرس ويصحح (`CourseInstructor`) وكمان بيقبض مرتب (`SalariedEmployee`).
-- **التنفيذ**: عملنا `@override` للأربع ميثودس بتوع الواجهات دي وكتبنا كودهم.
-- لاحظ إن كلاس `Teacher` معملش implement لـ `AssignmentSubmitter` لأنه مش بيسلم واجبات، وبكدة حميناه من وجود ميثود ميتة.
+- **`implements ClassAttendee, CourseInstructor, SalariedEmployee`**: يقوم كلاس المدرس بتنفيذ الواجهات الملائمة لدوره؛ حيث يتواجد بقاعة المحاضرات (`ClassAttendee`)، ويتولى التدريس والتقييم (`CourseInstructor`)، ويتقاضى راتبًا ماليًا (`SalariedEmployee`).
+- **التنفيذ**: يلتزم الكلاس بإعادة تعريف الدوال المرتبطة بهذه الواجهات وكتابة منطق تشغيلها الفعلي.
+- نلاحظ أن كلاس `Teacher` لم ينفذ واجهة `AssignmentSubmitter` لعدم مطالبته بتسليم تكليفات دراسية، مما يحميه من وجود دوال ميتة أو فارغة.
 
 ---
 
@@ -78,9 +78,8 @@ void main() {
   ...
 }
 ```
-- بننشئ الأوبجكتس وبننادي الميثودس بتاعتهم بشكل مباشر وطبيعي.
-- مفيش أي كود محمي بـ `try-catch` عشان خايفين يرمي `UnimplementedError` زي الكود القديم العك، لأن الـ Compiler ضامن إن كل كائن مفيهوش ميثودس غريبة مش بتاعته.
-- التصميم ده أمن، واضح، وقابل للتمدد بمنتهى السهولة.
-
+- يتم إنشاء الكائنات واستدعاء دوالها بشكل مباشر وانسيابي.
+- الكود خالٍ تمامًا من جمل معالجة الأخطاء `try-catch` المرتبطة بمخاوف استدعاء وظائف غير منفذة، نظرًا لأن المترجم يضمن خلو الكلاسات من دوال لا تدعمها بنيتها الأساسية.
+- يوضح التصميم مدى توافق الكود وأمانه وقابليته للتطوير بيسر.
 
 </div>
