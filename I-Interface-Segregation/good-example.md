@@ -1,41 +1,36 @@
-<div dir="rtl">
+# Compliant Design Explanation (Good Design)
 
-# شرح التصميم البرمجي المتوافق (Good Design): good-example.md
-
-في ملف الكود [good.dart](code/good.dart)، قمنا بتطبيق مبدأ فصل الواجهات (ISP) لإعادة هيكلة وتوزيع مسؤوليات الواجهات كالتالي:
+In [good.dart](code/good.dart), we resolved the bloated interface problems by applying the Interface Segregation Principle (ISP):
 
 ---
 
-## بنية الحل البرمجي الجديد
+## New Solution Structure
 
-قمنا بتفكيك الواجهة الضخمة `UniversityMember` إلى أربع واجهات برمجية صغيرة ومحددة التخصص لتغطية الأنشطة الجامعية المتنوعة:
-1. **`ClassAttendee`**: تحتوي على دالة حضور المحاضرات فقط.
-2. **`AssignmentSubmitter`**: تحتوي على دالة تسليم التكليفات الأكاديمية فقط.
-3. **`CourseInstructor`**: تحتوي على دوال التدريس وتصحيح الاختبارات.
-4. **`SalariedEmployee`**: تحتوي على دالة احتساب الراتب المالي.
+We broke down the bloated `UniversityMember` interface into four small, highly specialized interfaces:
+1. **`ClassAttendee`**: Declares only the `attendClass()` method.
+2. **`AssignmentSubmitter`**: Declares only the `submitAssignment()` method.
+3. **`CourseInstructor`**: Declares `teachCourse()` and `gradeExams()` methods.
+4. **`SalariedEmployee`**: Declares only the `calculateSalary()` method.
 
-بعد ذلك، قامت كلاسات الدومين (Domain Classes) بتنفيذ الواجهات الملائمة لاختصاصها الفعلي فقط:
-- كلاس `Student` ينفذ: `implements ClassAttendee, AssignmentSubmitter`.
-- كلاس `Teacher` ينفذ: `implements ClassAttendee, CourseInstructor, SalariedEmployee`.
+Subsequently, domain classes implement only the specific interfaces that map directly to their roles:
+- The `Student` class implements: `ClassAttendee, AssignmentSubmitter`.
+- The `Teacher` class implements: `ClassAttendee, CourseInstructor, SalariedEmployee`.
 
 ---
 
-## الفوائد والرشاقة المعمارية المكتسبة
+## Acquired Architectural Benefits
 
-* **خلو الكود من الدوال الفارغة (No Dead Code)**:
-   عند فحص كلاس `Student` أو كلاس `Teacher`، سنجد أن كافة الدوال المكتوبة هي دوال حقيقية مستخدمة بالفعل، دون وجود أي دوال معطلة أو استثناءات من نوع `UnimplementedError()`. هذا يجعل الشيفرة مقروءة بوضوح ومحددة المسؤوليات بنسبة 100%.
+* **Zero Dead Code**:
+   Inspecting the `Student` and `Teacher` classes reveals that all implemented methods contain active, relevant operations. No mock overrides, empty scopes, or `UnimplementedError()` exceptions exist, making the codebase highly readable and maintainable.
 
-* **المرونة وقابلية التركيب (Interface Composition)**:
-   إذا ظهر دور وظيفي جديد في الجامعة مثل "مساعد التدريس" (Teaching Assistant - TA)؛ وهو طالب دراسات عليا يحضر المحاضرات ويسلم تكليفات ولكنه يقوم أيضًا بالتدريس للطلاب المستجدين ويتقاضى راتبًا ماليًا.
-   لإنشاء هذا الكلاس بمرونة، نكتفي بكتابة التعريف التالي:
+* **Interface Composition**:
+   If a new role is introduced to the university, such as a Teaching Assistant (TA)—a graduate student who attends classes and submits assignments, but also teaches freshman labs and receives a salary—we can easily compose their behavior:
    ```dart
    class TeachingAssistant implements ClassAttendee, AssignmentSubmitter, CourseInstructor, SalariedEmployee {
-     // تنفيذ كافة الدوال المطلوبة لهذه الواجهات المشتركة بأمان
+     // Implement the methods safely according to their actual roles
    }
    ```
-   تتيح لنا هذه البنية تركيب الواجهات وتجميعها بمرونة كاملة لتلبية احتياجات النظام المتغيرة.
+   This approach allows us to assemble behaviors like building blocks to meet changing requirements.
 
-* **حماية الكود من تشتت التعديلات**:
-   في حال تعديل شروط استلام الرواتب، يقتصر التحديث على واجهة `SalariedEmployee` والكلاسات التي تنفذها فقط (مثل كلاس المدرسين والموظفين). ويظل كلاس `Student` محميًا ومستقلاً تمامًا عن هذا التعديل، فلا يتأثر كوده ولا يضطر النظام لإعادة بنائه وترجمته.
-
-</div>
+* **Decoupled Updates (Closed to Change Propagation)**:
+   If salary calculation rules change, we only modify the `SalariedEmployee` interface and its implementing classes (like `Teacher` or `Staff`). The `Student` class is completely shielded from these changes and does not require recompilation or code reviews.

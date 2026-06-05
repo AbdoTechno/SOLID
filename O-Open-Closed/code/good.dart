@@ -1,12 +1,12 @@
-// كود نظيف ومتصلح بناءً على مبدأ الـ OCP
-// لو حابين نضيف أي نوع خصم جديد، هنعمل كلاس جديد ونعمل Implement للـ DiscountStrategy من غير ما نلمس الكود القديم!
+// Compliant code adhering to the Open-Closed Principle (OCP)
+// To add any new discount type, we just create a new class implementing the DiscountStrategy interface without touching existing code.
 
-// 1. التجريد (Abstraction)
+// 1. Abstraction (Interface)
 abstract class DiscountStrategy {
   double calculateDiscount(double originalPrice);
 }
 
-// 2. تطبيق الخصومات المختلفة (Concrete Strategies)
+// 2. Concrete Strategies
 class RegularDiscount implements DiscountStrategy {
   @override
   double calculateDiscount(double originalPrice) {
@@ -28,15 +28,15 @@ class ScholarshipDiscount implements DiscountStrategy {
   }
 }
 
-// إضافة خصم جديد تماماً (مثلاً لموظفي الجامعة) من غير ما نغير أي كلاس قديم!
+// Adding a new discount strategy (e.g., for University Staff) without modifying any existing class!
 class StaffDiscount implements DiscountStrategy {
   @override
   double calculateDiscount(double originalPrice) {
-    return originalPrice * 0.35; // خصم 35% للموظفين
+    return originalPrice * 0.35; // 35% discount for university staff
   }
 }
 
-// 3. كلاس الحساب الرئيسي (مغلق تماماً للتعديل ومفتوح للتمديد)
+// 3. Main Calculator Class (Closed for modification, open for extension via polymorphism)
 class DiscountCalculator {
   double calculate(double originalPrice, DiscountStrategy strategy) {
     return strategy.calculateDiscount(originalPrice);
@@ -44,16 +44,16 @@ class DiscountCalculator {
 }
 
 void main() {
-  print('--- تشغيل كود حساب الخصم النظيف (Good OCP Example) ---');
+  print('--- Running Compliant Code (Good OCP Example) ---');
   final calculator = DiscountCalculator();
 
   final regular = calculator.calculate(1000, RegularDiscount());
   final vip = calculator.calculate(1000, VipDiscount());
   final scholarship = calculator.calculate(1000, ScholarshipDiscount());
-  final staff = calculator.calculate(1000, StaffDiscount()); // اشتغل من غير ما نعدل كلاس المحاسب!
+  final staff = calculator.calculate(1000, StaffDiscount()); // Works without modifying DiscountCalculator!
 
-  print('خصم الطالب العادي: $regular جنيه');
-  print('خصم الطالب الـ VIP: $vip جنيه');
-  print('خصم طالب المنحة: $scholarship جنيه');
-  print('خصم الموظف الجديد: $staff جنيه');
+  print('Regular Student Discount: \$$regular');
+  print('VIP Student Discount: \$$vip');
+  print('Scholarship Student Discount: \$$scholarship');
+  print('Staff Member Discount: \$$staff');
 }

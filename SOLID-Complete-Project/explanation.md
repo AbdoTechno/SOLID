@@ -1,59 +1,55 @@
-<div dir="rtl">
+# SOLID Principles Application in the Simplified University System
 
-# شرح تطبيق مبادئ SOLID في مشروع نظام إدارة الجامعة المبسط
-
-شرح تفصيلي لتوزيع مبادئ SOLID الخمسة في الكود المصدري للمشروع:
+A detailed breakdown highlighting exactly how the five SOLID principles are implemented across the project's source code:
 
 ---
 
-## 1. مبدأ المسؤولية الواحدة: S (Single Responsibility Principle)
+## 1. Single Responsibility Principle (SRP)
 
-يضمن مبدأ المسؤولية الواحدة (SRP) أن تكون كل فئة مسؤولة عن وظيفة محددة واحدة فقط دون التداخل مع وظائف الفئات الأخرى:
-* **الفئة `StudentRegistry`**: مسؤولة فقط عن عملية تسجيل الطلاب والاحتفاظ بسجلاتهم.
-* **الفئة `EnrollmentManager`**: مسؤولة فقط عن تسجيل المواد الدراسية للطلاب والتحقق من الشروط المطلوبة.
-* **الفئة `GradeBook`**: مسؤولة فقط عن رصد وتسجيل درجات الطلاب.
-* **الفئة `BaseStudent`**: مسؤولة فقط عن الاحتفاظ بالبيانات الأساسية للطالب.
-* **الفئة `Course`**: مسؤولة فقط عن تمثيل بيانات المادة الدراسية.
-
----
-
-## 2. مبدأ المفتوح والمغلق: O (Open-Closed Principle)
-
-يضمن هذا المبدأ إمكانية إضافة ميزات وتفاصيل جديدة للنظام دون الحاجة لتعديل الكود البرمجي للخدمات الأساسية:
-* **على مستوى الطلاب**: إذا قررت الجامعة إضافة نوع جديد من الطلاب (مثل طالب مغترب `ExchangeStudent` أو طالب منحة `ScholarshipStudent`)، فإن كل ما نحتاجه هو إنشاء فئة جديدة ترث من الفئة `BaseStudent` دون تعديل كود الفئات الخدمية المذكورة. وسيتعامل النظام مع النوع الجديد مباشرة اعتماداً على تعدد الأشكال (Polymorphism).
-* **على مستوى التخزين**: تعتمد فئة `StudentRegistry` على واجهة `StudentRepository`. وإذا أردنا حفظ البيانات في قاعدة بيانات فعلية (مثل SQL أو Firebase)، فسنقوم بإنشاء فئة جديدة تنفذ هذه الواجهة (مثل `SqlStudentRepository`) وحقنها في دالة البدء `main` دون تعديل كود فئة `StudentRegistry` نفسها.
+The Single Responsibility Principle ensures that each class focuses on a single, well-defined responsibility:
+* **`StudentRegistry` class**: Responsible solely for registering students and retrieving their records.
+* **`EnrollmentManager` class**: Responsible solely for registering students into academic courses.
+* **`GradeBook` class**: Responsible solely for assigning and managing student grades.
+* **`BaseStudent` class**: Responsible solely for representing core student profile details.
+* **`Course` class**: Responsible solely for representing course entity details.
 
 ---
 
-## 3. مبدأ إحلال ليسكوف: L (Liskov Substitution Principle)
+## 2. Open-Closed Principle (OCP)
 
-يظهر هذا المبدأ بوضوح في الفصل بين الطالب العادي والطالب المستمع:
-* **المشكلة التقليدية**: يحضر الطالب المستمع `AuditStudent` المحاضرات فقط دون الحصول على درجات أو دخول الامتحانات. إذا قمنا بوضع دالة رصد الدرجات في الفئة الأب `BaseStudent` واضطررنا لإلغائها برمي استثناء (Exception) في الفئة الابنة `AuditStudent` للتعبير عن عدم مطابقتها، فسنكون قد انتهكنا مبدأ إحلال ليسكوف (LSP).
-* **الحل**: تم نقل دالة رصد الدرجات من الفئة الأب `BaseStudent` إلى واجهة منفصلة باسم `Gradable`.
-  - الفئة `CreditStudent` ترث من الفئة الأب وتنفذ واجهة `Gradable`.
-  - الفئة `AuditStudent` ترث من الفئة الأب فقط دون تنفيذ واجهة `Gradable`.
-* في فئة رصد الدرجات `GradeBook`:
+The design allows extending system behaviors without modifying existing, stable classes:
+* **Student Types**: If the university introduces a new student type (e.g., `ExchangeStudent` or `ScholarshipStudent`), we simply create a new class extending `BaseStudent`. The services interact with the parent type or relevant interfaces, resolving behavior via Polymorphism without needing internal changes.
+* **Data Storage**: The `StudentRegistry` class depends on the abstract `StudentRepository` interface. If we want to switch the storage engine from an in-memory map to a physical database (like SQL or Firestore), we write a new class (e.g., `SqlStudentRepository`) implementing the interface, and inject it during initialization in `main.dart`. The `StudentRegistry` class remains completely unmodified.
+
+---
+
+## 3. Liskov Substitution Principle (LSP)
+
+This principle is demonstrated by separating grading behavior between credit students and audit students:
+* **The Problem**: An audit student (`AuditStudent`) attends lectures but does not earn grades or sit for exams. If we define the grade assignment methods in the base `BaseStudent` class and then force `AuditStudent` to override them by throwing an exception (e.g., `UnsupportedError`), we violate LSP because the child class cannot substitute the parent class without breaking client expectations.
+* **The Solution**: We extract the grading behavior from `BaseStudent` and move it to a dedicated interface named `Gradable`.
+  - `CreditStudent` extends `BaseStudent` and implements the `Gradable` interface.
+  - `AuditStudent` extends `BaseStudent` but does not implement `Gradable`.
+* In the `GradeBook` service, we check for eligibility:
   ```dart
   if (student is Gradable) {
     (student as Gradable).addGrade(course, grade);
   }
   ```
-  هنا يتعامل النظام بأمان؛ فإذا كان الطالب غير مؤهل لرصد الدرجات، يتم تخطي العملية بأمان أثناء التشغيل (Runtime Safety) دون إجبار الفئة `AuditStudent` على تنفيذ واجهات لا تناسب طبيعتها.
+  This pattern maintains runtime safety, ensuring client classes do not invoke invalid grading workflows on audit student records, and avoids forcing `AuditStudent` to implement operations that conflict with its real-world behavior.
 
 ---
 
-## 4. مبدأ فصل الواجهات: I (Interface Segregation Principle)
+## 4. Interface Segregation Principle (ISP)
 
-تم تطبيق هذا المبدأ بالتكامل مع مبدأ إحلال ليسكوف (LSP):
-* قمنا بإنشاء واجهة صغيرة ومحددة باسم `Gradable` في ملف [models.dart](source-code/models.dart).
-* الفئة `AuditStudent` ليست مجبرة على كتابة دوال فارغة أو غير مستخدمة لرصد الدرجات لأنها لا تنفذ الواجهة `Gradable` أساساً. وبذلك تلتزم كل فئة بتنفيذ الوظائف التي تحتاجها وتتوافق مع دورها فقط.
+This principle works in tandem with LSP:
+* We created a small, highly cohesive interface `Gradable` in the codebase.
+* The `AuditStudent` class is not forced to implement stubbed or empty grading methods since it does not inherit from `Gradable`. Classes implement only the interfaces and methods that directly apply to their role.
 
 ---
 
-## 5. مبدأ عكس الاعتمادية: D (Dependency Inversion Principle)
+## 5. Dependency Inversion Principle (DIP)
 
-يظهر هذا المبدأ في فك الارتباط بين الخدمات ومخازن البيانات (Repositories):
-* لا تعتمد فئة `StudentRegistry` بشكل مباشر على الفئة المادية `InMemoryStudentRepository` التي تتعامل مع الذاكرة. بل تعتمد على التجريد (Abstraction) المتمثل في واجهة `StudentRepository` المحددة في ملف [interfaces.dart](source-code/interfaces.dart).
-* في ملف [main.dart](source-code/main.dart)، يتم استخدام حقن الاعتمادية (Dependency Injection) لتمرير كائن الـ Repository الفعلي إلى فئة `StudentRegistry` من الخارج، مما يحافظ على نظافة كود منطق العمل وعدم ارتباطه بتفاصيل البنية التحتية.
-
-</div>
+DIP decouples core business logic services from low-level data storage details:
+* The `StudentRegistry` service does not depend on the concrete class `InMemoryStudentRepository`. Instead, it depends on the abstract interface `StudentRepository` defined in [interfaces.dart](source-code/interfaces.dart).
+* In [main.dart](source-code/main.dart), we use Dependency Injection (DI) to pass the concrete repository implementation into the constructor of `StudentRegistry` at runtime. This isolates the core domain logic from the technical infrastructure layer.

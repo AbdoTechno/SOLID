@@ -1,82 +1,79 @@
-<div dir="rtl">
+# Technical Interview Questions on the Interface Segregation Principle (ISP)
 
-# أسئلة مقابلات فنية حول مبدأ فصل الواجهات: interview-questions.md
-
-مجموعة من الأسئلة والأجوبة التقنية المتوقعة في المقابلات الفنية (Interviews) حول مبدأ فصل الواجهات (ISP)، مقسمة حسب المستويات المهنية:
+A collection of technical interview questions and answers regarding the Interface Segregation Principle (ISP), categorized by professional experience level:
 
 ---
 
-## مستوى المبتدئين (Junior Level)
+## Junior Level
 
-### س1: ما هو مفهوم مبدأ فصل الواجهات (ISP)؟
-**الجواب**: ينص المبدأ على وجوب عدم إجبار أي كلاس على تنفيذ واجهات برمجية أو دوال لا يحتاجها؛ وذلك من خلال تقسيم الواجهات الضخمة إلى واجهات صغيرة محددة التخصص.
+### Q1: What is the Interface Segregation Principle (ISP)?
+**Answer**: ISP is the fourth principle of SOLID. It states that no class should be forced to implement interfaces or depend on methods it does not use. This is achieved by dividing large, bloated interfaces into smaller, specialized ones.
 
-### س2: ما هي المشكلة الأساسية في تصميم واجهة برمجية موحدة وشاملة (Fat Interface)؟
-**الجواب**: تضطر الكلاسات المنفذة لها إلى كتابة دوال فارغة أو إلقاء استثناءات لتعطيل وظائف غير متوافقة مع طبيعتها لمجرد إرضاء المترجم (Compiler)، مما يجعل الشيفرة معقدة وصعبة الصيانة.
+### Q2: What is the core issue with designing a single unified global interface (Fat Interface)?
+**Answer**: Implementing classes are forced to write empty dummy methods or throw exceptions (like `UnimplementedError`) to disable actions that do not fit their purpose, solely to satisfy the compiler. This increases complexity and makes the code fragile.
 
-### س3: هل يركز مبدأ ISP على الكلاسات أم على الواجهات البرمجية (Interfaces)؟
-**الجواب**: يركز المبدأ بشكل أساسي على تصميم وهيكلة الواجهات البرمجية (Interfaces) لتكون رشيقة ومريحة للمكونات المستفيدة (Clients) التي تعتمد عليها.
+### Q3: Does ISP focus on classes or on interfaces?
+**Answer**: ISP focuses primarily on the design of interfaces, ensuring they are lean, cohesive, and convenient for the client components (consumers) that depend on them.
 
-### س4: على ماذا يدل قيام دالة في كلاس معين بإلقاء استثناء من نوع `UnimplementedError`؟
-**الجواب**: يعد هذا مؤشرًا صريحًا (Red Flag) على خرق تصميم النظام لمبدأ فصل الواجهات (ISP) ومبدأ إحلال ليسكوف (LSP) معًا؛ نتيجة فرض دالة غير متوافقة على الكلاس.
+### Q4: If a subclass method throws an `UnimplementedError` exception, what does it indicate?
+**Answer**: This is a direct red flag indicating a violation of both ISP and LSP. The subclass is forced to implement a method signature from a parent contract that it cannot support.
 
-### س5: كيف يتم علاج مشكلة الواجهات المتضخمة (Fat Interfaces)؟
-**الجواب**: يتم ذلك بتفكيك وتجزئة الواجهة الكبيرة إلى واجهات أصغر ذات تخصصات محددة (على سبيل المثال، تجزئة واجهة `Worker` إلى واجهتين: `Workable` و `Feedable`).
+### Q5: How do you fix a bloated interface (Fat Interface)?
+**Answer**: By splitting the bloated interface into smaller, specialized interfaces (for example, segregating a massive `Worker` interface into `Workable` and `Feedable`).
 
-### س6: هل تدعم لغة Dart الكلمة المفتاحية `interface` بشكل مستقل؟
-**الجواب**: لا تحتوي لغة Dart على كلمة مفتاحية مستقلة باسم `interface` كبعض اللغات الأخرى (مثل Java). بل يمكن استخدام أي كلاس عادي أو كلاس مجرد (Abstract Class) كواجهة برمجية عبر استدعائه باستخدام الكلمة المفتاحية `implements`.
+### Q6: Does Dart support an explicit `interface` keyword?
+**Answer**: No. Unlike languages like Java, Dart does not have an explicit `interface` keyword. Instead, every class implicitly defines an interface. You can implement any class (regular or abstract) as an interface using the `implements` keyword.
 
-### س7: ما المقصود بالواجهة المتضخمة أو البدينة (Fat/Bloated Interface)؟
-**الجواب**: هي واجهة برمجية تضم عددًا كبيرًا من الدوال غير المترابطة وتقدم خدمات لجهات متعددة ومختلفة من المكونات المستفيدة في آن واحد.
-
----
-
-## المستوى المتوسط (Mid-Level)
-
-### س8: ما الفرق بين مبدأ المسؤولية الواحدة (SRP) ومبدأ فصل الواجهات (ISP)؟
-**الجواب**: 
-- **SRP**: يركز على الكلاسات والوحدات البرمجية (كلاس واحد = سبب واحد للتغيير).
-- **ISP**: يركز على الواجهات البرمجية والعقود (عدم إجبار العميل على الاعتماد على ما لا يستخدمه).
-كلا المبدأين يسعيان لتقليل الترابط (Coupling) وزيادة التماسك (Cohesion) ولكن على مستويات تصميمية مختلفة.
-
-### س9: كيف يتم تطبيق تركيب الواجهات (Interface Composition) في لغة Dart؟
-**الجواب**: يتم ذلك بجعل الكلاس ينفذ واجهات متعددة منفصلة بالفاصلة (مثال: `class TA implements StudentRole, TeacherRole`)، أو باستخدام الـ Mixins عبر الكلمة المفتاحية `with` لتركيب السلوكيات.
-
-### س10: ألا يؤدي تقسيم الواجهات لقطع صغيرة إلى زيادة تعقيد المشروع؟
-**الجواب**: لا، فالتقسيم المدروس الذي يخدم منطق العمل يبسط الكود ويجعله مفكك الارتباط (Decoupled) ويسهل اختبار كل جزء على حدة. بينما يكمن التعقيد الحقيقي في الواجهات المتضخمة المتشابكة التي تعوق الصيانة والتطوير.
-
-### س11: ما هو أثر تعديل دالة في واجهة برمجية ضخمة على كلاسات النظام؟
-**الجواب**: ستضطر كافة الكلاسات المنفذة لهذه الواجهة إلى تعديل كودها وإعادة البناء والترجمة، حتى الكلاسات التي لا تستخدم الدالة المعدلة نهائيًا، مما يزيد من وقت الترجمة (Build Time) ومخاطر حدوث أخطاء.
-
-### س12: كيف يسهم تطبيق مبدأ ISP في تبسيط عمليات المحاكاة (Mocking) أثناء الاختبار؟
-**الجواب**: عندما تكون الواجهة صغيرة ومحددة، يصبح إنشاء كلاس محاكاة (Mock Class) للاختبار أمرًا سهلاً وسريعًا؛ حيث لا يضطر المطور لمحاكاة عشرات الدوال غير المستخدمة في الاختبار الحالي.
-
-### س13: كيف يمكن معالجة واجهة ضخمة مستخدمة في مواضع متعددة داخل كود قديم (Legacy Code) دون كسر النظام؟
-**الجواب**: نقوم أولاً بتصميم الواجهات الصغيرة الجديدة المتخصصة. ثم نجعل الواجهة الضخمة القديمة ترث (extends) من الواجهات الصغيرة الجديدة للحفاظ على التوافقية التراجعية (Backward Compatibility). بعد ذلك، نقوم بتحديث أجزاء الكود تدريجيًا لتعتمد مباشرة على الواجهات الصغيرة المتخصصة.
-
-### س14: ما هي علاقة مبدأ ISP بمفهوم "الواجهة المخصصة للعميل" (Client-Specific Interface)؟
-**الجواب**: هما وجهان لعملة واحدة؛ حيث يوجه المبدأ بأن تصميم الواجهة البرمجية يجب أن يتم وتحدد معالمه بناءً على احتياجات المكون المستفيد (Client) الذي يستدعيها، وليس بناءً على تطلعات الكلاس المنفذ لها.
+### Q7: What is a "Fat" or "Bloated" Interface?
+**Answer**: It is an interface that declares a large number of unrelated methods, attempting to serve multiple diverse clients or responsibilities at the same time.
 
 ---
 
-## مستوى المحترفين (Advanced/Senior Level)
+## Mid-Level
 
-### س15: كيف يؤثر مبدأ ISP على التوافقية الثنائية (Binary Compatibility) والمكتبات المشتركة؟
-**الجواب**: في لغات البرمجة التي تعتمد على الربط الاستاتيكي والترجمة الثنائية (مثل C++ أو Go)، يمنع تطبيق ISP كسر التوافقية الثنائية (ABI). فإذا كانت الواجهات ضخمة، فإن أي تعديل فيها يغير هيكل جدول الدوال الافتراضية (vtable)، مما يجبر كافة المكتبات المعتمدة عليها على إعادة الترجمة. وتجزئة الواجهات يحمي المكتبات من عمليات إعادة الترجمة غير الضرورية.
+### Q8: What is the difference between SRP and ISP?
+**Answer**:
+- **SRP**: Focuses on classes and modules (a class should have only one reason to change).
+- **ISP**: Focuses on interfaces and contracts (a client should not be forced to depend on methods it does not consume).
+Both principles strive to decrease coupling and increase cohesion, but they operate at different design granularities.
 
-### س16: كيف يتم توظيف الواجهات المنفصلة (Segregated Interfaces) في هندسة المعمارية النظيفة (Clean Architecture)؟
-**الجواب**: نستخدم مبدأ ISP عند حدود الطبقات (Layer Boundaries)؛ ففي طبقة حالات الاستخدام (Use Cases/Application Layer)، نقسم حدود المخرجات (Output Boundaries / Presenter Interfaces) إلى واجهات صغيرة محددة (مثل `UserPresenter` و `ErrorPresenter`) بدلاً من واجهة عرض واحدة متضخمة. يتيح ذلك لطبقة واجهة المستخدم (UI) تنفيذ متطلبات العرض الخاصة بها فقط وتجنب معرفة تفاصيل الطبقات الأخرى.
+### Q9: How is Interface Composition implemented in Dart?
+**Answer**: A class can implement multiple independent interfaces separated by commas: `class TeachingAssistant implements Student, Instructor`. Dart also supports mixins using the `with` keyword to compose shared behaviors dynamically.
 
-### س17: هل يمكن تطبيق الـ ISP في لغات البرمجة الديناميكية (Dynamic Languages) مثل JavaScript أو Python؟ ولماذا؟
-**الجواب**: نعم، على الرغم من عدم وجود مترجم يفرض تنفيذ الدوال فنيًا (حيث تعتمد على Duck Typing)، إلا أن المبدأ يظل محوريًا من الناحية المعمارية. فإذا كانت الواجهة الافتراضية لأي وحدة (Module) ضخمة، فإن المكونات الخارجية سترتبط بها بشكل وثيق (High Coupling)، مما يصعب عمليات إعادة الهيكلة (Refactoring) أو استبدال الموديول بآخر مستقبلاً.
+### Q10: Doesn't dividing interfaces into smaller pieces increase project complexity?
+**Answer**: No. Thoughtful segregation that matches domain roles keeps the codebase decoupled, clean, and testable. The real complexity lies in bloated, heavily coupled interfaces that trigger wide-ranging compile errors when modified.
 
-### س18: وضح العلاقة المعمارية بين مبدأ ISP ونمط واجهات الأدوار (Role Interfaces)؟
-**الجواب**: واجهات الأدوار (Role Interfaces) هي نمط تصميمي ناتج عن تطبيق ISP؛ فبدلاً من تصميم الواجهات بناءً على الكيانات (Header Interfaces مثل كلاس `Student`)، نقوم بتصميمها بناءً على الأدوار التي يلعبها الكيان في سياق معين (مثل `Attendee`, `Payer`, `Enrollable`). يمنح هذا التوجه مرونة معمارية فائقة ويركز على الأدوار والتعاون المشترك بين الكائنات.
+### Q11: What is the impact of modifying a method signature in a bloated interface?
+**Answer**: All classes implementing that interface must be updated and recompiled, even if they never consume the modified method. This increases build times and raises the risk of introducing bugs.
 
-### س19: عند تصميم واجهات برمجة التطبيقات للخدمات المصغرة (Microservices API)، كيف تطبق مبدأ ISP؟
-**الجواب**: نتجنب تصميم واجهة برمجية واحدة موحدة تخدم جميع المنصات والمستفيدين (Web, Mobile, Third-Party). بدلاً من ذلك، نطبق نمط **BFF (Backend For Frontend)** لإنشاء واجهة بوابة برمجية (API Gateway) مخصصة ومفصلة لكل نوع من أنواع الأجهزة المستفيدة بما يلائم احتياجاتها ويعزلها عن تفاصيل المنصات الأخرى.
+### Q12: How does ISP simplify Mocking during testing?
+**Answer**: When interfaces are small and focused, creating mock implementations for unit tests is quick and clean. Developers do not need to write mock declarations for dozens of irrelevant methods.
 
-### س20: كيف يتقاطع مبدأ ISP مع مشكلة "تلوث الواجهات" (Interface Pollution) في البرمجة كائنية التوجه؟
-**الجواب**: يحدث تلوث الواجهات (Interface Pollution) عند المبالغة المفرطة في تقسيم الواجهات لدرجة إنشاء واجهة مستقلة لكل دالة منفردة في النظام (Over-segregation). يؤدي ذلك إلى إغراق الكود بتجريدات غير ضرورية تعوق تتبع وفهم منطق العمل. ويكمن دور المهندس المحترف في إيجاد التوازن ودمج الدوال ذات التماسك المرتفع (High Cohesion) في واجهة واحدة طالما أنها تخدم نفس المستفيد وتلبي نفس الدور.
+### Q13: How can you refactor a bloated interface in a large legacy project without breaking existing code?
+**Answer**:
+First, design the new, segregated interfaces. Then, modify the legacy bloated interface to inherit (`extends`) from the new, smaller interfaces to preserve backward compatibility. Gradually update the client classes to consume the specific smaller interfaces directly, eventually deprecating the monolithic interface.
 
-</div>
+### Q14: What is the relationship between ISP and the "Client-Specific Interface" concept?
+**Answer**: They are the same thing. The principle dictates that interfaces should be designed and structured according to what the client code expects to call, rather than what the implementing class is capable of providing.
+
+---
+
+## Senior Level
+
+### Q15: How does ISP affect Binary Compatibility and shared libraries?
+**Answer**: In statically linked and compiled languages (like C++ or Go), violating ISP breaks Binary Compatibility (ABI). In a bloated interface, adding or modifying a method changes the virtual table (vtable) layout, forcing all client applications and shared libraries to recompile. Segregating interfaces shields libraries from unnecessary recompilations.
+
+### Q16: How do you apply ISP to Clean Architecture layer boundaries?
+**Answer**: We use ISP at layer boundaries. In the Application/Use Case layer, we split output boundaries (Presenter Interfaces) into small, focused interfaces (e.g., `UserPresenter` and `ErrorPresenter`) rather than designing a single monolithic UI interface. This ensures the UI layer only implements what is necessary for the current presentation scope.
+
+### Q17: Can you apply ISP in dynamically typed languages like JavaScript or Python? Why?
+**Answer**: Yes. Although there is no compiler to enforce types, the architectural coupling is still real. If a module exports a massive unified API, client components become tightly coupled to it. This makes refactoring or swapping the module with an alternative highly difficult.
+
+### Q18: Explain the relationship between ISP and Role Interfaces.
+**Answer**: Role Interfaces are a design pattern that emerges from applying ISP. Instead of designing interfaces around entity types (Header Interfaces, e.g., representing all things a `Student` can do), we design them around the specific roles an object plays in a given collaboration context (e.g., `ClassAttendee`, `Payer`, `Enrollable`). This provides extreme architectural flexibility.
+
+### Q19: How do you apply ISP when designing Microservices APIs?
+**Answer**: We avoid publishing a single, monolithic API that serves all platforms (Web, Mobile, and external clients). Instead, we apply the BFF (Backend For Frontend) pattern to deploy specialized API gateways tailored to each client type, providing only the endpoints and data formats they actually consume.
+
+### Q20: How does ISP intersect with the issue of Interface Pollution in OOP?
+**Answer**: Interface Pollution (or over-segregation) occurs when developers over-apply ISP and create an interface for every single method in the system. This floods the codebase with redundant abstractions, hurting readability. A Senior Engineer balances segregation by grouping highly cohesive methods that serve the same client role into a single interface.

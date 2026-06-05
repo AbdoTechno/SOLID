@@ -1,9 +1,9 @@
-// واجهات النظام وعقود الاعتمادية (Interfaces & Abstractions)
-// بيعبر عن الـ DIP في المشروع
+// System interfaces and dependency contracts (Interfaces & Abstractions)
+// Implements the Dependency Inversion Principle (DIP) in the project
 
 import 'models.dart';
 
-// 1. عقد التخزين (DIP): السيستم بيعتمد على الواجهة دي مش على تطبيق مادي محدد
+// 1. Storage Contract (DIP): The system depends on this interface rather than a concrete repository implementation
 abstract class StudentRepository {
   void save(BaseStudent student);
   BaseStudent? findById(String id);

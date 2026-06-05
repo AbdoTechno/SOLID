@@ -1,46 +1,42 @@
-<div dir="rtl">
+# Quick Revision Sheet for Dependency Inversion Principle (DIP)
 
-# ورقة مراجعة سريعة لمبدأ عكس الاعتمادية (Dependency Inversion Principle)
-
-تقدم هذه الورقة ملخصاً مكثفاً ومباشراً لمبدأ عكس الاعتمادية (DIP) للرجوع إليه وتذكره بسرعة:
+This cheat sheet provides a concise and direct summary of the Dependency Inversion Principle (DIP) for fast recall:
 
 ---
 
-## تعريف المبدأ (Definition)
+## Core Definition
 
-1. الوحدات عالية المستوى لا يجب أن تعتمد على وحدات منخفضة المستوى. كلاهما يجب أن يعتمد على التجريد (Abstractions).
-2. التجريد لا يجب أن يعتمد على التفاصيل. التفاصيل يجب أن تعتمد على التجريد.
-
----
-
-## ملخص الفكرة الأساسية (One-Line Summary)
-
-> **"فك الارتباط الوثيق بين الفئات، واجعل تواصلها يتم عبر واجهات قياسية موحدة (Interfaces)."**
+1. High-level modules should not depend on low-level modules. Both should depend on abstractions.
+2. Abstractions should not depend on details. Details should depend on abstractions.
 
 ---
 
-## الفوائد البرمجية (Benefits)
+## One-Line Summary
 
-1. **مرونة عالية** في تبديل وتعديل التقنيات المستخدمة (مثل قواعد البيانات ومزودي خدمات الشبكة).
-2. **تسهيل اختبارات الوحدة (Unit Tests)** عبر استخدام كائنات المحاكاة (Mocking).
-3. **تقليل الترابط (Coupling)** ومنع انتشار الأخطاء وتواليها في النظام.
-4. **كود منظم ونظيف** يفصل تماماً بين منطق العمل (Domain) والبنية التحتية (Infrastructure).
+> **"Decouple components by making them interact through abstract interfaces instead of concrete implementations."**
 
 ---
 
-## مؤشرات الانتهاك (Red Flags)
+## Key Benefits
 
-* قيام فئة منطق العمل بإنشاء فئة قاعدة البيانات أو الخدمات التقنية بنفسها داخلياً (باستخدام `new` أو ما يعادلها).
-* استقبال مشيد الفئة الأساسية لفئات مادية (Concrete Classes) بدلاً من واجهات مجردة.
-* عدم القدرة على إجراء اختبار وحدة (Unit Test) للفئة دون الحاجة لتشغيل قاعدة بيانات أو شبكة حقيقية.
-* الاضطرار لتعديل فئة منطق العمل الأساسية لمجرد تغيير طريقة إرسال الإشعارات أو تغيير مكتبة الاتصال بالشبكة.
+1. **High Flexibility**: Swap and upgrade low-level technologies (such as database engines or API services) with minimal effort.
+2. **Simplified Testing**: Write isolated unit tests using mocks and stubs instead of real infrastructure.
+3. **Loose Coupling**: Reduce interdependencies to prevent cascading errors across the codebase.
+4. **Clean Separation of Concerns**: Keep business workflows (domain layer) isolated from infrastructure details (database, UI, networking).
 
 ---
 
-## إرشادات المقابلات الفنية (Interview Tips)
+## Red Flags (Violations)
 
-* **المصطلحات المحورية**: ركّز على استخدام مفاهيم مثل التجريد مقابل التفاصيل (Abstractions vs. Details)، الترابط الوثيق والضعيف (Tight/Loose Coupling)، وحقن الاعتمادية (Dependency Injection).
-* **الفرق الجوهري**: وضّح بدقة الفرق بين مبدأ عكس الاعتمادية (DIP) كفلسفة تصميمية، وبين حقن الاعتمادية (DI) كآلية لتطبيق هذا المبدأ.
-* **المثال التوضيحي**: استعن بمثال المصباح الكهربائي الملحوم بالأسلاك مباشرة في الجدار مقارنة بالمقبس الكهربائي القياسي، ثم طبقه برمجياً على فئة تسجيل الطلاب وفئة قاعدة البيانات.
+* Business logic classes instantiating low-level service classes directly (using `new` or direct constructor invocation).
+* High-level constructors accepting concrete classes instead of abstract interfaces.
+* The inability to run unit tests without establishing physical database connections or network sockets.
+* Modifying a core business logic class when changing notification dispatch mechanisms or API packages.
 
-</div>
+---
+
+## Technical Interview Tips
+
+* **Core Terminology**: Use phrases like *Abstractions vs. Details*, *Tight/Loose Coupling*, and *Dependency Injection*.
+* **Key Distinction**: Clarify that DIP is a design principle (the "what"), while Dependency Injection (DI) is a structural pattern used to achieve it (the "how").
+* **Physical Analogy**: Use the wall socket analogy. A light bulb wired directly into the wall is tightly coupled. An outlet provides an abstraction, allowing any bulb to plug in. Translate this to a student registration system and database interface.

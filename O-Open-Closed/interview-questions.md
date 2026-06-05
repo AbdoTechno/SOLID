@@ -1,87 +1,83 @@
-<div dir="rtl">
+# Technical Interview Questions on the Open-Closed Principle (OCP)
 
-# أسئلة مقابلات فنية حول مبدأ المفتوح والمغلق: interview-questions.md
-
-مجموعة من الأسئلة والأجوبة التقنية المتوقعة في المقابلات الفنية (Interviews) حول مبدأ المفتوح والمغلق (OCP)، مقسمة حسب المستويات المهنية:
+A collection of technical interview questions and answers regarding the Open-Closed Principle (OCP), categorized by professional experience level:
 
 ---
 
-## مستوى المبتدئين (Junior Level)
+## Junior Level
 
-### س1: ما هو مفهوم مبدأ المفتوح والمغلق (OCP)؟
-**الجواب**: ينص المبدأ على أن الكيانات البرمجية (الكلاسات، والوحدات البرمجية، والدوال) يجب أن تكون مفتوحة للتمديد والتوسيع لإضافة سلوكيات جديدة (Open for Extension)، ومغلقة أمام التعديل المباشر على الكود القديم المستقر (Closed for Modification).
+### Q1: What is the Open-Closed Principle (OCP)?
+**Answer**: OCP is the second principle of SOLID. It states that software entities (classes, modules, functions, etc.) should be open for extension (to add new features/behaviors) but closed for modification (existing stable code should not be changed).
 
-### س2: كيف يتم تطبيق مبدأ OCP في الكود المصدري؟
-**الجواب**: يتم تطبيقه بالاعتماد على التجريد (Abstraction) وتعدد الأشكال (Polymorphism)؛ حيث يعتمد المكون البرمجي الرئيسي على واجهات مجردة (Interfaces)، ويتم إدخال أي سلوك جديد عن طريق إنشاء كلاسات جديدة تنفذ هذه الواجهات.
+### Q2: How do you implement OCP in source code?
+**Answer**: It is implemented using Abstraction and Polymorphism. The core application logic depends on abstract interfaces, and new behaviors are added by writing new classes that implement those interfaces.
 
-### س3: ما هي العواقب الناتجة عن تجاهل تطبيق مبدأ OCP؟
-**الجواب**: يصبح الكود هشًا (Fragile) وسهل الكسر؛ فمع كل متطلب عمل جديد، يضطر المطور لتعديل الكود القديم المستقر، مما يعرض النظام لظهور أخطاء تراجعية (Regression Bugs) في وظائف برمجية كانت تعمل بشكل سليم.
+### Q3: What happens if you ignore the Open-Closed Principle?
+**Answer**: The codebase becomes fragile. Every time a new feature is requested, you must modify stable, previously tested code. This introduces a high risk of regression bugs in features that were working perfectly.
 
-### س4: هل يعد استخدام الجمل الشرطية مثل `switch-case` أو `if-else` بشكل مكثف مخالفة لمبدأ OCP؟
-**الجواب**: نعم، في كثير من الأحيان يمثل ذلك علامة تحذيرية (Red Flag)؛ فإذا كانت الجمل الشرطية تُستخدم للتحقق من أنواع معينة من أجل تغيير سلوك الكود، فمن الأفضل استبدالها باستخدام تعدد الأشكال (Polymorphism) لتفادي تعديل هذه الجمل عند إضافة نوع جديد.
+### Q4: Does using `switch-case` or nested `if-else` blocks violate OCP?
+**Answer**: Yes, frequently. If you use conditionals to check type flags in order to determine different behaviors, it is a major OCP red flag. Adding a new type requires modifying the conditional blocks. These should be refactored to use polymorphism instead.
 
-### س5: ما الفرق بين "التعديل" (Modification) و"التمديد" (Extension)؟
-**الجواب**: التعديل يعني فتح ملف كود قائم ومستقر وتغيير الأسطر البرمجية المكتوبة داخله. أما التمديد فيعني كتابة كود جديد في كلاسات أو ملفات مستقلة لإضافة السلوك الجديد دون المساس بالملفات القديمة.
+### Q5: What is the difference between "Modification" and "Extension"?
+**Answer**: Modification means opening an existing, stable file and changing its code. Extension means writing new classes or files to introduce new behaviors without altering the existing files.
 
-### س6: هل يمنع مبدأ OCP تعديل الكود القديم لإصلاح الأخطاء البرمجية (Bugs)؟
-**الجواب**: لا يمنع المبدأ ذلك؛ فإذا تم اكتشاف خطأ برمجى (Bug) في كود قائم، يجب إصلاحه في موضعه. المبدأ يمنع التعديل المباشر عند إضافة **ميزات جديدة** أو تغيير منطق العمل وقواعده.
+### Q6: Does OCP prevent modifying stable code to fix bugs?
+**Answer**: No. If a bug is discovered in existing code, it must be fixed directly. OCP allows modification for corrective purposes (bug fixes), but forbids modification for adding **new features** or shifting business logic.
 
-### س7: ما هي الفائدة الأساسية لمبدأ OCP في عملية اختبار الكود؟
-**الجواب**: تكمن الفائدة في عدم الحاجة لإعادة اختبار الكود القديم المستقر بالكامل؛ إذ ينصب التركيز على اختبار المكونات والكلاسات الجديدة المضافة للتوسيع فقط.
-
----
-
-## المستوى المتوسط (Mid-Level)
-
-### س8: كيف يسهم نمط الاستراتيجية (Strategy Pattern) في تحقيق مبدأ OCP؟
-**الجواب**: يتيح نمط الاستراتيجية فصل منطق العمليات أو الخوارزميات في كلاسات منفصلة تشترك في واجهة واحدة. يستقبل المكون الرئيسي هذه الواجهة كمعامل، مما يسمح بإضافة خوارزميات جديدة مستقبلاً دون الحاجة لتعديل كود المكون الرئيسي.
-
-### س9: متى يفضل إنشاء واجهات مجردة لتطبيق مبدأ OCP، ومتى يفضل كتابة كود مباشر؟
-**الجواب**: يتم تطبيق ذلك في الأجزاء التي يكثر تعديلها أو يتوقع توسيعها مستقبلاً وفقًا لمتطلبات العمل. أما في الأجزاء البسيطة والثابتة التي لا يتوقع تغييرها، فيفضل إبقاؤها كلاسات عادية تجنبًا للتعقيد الزائد والمبالغة في التصميم (Over-engineering).
-
-### س10: إذا كان لدينا دالة لتنسيق البيانات ونرغب في إضافة دعم لتنسيق XML بجانب JSON، كيف نطبق مبدأ OCP؟
-**الجواب**: ننشئ واجهة مجردة باسم `DataFormatter` تحتوي على دالة `format(Data data)`. ثم ننشئ كلاسين ينفذان الواجهة: `JsonFormatter` و `XmlFormatter`. يعتمد كلاس معالجة البيانات الرئيسي على الواجهة المجردة، وفي حال الرغبة في دعم تنسيق YAML مستقبلاً، نكتفي بإضافة كلاس `YamlFormatter` دون تعديل الكود الرئيسي.
-
-### س11: هل يتعارض مبدأ OCP مع مبدأ عدم تكرار الكود (DRY - Don't Repeat Yourself)؟
-**الجواب**: لا يتعارض؛ فمن الممكن الاحتفاظ بالمنطق البرمجي المشترك داخل كلاس أساسي (Base Class) أو كلاسات مساعدة، مع الحفاظ على تطبيق OCP عبر فصل السلوكيات المتغيرة في كلاسات منفصلة ومستقلة.
-
-### س12: ما الفرق في تطبيق مبدأ OCP بين استخدام التوريث (Inheritance) والتركيب (Composition)؟
-**الجواب**: يمثل التوريث إحدى طرق التمديد ولكن يعيبه الترابط الوثيق (Tight Coupling) بين الأب والابن. بينما يعد التركيب (Composition) عبر تمرير الواجهات البرمجية للمشيد (Constructor) أفضل وأكثر مرونة، لأنه يتيح تغيير السلوك في مرحلة التشغيل (Runtime) بسهولة.
-
-### س13: كيف يمكن تطبيق مبدأ OCP في تصميم واجهات المستخدم في Flutter؟
-**الجواب**: يتم ذلك بالاعتماد على التركيب (Composition)؛ كأن نصمم مكونًا عامًا (مثل `CustomCard`) يستقبل محتوياته كمعامل من نوع `Widget` بدلاً من تصميمه لعرض الصور فقط. يتيح ذلك للمطورين تمرير نصوص أو مقاطع فيديو أو صور داخل المكون دون الحاجة لتعديل الكود المصدري للـ Card نفسه.
-
-### س14: ما هي المؤشرات التي تدل على أن الكود يخالف مبدأ OCP؟
-**الجواب**:
-1. نمو وتضخم الجمل الشرطية `if-else` أو `switch` مع كل متطلب عمل جديد.
-2. الاضطرار لتعديل نفس الملفات المستقرة عند إضافة أي ميزة جديدة للنظام.
-3. تكرار حدوث أخطاء برمجية في أجزاء قديمة مستقرة عند دمج ميزات جديدة.
+### Q7: What is the main benefit of OCP during testing?
+**Answer**: It minimizes regression testing. You do not need to re-test the entire legacy system; testing efforts can be focused strictly on the newly added extension classes.
 
 ---
 
-## مستوى المحترفين (Advanced/Senior Level)
+## Mid-Level
 
-### س15: كيف يؤثر تطبيق مبدأ OCP على دورة إطلاق البرمجيات (Release Cycle) وعمليات النشر (Deployment)؟
-**الجواب**: يسهل المبدأ عمليات النشر المستمر (CI/CD)؛ فبما أن الميزات الجديدة تضاف كملفات أو مكتبات مستقلة، يمكن نشرها وتحديثها دون الحاجة لإعادة بناء ونشر نواة النظام بالكامل (Core System)، مما يقلل من المخاطر ويسرع عملية الإطلاق.
+### Q8: How does the Strategy Pattern help achieve OCP?
+**Answer**: The Strategy Pattern isolates algorithms or business rules into separate classes that share a common interface. The main client class accepts this interface as a parameter, allowing developers to add new strategy algorithms without changing the client class.
 
-### س16: هل يمكن تطبيق مبدأ OCP بنسبة 100% في كافة أجزاء النظام؟ ولماذا؟
-**الجواب**: مستحيل عمليًا وغير مستحب؛ لأن السعي للتطبيق المطلق للمبدأ يتطلب مستويات لا حصر لها من التجريد والواجهات البرمجية، مما يحول النظام إلى بنية معقدة للغاية وصعبة القراءة. يكمن دور مهندس البرمجيات المحترف في تحديد الأجزاء الأكثر عرضة للتغير بناءً على فهمه لمتطلبات العمل وتطبيق المبدأ فيها بشكل استراتيجي وذكي.
+### Q9: When should you create abstractions for OCP, and when is it unnecessary?
+**Answer**: Abstractions should be introduced in areas of the application that change frequently or are expected to expand based on business needs. For simple, static logic that is unlikely to change, write direct code to avoid unnecessary complexity and premature abstraction (Over-engineering).
 
-### س17: ما هو مفهوم "درع التجريد" (Abstraction Shield) وعلاقته بمبدأ OCP؟
-**الجواب**: درع التجريد هو جدار من الواجهات البرمجية المجردة يُبنى حول منطق النظام الأساسي (Core Logic) لحمايته من التغيرات التي تطرأ على التفاصيل الخارجية (مثل قواعد البيانات أو واجهات المستخدم). يتيح هذا الدرع تمديد النظام وتعديل التفاصيل الخارجية دون إحداث أي تغيير في منطق العمل الداخلي المستقر.
+### Q10: If a formatting method needs to support XML in addition to JSON, how do you apply OCP?
+**Answer**: Create an abstract class `DataFormatter` containing a `format(Data data)` method. Then, implement the interface in two concrete classes: `JsonFormatter` and `XmlFormatter`. The consumer class depends on the `DataFormatter` abstraction. To add YAML support later, write a `YamlFormatter` class without touching existing code.
 
-### س18: كيف يسهم مبدأ OCP في حل مشكلات دمج وتفرع الكود (Branching and Merging) في Git؟
-**الجواب**: يقلل مبدأ OCP من احتمالية تعارضات الدمج (Merge Conflicts)؛ فبما أن المطورين يعملون على إضافة ميزات جديدة عبر إنشاء ملفات وكلاسات جديدة خاصة بهم، يقل التعديل المشترك في نفس الملفات المستقرة، مما يسهل دمج التفرعات البرمجية في Git وانسيابية العمل الجماعي.
+### Q11: Does OCP conflict with the DRY (Don't Repeat Yourself) principle?
+**Answer**: No. You can keep shared, helper methods inside a base class or utility classes, while applying OCP by separating the varying behaviors into independent concrete strategy classes.
 
-### س19: ما هي الخطة المتبعة لإعادة هيكلة كود قديم يحتوي على جمل شرطية ضخمة تخالف مبدأ OCP؟
-**الجواب**:
-1. كتابة اختبارات وحدة (Unit Tests) تغطي سلوك الجمل الشرطية الحالي بالكامل لضمان عدم حدوث تراجع في الأداء.
-2. إنشاء واجهة مجردة (Interface) تمثل السلوك المشترك.
-3. نقل منطق كل حالة (Case) إلى كلاس منفصل ينفذ هذه الواجهة.
-4. استخدام نمط المصنع (Factory Pattern) كخطوة انتقالية لتحديد واسترجاع كائن الاستراتيجية المناسب بناءً على المتغير.
-5. استبدل الجمل الشرطية القديمة بنظام الاستدعاء الموحد، والتحقق من نجاح كافة الاختبارات.
+### Q12: Compare OCP implementations using Inheritance vs. Composition.
+**Answer**: Inheritance allows extension, but introduces tight coupling between the parent and child class (changes to the parent can break the child). Composition combined with interfaces is preferred because it allows behaviors to be swapped dynamically at runtime (Loose Coupling).
 
-### س20: وضح العلاقة بين مبدأ OCP ومعمارية الإضافات (Plugin Architecture)؟
-**الجواب**: تمثل معمارية الإضافات التطبيق المعماري الأمثل لمبدأ OCP؛ حيث يوفر النظام الأساسي نقاط اتصال برمجية محددة (Extension Points/Interfaces)، ويقوم أي برنامج فرعي أو إضافة (Plugin) بالربط مع هذه النقاط لتقديم وظائف جديدة (مثل إضافات متصفح Chrome أو إضافات بيئات التطوير)، دون الحاجة لتعديل أو معرفة الكود المصدري للنظام الرئيسي.
+### Q13: How do you apply OCP to UI design in Flutter?
+**Answer**: By using composition. For example, design a generic `CustomCard` widget that accepts a child `Widget` or a `CardConfig` style configuration, rather than hardcoding it for specific content. This allows developers to reuse the card for text, images, or video without modifying the card class.
 
-</div>
+### Q14: What are the warning signs (Red Flags) indicating OCP violations?
+**Answer**:
+1. Conditional statements (`if-else`, `switch`) that grow larger with every new business feature.
+2. The necessity to edit existing stable files to implement a new feature.
+3. Frequent regression bugs in stable modules after merging new features.
+
+---
+
+## Senior Level
+
+### Q15: How does OCP affect the Software Release Cycle and deployment processes?
+**Answer**: OCP simplifies continuous deployment (CI/CD). Because new features are added in separate files or modular libraries, they can be deployed and versioned independently without rebuilding and redeploying the core system, reducing risks and deployment times.
+
+### Q16: Is it possible to apply OCP to 100% of a software project? Why?
+**Answer**: No, it is practically impossible and undesirable. Attempting to make every single class open/closed requires endless layers of interfaces, making the codebase highly complex and hard to trace. A Senior Engineer applies OCP strategically to the business domains that are most likely to change, keeping simple CRUD components straightforward.
+
+### Q17: What is an "Abstraction Shield" and how does it relate to OCP?
+**Answer**: An Abstraction Shield is a layer of interfaces wrapped around the core business logic. It protects stable domain rules from changes occurring in external infrastructures (e.g., database schema updates, UI framework migrations). This shield enables external changes to occur without modifying the core domain.
+
+### Q18: How does OCP reduce Branching and Merging conflicts in Git?
+**Answer**: By separating extension code. When developers add features by writing new classes in new files, they rarely touch the same shared stable files. This keeps Git commits isolated, minimizing merge conflicts and facilitating parallel development.
+
+### Q19: What is the step-by-step strategy to refactor legacy code containing massive conditional statements violating OCP?
+**Answer**:
+1. Write comprehensive unit tests covering the current behavior of the conditional block to catch regressions.
+2. Define an abstract interface representing the common action.
+3. Extract the logic from each switch `case` into a dedicated class implementing the interface.
+4. Implement a Factory class to instantiate the correct strategy object based on the input condition.
+5. Replace the switch block with a dynamic interface call and run unit tests to confirm success.
+
+### Q20: Explain the relationship between OCP and Plugin Architecture.
+**Answer**: Plugin Architecture is the ultimate implementation of OCP. The core system provides defined connection ports (Extension Points/Interfaces), and plugins implement these interfaces to provide new features (e.g., Chrome extensions, IDE plugins) without needing access to the core source code.

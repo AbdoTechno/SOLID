@@ -1,45 +1,41 @@
-<div dir="rtl">
+# Revision Sheet - Open-Closed Principle (OCP)
 
-# ورقة المراجعة السريعة لمبدأ المفتوح والمغلق: revision-sheet.md
-
-دليل المراجعة السريعة لمبدأ المفتوح والمغلق (OCP)، مصمم للاسترجاع السريع للمفاهيم الأساسية:
+Quick revision guide for the Open-Closed Principle (OCP), designed for fast recall of core concepts:
 
 ---
 
-## التعريف الأساسي (Definition)
+## Core Definition
 
-ينص المبدأ على أن الكيانات البرمجية يجب أن تكون **مفتوحة للتوسيع والتمديد** (Open for Extension) لإضافة سلوكيات وميزات جديدة للنظام، و**مغلقة أمام التعديل المباشر** (Closed for Modification) لحماية الكود القائم والمستقر من الخلل.
-
----
-
-## الخلاصة (One-Line Summary)
-
-> **"عند إضافة ميزة جديدة للنظام، قم بإنشاء كلاس مستقل يمد البنية الحالية دون الحاجة لتعديل الكود القديم المستقر."**
+Software entities should be **open for extension** (to add new features and behaviors) but **closed for modification** (to protect stable, running code from being tampered with or broken).
 
 ---
 
-## فوائد التطبيق (Benefits)
+## One-Line Summary
 
-1. **حماية الكود القديم** من ظهور الأخطاء التراجعية (Regression Bugs).
-2. **مرونة وسهولة التوسع** عبر إضافة ميزات جديدة بسرعة وانسيابية.
-3. **الحد من تعارضات دمج الكود** (Merge Conflicts) بفضل عمل المطورين في ملفات منفصلة.
-4. **تبسيط اختبار الجودة** بتركيز الاختبارات على المكونات الجديدة فقط.
+> **"Add new features by writing new classes that extend the existing system, rather than modifying old, tested code."**
 
 ---
 
-## العلامات التحذيرية لمخالفة المبدأ (Red Flags)
+## Key Benefits
 
-* تضخم الجمل الشرطية `if-else` أو `switch` بصورة مستمرة مع زيادة متطلبات العمل.
-* الاضطرار لتحديث نفس الكلاس الرئيسي مع كل طلب ميزة جديدة من العميل.
-* صعوبة إجراء اختبارات الوحدة نتيجة قيام الكلاس بالتحقق من أنواع وخيارات متعددة داخليًا.
-* كثرة التحقق من نوع الكائن في مرحلة التشغيل (مثل استخدام المعامل `is` في Dart) وإجراء عمليات تحويل النوع (Type Casting).
+1. **Protects Stable Code**: Prevents regression bugs when adding new features.
+2. **Flexible Extensibility**: Allows the system to scale and adapt to business requirements quickly.
+3. **Fewer Merge Conflicts**: Developers write new code in separate files, minimizing overlapping Git edits.
+4. **Focused QA Testing**: Testing efforts can target new classes rather than re-evaluating legacy modules.
 
 ---
 
-## إرشادات سريعة للمقابلات الفنية (Interview Tips)
+## Red Flags
 
-* **المصطلحات المحورية**: التركيز على مفاهيم "التجريد" (Abstraction)، و"تعدد الأشكال" (Polymorphism)، ونمط "الاستراتيجية" (Strategy Pattern).
-* **المثال النموذجي**: شرح مثال حساب خصومات الطلاب (Regular, VIP, Scholarship) وكيفية إدارته بمرونة كاملة عبر واجهة `DiscountStrategy`.
-* **الاعتدال والواقعية**: توضيح أن تطبيق مبدأ OCP يتم بشكل انتقائي وذكي في الأجزاء المعرضة للتغيير الفعلي، لتفادي التعقيد الزائد في البنية البرمجية (Over-engineering).
+* Conditional blocks (`if-else`, `switch`) that expand continuously with every new business rule.
+* The necessity to open and edit core, stable classes to support a new business entity or type.
+* Low testability because classes contain hardcoded, varying conditional paths.
+* Frequent runtime type checking (e.g., using `is` in Dart) or type casting to resolve behavior.
 
-</div>
+---
+
+## Technical Interview Tips
+
+* **Key Terminology**: Use terms like "Abstraction", "Polymorphism", "Dynamic Dispatch", and "Strategy Pattern" to explain how OCP is achieved.
+* **The Go-To Example**: Explain the student discount calculator (Regular, VIP, Scholarship) and how the `DiscountStrategy` interface decouples the calculator from individual student details.
+* **Architecture Balance**: Emphasize that OCP is applied strategically in areas of predicted change (YAGNI), rather than everywhere, to avoid excessive abstract configurations (Over-engineering).

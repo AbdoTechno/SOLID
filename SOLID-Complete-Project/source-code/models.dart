@@ -1,7 +1,7 @@
-// نماذج البيانات وكيانات الدومين (Models & Domain Entities)
-// بتعبر عن الـ LSP والـ ISP في تنظيم خصائص الطلاب والكورسات
+// Data models and domain entities (Models & Domain Entities)
+// Implements LSP and ISP in organizing student attributes and course records
 
-// 1. كلاس الكورس
+// 1. Course class
 class Course {
   final String code;
   final String name;
@@ -9,13 +9,13 @@ class Course {
   Course({required this.code, required this.name});
 }
 
-// 2. واجهة التقييم والدرجات (ISP): للطلاب اللي بيمتحنوا بس
+// 2. Grading Interface (ISP): Only implemented by students eligible for exams and grades
 abstract class Gradable {
   void addGrade(Course course, String grade);
   Map<Course, String> getGrades();
 }
 
-// 3. كلاس الطالب الأساسي
+// 3. Base Student Class
 abstract class BaseStudent {
   final String id;
   final String name;
@@ -25,15 +25,15 @@ abstract class BaseStudent {
 
   void enroll(Course course) {
     if (enrolledCourses.any((c) => c.code == course.code)) {
-      print('تنبيه: الطالب $name مسجل بالفعل في كورس ${course.name}');
+      print('Warning: Student $name is already enrolled in course ${course.name}');
       return;
     }
     enrolledCourses.add(course);
-    print('تم تسجيل الطالب $name في كورس ${course.name} بنجاح.');
+    print('Student $name enrolled in course ${course.name} successfully.');
   }
 }
 
-// 4. طالب الساعات المعتمدة (Credit Student): طالب عادي بيمتحن وبياخد درجات (LSP & ISP Compliant)
+// 4. Credit Student: A regular student who takes exams and gets grades (LSP & ISP Compliant)
 class CreditStudent extends BaseStudent implements Gradable {
   final Map<Course, String> _grades = {};
 
@@ -43,18 +43,18 @@ class CreditStudent extends BaseStudent implements Gradable {
   @override
   void addGrade(Course course, String grade) {
     if (!enrolledCourses.contains(course)) {
-      print('خطأ: لا يمكن رصد درجة لكورس ${course.name} لأن الطالب $name غير مسجل فيه!');
+      print('Error: Cannot assign grade for course ${course.name} because student $name is not enrolled in it!');
       return;
     }
     _grades[course] = grade;
-    print('تم رصد درجة ($grade) للطالب $name في كورس ${course.name}.');
+    print('Grade ($grade) recorded for student $name in course ${course.name}.');
   }
 
   @override
   Map<Course, String> getGrades() => Map.unmodifiable(_grades);
 }
 
-// 5. الطالب المستمع (Audit Student): بيحضر الكورس بس ملوش درجات (LSP Compliant)
+// 5. Audit Student: Attends the course but is not eligible for grades (LSP Compliant)
 class AuditStudent extends BaseStudent {
   AuditStudent({required String id, required String name})
       : super(id: id, name: name);

@@ -1,23 +1,21 @@
-<div dir="rtl">
+# Compliant Design Explanation (Good Design)
 
-# شرح التصميم البرمجي المتوافق (Good Design): good-example.md
-
-في ملف الكود [good.dart](code/good.dart)، قمنا بحل مشكلة تداخل المسؤوليات والاعتماديات باستخدام **التجريد (Abstraction)** و **تعدد الأشكال (Polymorphism)**:
+In [good.dart](code/good.dart), we resolved the tight coupling issues and switch-statement dependency by utilizing **Abstraction** and **Polymorphism**:
 
 ---
 
-## بنية الحل البرمجي الجديد
+## New Solution Structure
 
-1. **إنشاء واجهة برمجية موحدة (`DiscountStrategy`)**:
-   قمنا بإنشاء كلاس مجرد (Abstract Class) باسم `DiscountStrategy` يحتوي على دالة واحدة مجردة هي `calculateDiscount`. يمثل هذا الكلاس الواجهة القياسية الموحدة التي تحكم حساب كافة الخصومات.
+1. **Unifying Interface (`DiscountStrategy`)**:
+   We created an abstract class named `DiscountStrategy` containing a single abstract method, `calculateDiscount`. This class acts as the standard interface that governs all discount calculations in the system.
 
-2. **عزل كل فئة خصم في كلاس مستقل**:
-   - كلاس `RegularDiscount` يقوم بتنفيذ (Implement) الواجهة ويحسب الخصم المخصص للفئة العادية.
-   - كلاس `VipDiscount` ينفذ الواجهة ويطبق خصم العملاء المتميزين.
-   - كلاس `ScholarshipDiscount` ينفذ الواجهة لتطبيق خصم المنح الدراسية.
+2. **Isolating Each Category into a Dedicated Class**:
+   - The `RegularDiscount` class implements the interface to compute regular student discounts (10%).
+   - The `VipDiscount` class implements the interface to compute VIP student discounts (20%).
+   - The `ScholarshipDiscount` class implements the interface to compute scholarship student discounts (50%).
 
-3. **جعل كلاس الحسابات يعتمد على التجريد**:
-   أصبح كلاس `DiscountCalculator` مستقلاً تمامًا عن تفاصيل فئات الطلاب وصيغ الحساب الخاصة بهم؛ حيث يستقبل السعر الأصلي وكائنًا يحقق الواجهة `DiscountStrategy` وينادي عليه:
+3. **Calculator Depends on Abstraction**:
+   The `DiscountCalculator` class is now decoupled from the details of specific student types and their mathematical formulas. It simply accepts the original price and any instance implementing the `DiscountStrategy` interface:
    ```dart
    double calculate(double originalPrice, DiscountStrategy strategy) {
      return strategy.calculateDiscount(originalPrice);
@@ -26,23 +24,21 @@
 
 ---
 
-## الفوائد المعمارية وقابلية التوسع (Extensibility Advantages)
+## Extensibility Advantages
 
-* **إضافة فئات خصم جديدة بسهولة**:
-   إذا دعت الحاجة لإضافة خصم للموظفين (Staff) بنسبة 35%، فإننا نكتفي بكتابة كلاس جديد ينفذ الواجهة الموحدة دون تعديل الكود القائم:
+* **Simple Extension for New Categories**:
+   If we need to add a staff discount (35%), we simply create a new class implementing the `DiscountStrategy` interface without touching existing files:
    ```dart
    class StaffDiscount implements DiscountStrategy {
      @override
      double calculateDiscount(double originalPrice) => originalPrice * 0.35;
    }
    ```
-   ويتم استدعاؤه في الدالة الرئيسية كالتالي:
+   And consume it in the main method as follows:
    ```dart
    calculator.calculate(1000, StaffDiscount());
    ```
-   نلاحظ هنا أننا لم نقم بفتح ملف `DiscountCalculator` أو تعديله، كما لم نغير أيًا من كلاسات الخصم السابقة، مما يعني أن الكود مغلق أمام التعديل ومفتوح للتمديد بنسبة 100%.
+   Notice that we did not open `DiscountCalculator` or edit its contents. The code is 100% closed for modification and open for extension.
 
-* **عزل كامل لمنطق العمليات (Encapsulation)**:
-   تم عزل قواعد احتساب كل خصم داخل الكلاس الخاص به. فإذا حدث خطأ في حساب خصومات الفئة المتميزة (VIP)، نتوجه مباشرة إلى كلاس `VipDiscount` لمعالجته دون القلق من التأثير على كلاس `RegularDiscount`.
-
-</div>
+* **Encapsulated Logic**:
+   The calculation rules for each discount type are isolated within their own classes. If a bug is found in VIP discount calculations, we resolve it within `VipDiscount` without worrying about affecting the `RegularDiscount` calculations.

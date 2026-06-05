@@ -1,41 +1,37 @@
-<div dir="rtl">
+# Integrated Simplified University Management System
 
-# مشروع نظام إدارة الجامعة المتكامل المبسط
-
-يحتوي هذا المجلد على تطبيق عملي مبسط لنظام شؤون طلاب الجامعة بأقل قدر ممكن من الكود البرمجي. لا يهدف هذا المشروع إلى بناء تطبيق معقد، بل يهدف لتقديم نموذج سهل القراءة والتحليل يوضح كيفية تكامل مبادئ SOLID الخمسة معاً بشكل متناسق ودون أي تعقيدات غير ضرورية.
+This directory contains a simplified practical application of a university student affairs system using minimal source code. The project is not intended to build a complex software system, but rather to present a highly readable, straightforward demonstration of how all five SOLID principles work together cohesively.
 
 ---
 
-## الميزات الأساسية للنظام (Core Features)
+## Core Features
 
-1. **تسجيل الطلاب (Student Registration)**: حفظ بيانات الطالب الجديد في قاعدة البيانات (أو الـ Repository).
-2. **تسجيل المواد (Course Enrollment)**: تمكين الطلاب من تسجيل المواد الدراسية الخاصة بهم.
-3. **رصد الدرجات (Grade Management)**: رصد درجات الطلاب في المواد المسجلين فيها، مع تطبيق قيود تمنع رصد درجات للطلاب المستمعين (Audit Students) بما يتوافق مع مبدأ إحلال ليسكوف (LSP).
-
----
-
-## مكونات المشروع
-
-* 📝 **[explanation.md](explanation.md)**: شرح تفصيلي وعميق لأماكن تطبيق كل مبدأ من مبادئ SOLID الخمسة في الكود.
-* 🖍️ **[architecture.md](architecture.md)**: مخططات توضيحية مبسطة للعلاقات والاعتماديات بين الفئات.
-* 📂 **[project-structure.md](project-structure.md)**: خريطة وتفصيل ملفات الكود المصدري.
-* 💻 **`source-code/`**: الكود المصدري الفعلي المكتوب بلغة Dart:
-  - [interfaces.dart](source-code/interfaces.dart): العقود والتجريدات (مثل `StudentRepository`).
-  - [models.dart](source-code/models.dart): فئات نطاق العمل للطلاب (مثل `CreditStudent` و`AuditStudent`).
-  - [repositories.dart](source-code/repositories.dart): البنية التحتية لحفظ البيانات في الذاكرة.
-  - [services.dart](source-code/services.dart): خدمات منطق العمل (Business Logic Services).
-  - [main.dart](source-code/main.dart): ربط كل المكونات وتشغيل العمليات باستخدام حقن الاعتمادية.
+1. **Student Registration**: Saving new student profiles to a storage repository.
+2. **Course Enrollment**: Enabling students to register for academic courses.
+3. **Grade Management**: Recording grades for students in their registered courses, while applying constraints that prevent grading audit students (complying with the Liskov Substitution Principle).
 
 ---
 
-## كيفية تشغيل المشروع وتجربته
+## Directory Structure
 
-لتشغيل الكود ومعاينة المخرجات، افتح واجهة الأوامر (Terminal) في مسار المشروع الرئيسي ونفذ الأمر التالي:
+* **[explanation.md](explanation.md)**: Detailed breakdown highlighting exactly where each of the five SOLID principles is applied in the source code.
+* **[architecture.md](architecture.md)**: Structural diagrams showing class relationships and dependency flows.
+* **[project-structure.md](project-structure.md)**: Detailed mapping of the source code files.
+* **`source-code/`**: The actual Dart implementation files:
+  - [interfaces.dart](source-code/interfaces.dart): Decoupling contracts and abstractions (such as `StudentRepository`).
+  - [models.dart](source-code/models.dart): Domain models for students (such as `CreditStudent` and `AuditStudent`).
+  - [repositories.dart](source-code/repositories.dart): In-memory data persistence implementations.
+  - [services.dart](source-code/services.dart): Core business logic services.
+  - [main.dart](source-code/main.dart): Initialization, dependency injection, and execution flows.
+
+---
+
+## How to Run the Project
+
+To execute the code and examine the output, open your terminal in the root directory of this repository and run the following command:
 
 ```bash
 dart run SOLID-Complete-Project/source-code/main.dart
 ```
 
-ستظهر مخرجات واضحة وتفصيلية للعمليات المختلفة في موجه الأوامر (Console).
-
-</div>
+This will run the execution flows and display clean log messages in the console.

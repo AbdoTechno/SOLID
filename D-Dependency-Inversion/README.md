@@ -1,57 +1,53 @@
-<div dir="rtl">
+# Dependency Inversion Principle (DIP)
 
-# مبدأ عكس الاعتمادية: Dependency Inversion Principle (DIP)
-
-يعد مبدأ عكس الاعتمادية (DIP) المبدأ الخامس والأخير من مبادئ SOLID، وهو الركيزة الأساسية لفك الارتباط الوثيق (Tight Coupling) بين الطبقات البرمجية المختلفة لضمان مرونة فائقة وتسهيل عمليات الصيانة.
+The Dependency Inversion Principle (DIP) is the fifth and final principle of SOLID. It is the core foundation for decoupling software modules, ensuring high flexibility, and simplifying long-term maintenance.
 
 ---
 
-## تعريف المبدأ (What is DIP?)
+## What is DIP?
 
-ينص مبدأ عكس الاعتمادية على شقين أساسيين:
-1. **لا يجوز للوحدات عالية المستوى (High-level modules) الاعتماد على الوحدات منخفضة المستوى (Low-level modules). يجب أن يعتمد كلاهما على التجريد (Abstractions)**.
-2. **لا يجوز للتجريد (Abstractions) الاعتماد على التفاصيل المادية (Details). التفاصيل المادية هي التي يجب أن تعتمد على التجريد**.
+The Dependency Inversion Principle states two key points:
+1. **High-level modules should not depend on low-level modules. Both should depend on abstractions.**
+2. **Abstractions should not depend on details. Details should depend on abstractions.**
 
-وبعبارة أخرى، لا ينبغي لكلاسات منطق العمل الأساسية الحساسة (Business Logic) الاعتماد بشكل مباشر على الكلاسات الخدمية الفرعية الخاصة بالتنفيذ الفعلي (مثل نوع قاعدة البيانات أو مزود خدمة الشبكة). بدلاً من ذلك، يجب أن تتصل هذه المكونات عبر واجهة برمجية مجردة (Interface).
-
----
-
-## دواعي وجود المبدأ (Why it Exists?)
-
-لتوضيح هذا المبدأ، نفترض نظام توصيل الأجهزة الكهربائية بالمنازل. إذا كان المصباح الكهربائي ملحومًا بأسلاكه مباشرة داخل الجدار، فستكون عملية استبداله عند التلف معقدة للغاية وتتطلب تكسير الجدران وتعديل البنية التحتية.
-
-والحل الصحيح هو توفير **واجهة قياسية موحدة (مقبس كهربائي / Interface)** في الجدار. يقدم الجدار الكهرباء للمقبس، ويشبك المصباح في المقبس عبر قابس قياسي. يتيح هذا الفصل استبدال المصباح بأي نوع آخر في ثوانٍ دون المساس بالجدار.
-
-في البرمجيات، إذا كان كلاس منطق العمل يعتمد بشكل مباشر على كلاس قاعدة البيانات `MySqlDatabase`، فإن النظام يصبح مرتبطًا بالكامل بهذه التقنية (Tightly Coupled). وعند الرغبة في الانتقال إلى قاعدة بيانات أخرى (مثل MongoDB)، سنضطر لإعادة كتابة وتعديل أجزاء واسعة من النظام الأساسي.
+In other words, core business logic classes should not directly depend on low-level helper classes responsible for specific tasks (such as a specific database client or an API service). Instead, both components should interact through an abstract interface.
 
 ---
 
-## المشكلات التي يحلها المبدأ (Problems it Solves)
+## Why it Exists
 
-1. **الترابط الوثيق (Tight Coupling)**: يمنع تداخل الكلاسات بطريقة تجعل أي تغيير بسيط في كود التفاصيل يؤثر سلبًا على منطق العمل الأساسي.
-2. **صعوبة استبدال المكونات (Hard to Swap Components)**: يجعل تغيير البنية التحتية (مثل قواعد البيانات، أو بوابات الدفع، أو مكتبات الاتصال بالشبكة) عملية يسيرة وخالية من التعقيد.
-3. **صعوبة اختبار منطق العمل (Untestable Business Logic)**: يتيح اختبار منطق العمل الأساسي بشكل معزول تمامًا دون اشتراط وجود اتصال فعلي بقواعد البيانات أو خوادم الشبكات.
+To understand this principle, consider how electrical devices connect to a house. If a light bulb's wires were soldered directly into the wall, replacing a burnt-out bulb would require tearing down the wall and modifying the infrastructure.
 
----
+The solution is to provide a **standard interface (electrical outlet / socket)** in the wall. The wall provides electricity to the outlet, and the bulb connects to the outlet using a standard plug. This separation allows you to swap the bulb with another one in seconds without modifying the wall.
 
-## فوائد تطبيق المبدأ (Benefits)
-
-* **مرونة خارقة (Flexibility)**: إمكانية استبدال أي وحدة خدمية منخفضة المستوى بوحدة أخرى متوافقة في وقت وجيز ودون المساس بالبنية الأساسية.
-* **تسهيل اختبارات الوحدة (Unit Testing)**: إمكانية إنشاء كائنات محاكاة (Mocks/Stubs) للخدمات الخارجية واختبار الكلاسات الأساسية بسرعة ودقة.
-* **التنظيم وعزل المسؤوليات**: تحقيق الفصل التام بين منطق إدارة العمليات وتفاصيل التنفيذ الفنية.
+In software, if your core business logic class directly depends on a concrete database class like `MySqlDatabase`, the system becomes tightly coupled to that specific technology. If you decide to switch to another database (such as MongoDB), you will be forced to rewrite and modify large portions of your core code.
 
 ---
 
-## عواقب تجاهل المبدأ (Drawbacks if Ignored)
+## Problems it Solves
 
-* **صلابة الكود (Rigidity)**: ترابط وتماسك مكونات النظام بشكل وثيق، مما يصعب من عملية تحديث التقنيات المستخدمة أو استبدالها.
-* **توالي الأخطاء البرمجية**: يؤدي أي تعديل في تفصيل فني فرعي إلى ظهور أخطاء متسلسلة في منطق العمل الحساس.
+1. **Tight Coupling**: Prevents modules from being so interdependent that minor changes in low-level details break the high-level business logic.
+2. **Hard to Swap Components**: Simplifies replacing infrastructure layers (such as databases, payment gateways, or networking libraries).
+3. **Untestable Business Logic**: Allows testing core business logic in isolation without needing actual connections to databases or external networks.
 
 ---
 
-## العلاقة بمبادئ SOLID الأخرى (Relation to other SOLID Principles)
+## Benefits
 
-* **مع مبدأ المفتوح والمغلق (OCP)**: يعد مبدأ DIP الأداة الفعالة التي تجعل OCP ممكنًا؛ فلكي نتمكن من تمديد النظام بإضافة ميزات جديدة دون تعديل الكود القديم، يجب أن يعتمد الكود القديم على تجريد (DIP) يسمح بربط المكونات الجديدة به بسلاسة.
-* **مع مبدأ إحلال ليسكوف (LSP)**: عند جعل المكونات عالية المستوى تعتمد على التجريد، فإننا نفترض أن أي كلاس مشتق يطبق هذا التجريد سيكون قادرًا على الحلول محله وتقديم نفس السلوك المتوقع دون التسبب في انهيار النظام (وهو ما يحققه مبدأ LSP).
+* **Flexibility**: Easily swap low-level modules with compatible ones without changing the high-level application structure.
+* **Easier Unit Testing**: Use test doubles (mocks/stubs) for external dependencies to run fast and reliable unit tests.
+* **Separation of Concerns**: Achieves a clear separation between orchestrating business workflows and technical implementation details.
 
-</div>
+---
+
+## Drawbacks if Ignored
+
+* **Rigidity**: System components are highly interdependent, making technical updates or migrations extremely risky and expensive.
+* **Cascade of Failures**: A change in a low-level detail triggers a chain reaction of compilation or runtime errors across high-level business logic.
+
+---
+
+## Relation to Other SOLID Principles
+
+* **With the Open-Closed Principle (OCP)**: DIP is the primary tool that enables OCP. To extend a system with new features without modifying existing code, the existing code must rely on abstractions (DIP) that allow new implementations to be plugged in.
+* **With the Liskov Substitution Principle (LSP)**: When high-level modules depend on abstractions, we assume that any subclass implementing the abstraction can be substituted seamlessly without breaking system behavior (which is what LSP guarantees).

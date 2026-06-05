@@ -1,48 +1,44 @@
-<div dir="rtl">
+# Theoretical Explanation of the Single Responsibility Principle
 
-# الشرح النظري لمبدأ المسؤولية الواحدة: theory.md
-
-لفهم مبدأ المسؤولية الواحدة بشكل دقيق، من المفيد البدء بتناول نموذج توضيحي من الحياة العملية قبل الانتقال إلى التفاصيل البرمجية.
+To understand the Single Responsibility Principle (SRP) accurately, it is helpful to start with a real-life analogy before diving into the programming details.
 
 ---
 
-## النموذج العقلي والتشبيه التوضيحي (Mental Model)
+## Mental Model and Analogy
 
-نفترض حالة **إدارة شؤون الطلاب** في إحدى الجامعات؛ حيث يقوم موظف واحد فقط بكافة المهام: استلام الطلبات، والبحث في الأرشيف الورقي، وتوقيع المستندات من العميد، وتحصيل الرسوم المالية، بالإضافة إلى إعداد المشروبات وإغلاق المكتب مساءً.
+Consider a **Student Affairs** department in a university where a single employee handles all tasks: receiving applications, searching the paper archives, obtaining signatures from the dean, collecting tuition fees, preparing drinks, and locking up the office at night.
 
-إذا غاب هذا الموظف لسبب صحي، ستتوقف أعمال الإدارة بالكامل. وإذا تغيرت آلية التوقيع أو إجراءات تحصيل الرسوم (كالانتقال من الدفع النقدي إلى الدفع الإلكتروني)، فسيضطر الموظف إلى التكيف مع الإجراءات الجديدة، مما يعطل بقية مهامه الأساسية مثل البحث في الأرشيف.
+If this employee goes on sick leave, the entire department stops working. Moreover, if the payment collection method changes (e.g., transitioning from cash payments to electronic payments), the employee must adapt to the new procedure, disrupting their other core tasks like searching the archive.
 
-يمثل هذا الموظف برمجيًا ما يسمى بـ **"God Class"**، وهو الكلاس الذي يحمل أعباء النظام بأكمله.
-والتصميم الصحيح يقتضي توزيع هذه المهام على موظف أرشيف مستقل، وموظف تحصيل مالي (خزينة)، وموظف علاقات عامة. وبهذا التقسيم، إذا تغيرت آلية الدفع، يقتصر التغيير على موظف التحصيل، بينما يستمر موظف الأرشيف في أداء عمله دون أي توقف أو تأثر.
-
----
-
-## دوافع ابتكار المبدأ
-
-عندما صاغ روبرت مارتن (Uncle Bob) هذا المبدأ، ركز على تحديد الجهة التي تطلب التغيير (Who triggers the change?).
-وقد عرّف المسؤولية بأنها: **"مجموعة من الأشخاص أو الإدارات التي تشترك في نفس الاحتياجات"** (Actors).
-
-على سبيل المثال، إذا كان هناك كلاس يخدم إدارة الحسابات (Finance)، وإدارة الموارد البشرية (HR)، وإدارة التقارير (Reporting) في آن واحد، فإن هذا الكلاس يمتلك ثلاثة أسباب مختلفة للتغيير (3 Actors). وعند طلب أي تعديل من إحدى هذه الإدارات، سنضطر إلى تعديل الكلاس نفسه، مما يشكل خطورة بالغة لأن التعديل الخاص بإدارة الحسابات قد يؤثر سلبًا على وظائف إدارة الموارد البشرية دون قصد.
+In software, this employee is what we call a **"God Class"**—a class that carries the weight of the entire system.
+A correct design divides these tasks among an archivist, a cashier, and a public relations officer. With this division, if the payment method changes, the modification is confined to the cashier, while the archivist continues working uninterrupted.
 
 ---
 
-## المفاهيم المغلوطة والأخطاء الشائعة (Common Mistakes)
+## Origin of the Principle
 
-1. **الاعتقاد بأن "المسؤولية الواحدة تعني دالة واحدة فقط"**:
-   يعد هذا المفهوم من الأخطاء الشائعة؛ إذ يعتقد البعض بوجوب إنشاء كلاس مستقل لكل دالة (Method). والمبدأ لا يفرض ذلك، بل يوجه بأن يخدم الكلاس فاعلاً واحدًا أو مفهومًا برمجيًا واحدًا.
-   *مثال*: كلاس `UserRepository` الذي يحتوي على دوال مثل `saveUser()`, `deleteUser()`, `updateUser()`, و `getUserById()`. على الرغم من تعدد الدوال، إلا أنها تخدم مسؤولية واحدة محددة وهي: **إدارة عمليات قاعدة بيانات المستخدمين**. هذا التصميم متوافق تمامًا مع مبدأ SRP.
+When Robert C. Martin (Uncle Bob) formulated this principle, he focused on identifying who requests the change: **"Who triggers the change?"**
+He defined a responsibility as: **"A group of people or departments that share the same needs"** (Actors).
 
-2. **المبالغة في تقسيم الكود (Over-Engineering)**:
-   وهي تقسيم الكود إلى كلاسات وملفات صغيرة جدًا بشكل مفرط وغير مبرر، مما يصعب من عملية تتبع وفهم المنطق البرمجي للنظام. لذا، يجب الحفاظ على التوازن؛ ونسأل دائمًا: "إذا تغير هذا الجزء، ما هي الجهة المستفيدة وما هي الجهات التي قد تتأثر في بيئة العمل؟". إذا كانت الجهة المستهدفة واحدة فقط، فإن التصميم يعد سليمًا.
+For example, if a single class serves the Finance department, HR department, and Reporting department at the same time, this class has three distinct reasons to change (3 Actors). When HR requests a modification, we are forced to modify this class, which is risky because the HR update might accidentally break a feature used by the Finance department.
 
 ---
 
-## الفهم العملي للمبدأ (Practical Understanding)
+## Misconceptions and Common Mistakes
 
-لمعرفة مدى توافق الكلاس مع مبدأ SRP، حاول صياغة وظيفة الكلاس في جملة واحدة بسيطة. إذا اضطررت لاستخدام حرف العطف **"و" (and)** بشكل متكرر، فهذا مؤشر على وجود خلل في التصميم.
-*مثال*:
-- "يقوم هذا الكلاس بجلب بيانات المستخدم من الخادم، **و** تحليلها (Parsing)، **و** تخزينها في قاعدة البيانات المحلية، **و** عرضها على الشاشة، **و** إرسال بريد إلكتروني ترحيبي".
-تعدد الوظائف هنا يعني وجوب فصل كل مهمة إلى كلاس مستقل ومخصص.
-- التصميم البديل الصحيح: "يقتصر هذا الكلاس على عرض بيانات المستخدم على الشاشة فقط"، بينما تتم معالجة العمليات الأخرى بواسطة خدمات مستقلة خلف الكواليس.
+1. **Believing that "a single responsibility means a single method"**:
+   This is a common error; some believe they must create a separate class for every single function (method). The principle does not require this; rather, it directs that a class should serve a single actor or a single business concept.
+   *Example*: A `UserRepository` class containing methods like `saveUser()`, `deleteUser()`, `updateUser()`, and `getUserById()`. Even though there are multiple methods, they all serve a single specific responsibility: **Managing database operations for users**. This design is fully SRP-compliant.
 
-</div>
+2. **Over-Engineering (Interface Explosion)**:
+   Dividing code into extremely small classes and files without justification makes tracking and understanding the business logic difficult. You must maintain a balance by asking: "If this code changes, who benefits and who might be affected?" If only one business actor is affected, the design is solid.
+
+---
+
+## Practical Understanding
+
+To evaluate a class against SRP, try describing its role in a single simple sentence. If you find yourself using the conjunction **"and"** repeatedly, it is a sign of poor design.
+*Example*:
+- "This class fetches user data from the server, **and** parses it, **and** stores it in the local database, **and** displays it on the screen, **and** sends a welcome email."
+This description indicates that each of these tasks should be separated into its own dedicated class.
+- *Correct Design*: "This class is only responsible for displaying user data on the screen," while other operations are handled by independent background services.

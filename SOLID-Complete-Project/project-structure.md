@@ -1,56 +1,52 @@
-<div dir="rtl">
+# Project Directory and File Structure
 
-# هيكل ملفات المشروع المبسط
-
-يوضح هذا الملف الهيكل الكامل والتنظيمي لملفات المشروع بعد تبسيطه وإزالة المكونات غير الضرورية.
+This document outlines the organization and responsibilities of the files within the simplified integrated project.
 
 ---
 
-## شجرة المجلدات المبسطة (Simplified Directory Tree)
+## Directory Tree
 
 ```text
 SOLID-Complete-Project/
-├── README.md                 # دليل تشغيل وفهم المشروع بشكل مبسط.
-├── explanation.md            # شرح تطبيق المبادئ الخمسة (S, O, L, I, D) في الكود.
-├── architecture.md           # المخططات المعمارية وعلاقات الفئات بالـ ASCII.
-├── project-structure.md      # هذا الملف (خريطة ملفات المشروع).
-└── source-code/              # الكود المصدري الفعلي المكتوب بلغة Dart.
-    ├── interfaces.dart       # العقود والواجهات المجردة للتخزين (DIP).
-    ├── models.dart           # فئات الطلاب والمواد الدراسية (LSP & ISP).
-    ├── repositories.dart     # البنية التحتية لحفظ البيانات في الذاكرة (DIP).
-    ├── services.dart         # خدمات التسجيل والمواد ورصد الدرجات (SRP).
-    └── main.dart             # نقطة الانطلاق وتجميع النظام عبر حقن الاعتمادية.
+├── README.md                 # Project guide and overview.
+├── explanation.md            # Explanation of how the five SOLID principles are applied in the code.
+├── architecture.md           # Architecture diagrams and class relationships in ASCII.
+├── project-structure.md      # This file (mapping out project files and folders).
+└── source-code/              # The actual Dart source code files.
+    ├── interfaces.dart       # Storage abstractions and contracts (DIP).
+    ├── models.dart           # Student and course domain models (LSP & ISP).
+    ├── repositories.dart     # In-memory storage infrastructure (DIP).
+    ├── services.dart         # Core services for registration, enrollment, and grading (SRP).
+    └── main.dart             # Application entry point, orchestrating components via DI.
 ```
 
 ---
 
-## تفصيل مسؤولية كل ملف (File Responsibilities)
+## File Responsibilities
 
 1. **`interfaces.dart`**:
-   - يحدد الواجهة المجردة `StudentRepository` لعمليات التخزين.
-   - **الهدف**: توفير واجهة تجريدية لفك الارتباط الوثيق مع قواعد البيانات.
+   - Defines the abstract `StudentRepository` interface for database operations.
+   - **Purpose**: Provides the abstraction contract to decouple business logic from infrastructure/database implementations.
 
 2. **`models.dart`**:
-   - يحتوي على فئة `Course`.
-   - يحدد واجهة `Gradable` لدرجات الطلاب المؤهلين للاختبار.
-   - يحتوي على الفئة الأب `BaseStudent`.
-   - يحتوي على الفئات الابنة `CreditStudent` و`AuditStudent`.
-   - **الهدف**: تمثيل البيانات والتحقق من صحة شروط التوريث وتخصيص الدرجات دون أخطاء أثناء التشغيل.
+   - Contains the `Course` class.
+   - Defines the `Gradable` interface for students eligible to receive grades.
+   - Contains the base `BaseStudent` class.
+   - Contains the subclass implementations: `CreditStudent` and `AuditStudent`.
+   - **Purpose**: Represents domain entities, enforces correct inheritance constraints, and organizes grading capability without causing runtime exceptions.
 
 3. **`repositories.dart`**:
-   - يحتوي على فئة `InMemoryStudentRepository` لحفظ بيانات الطلاب في الذاكرة المؤقتة.
-   - **الهدف**: محاكاة قاعدة بيانات فعلية بأقل كود برمجي ممكن لتطبيق مبدأ DIP.
+   - Implements the `InMemoryStudentRepository` subclass that implements `StudentRepository` using an in-memory data store.
+   - **Purpose**: Mocks database persistence with minimal boilerplate code to demonstrate the Dependency Inversion Principle.
 
 4. **`services.dart`**:
-   - يحتوي على فئة `StudentRegistry` لتسجيل الطلاب الجدد.
-   - يحتوي على فئة `EnrollmentManager` لتسجيل المواد الدراسية للطلاب.
-   - يحتوي على فئة `GradeBook` لرصد درجات الطلاب.
-   - **الهدف**: كتابة منطق العمل الأساسي (Business Logic) مقسماً إلى خدمات مستقلة لكل منها وظيفتها الخاصة (SRP).
+   - Contains the `StudentRegistry` class for registering new students.
+   - Contains the `EnrollmentManager` class for managing course enrollments.
+   - Contains the `GradeBook` class for recording course grades.
+   - **Purpose**: House core business logic, divided into dedicated services conforming to the Single Responsibility Principle (SRP).
 
 5. **`main.dart`**:
-   - ينشئ كائنات الخدمات والـ Repositories.
-   - يربط المكونات مع بعضها البعض باستخدام حقن الاعتمادية (Dependency Injection).
-   - يجري محاكاة كاملة لعمليات تسجيل الطلاب (عادي ومستمع)، وتسجيل المواد الدراسية، ورصد الدرجات.
-   - **الهدف**: نقطة التشغيل الأساسية التي تجمع كافة مكونات مبادئ SOLID وتوضح تكاملها في أبسط صورة.
-
-</div>
+   - Instantiates the required repositories and services.
+   - Links the components together using manual Dependency Injection (DI) through class constructors.
+   - Simulates end-to-end workflows: registering credit/audit students, enrolling them in courses, and recording grades.
+   - **Purpose**: Serves as the application's runtime entry point, demonstrating how all five SOLID principles work together cohesively.

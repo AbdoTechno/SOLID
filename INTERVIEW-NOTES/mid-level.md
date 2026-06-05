@@ -1,55 +1,51 @@
-<div dir="rtl">
+# Mid-Level Technical Interview Guidelines
 
-# إرشادات المقابلات الفنية للمستوى المتوسط (Mid-Level)
-
-مرحباً بكم في إرشادات المقابلات الفنية للمستوى المتوسط (Mid-Level). تنتقل الأسئلة في هذا مستوى من المعرفة النظرية بالمبادئ إلى مناقشة تطبيقاتها العملية، وكيفية إعادة هيكلة الكود غير المنظم (Refactoring)، وحل المشكلات المعمارية الفنية.
+Welcome to the Mid-Level technical interview guidelines. At this stage, interviewers shift their focus from theoretical knowledge of SOLID principles to practical application, legacy code refactoring strategies, and resolving architectural design trade-offs.
 
 ---
 
-## الربط بين مبادئ SOLID وأنماط التصميم (Design Patterns)
+## Connecting SOLID Principles to Design Patterns
 
-يركز الممتحنون غالباً على ربط المبادئ بالأنماط البرمجية الشائعة:
-* **مبدأ المسؤولية الواحدة (SRP) ونمط الـ Repository**: يتم استخدام نمط الـ Repository لفصل منطق البيانات والتخزين (Data & Persistence) عن فئات نطاق العمل (Domain) وواجهات المستخدم (UI).
-* **مبدأ المفتوح والمغلق (OCP) ونمطي الـ Strategy والـ Factory**: يُسخدم نمط الـ Strategy لتغيير الخوارزمية المستخدمة (مثل طرق الدفع أو حساب الخصومات) في وقت التشغيل (Runtime)، ويُستخدم نمط الـ Factory لإنشاء الكائنات المتوافقة دون الحاجة لتعديل كود الطلب الأساسي.
-* **مبدأ إحلال ليسكوف (LSP) ونمط الـ State**: يضمن أن كل كائن يمثل حالة (State Object) يمكنه الحلول محل الفئة الأب دون التسبب في حدوث استثناءات (Exceptions) غير متوقعة أثناء التشغيل.
-* **مبدأ فصل الواجهات (ISP) وواجهات الأدوار (Role Interfaces)**: نقوم بتقسيم الواجهات الكبيرة إلى واجهات أدوار صغيرة ومحددة (مثل `Enrollable` و`Payable`) ومن ثم تركيبها (Composition) داخل الفئات حسب الحاجة.
-* **مبدأ عكس الاعتمادية (DIP) وأطر عمل حقن الاعتمادية (Dependency Injection)**: استخدام نمط محدد الخدمات (Service Locator) أو حاويات التحكم العكسي (IoC Container) لإدارة وحقن الاعتماديات تلقائياً وبشكل مرن.
-
----
-
-## العلاقة بين مبادئ SOLID واختبار البرمجيات (Testing & Mocking)
-
-من الأسئلة الشائعة: كيف يساهم تطبيق مبادئ SOLID في تسهيل اختبارات الوحدة (Unit Testing)؟
-* **بدون تطبيق المبادئ**: يكون الكود مترابطاً بشكل وثيق (Tight Coupling). وإذا أردنا اختبار فئة منطق العمل، فستحاول الاتصال بخوادم أو قواعد بيانات فعلية، مما يجعل الاختبارات بطيئة وهشة وغير مستقرة.
-* **عند تطبيق المبادئ (DIP & SRP)**:
-  - تستقبل فئة منطق العمل واجهاتها التجريدية عبر المشيد (Constructor).
-  - أثناء الاختبار، نقوم بإنشاء فئات محاكاة (Mock Classes) تنفذ نفس الواجهات البرمجية وتوفر سلوكاً وهمياً خفيفاً في الذاكرة (In-memory).
-  - نقوم بحقن هذه الكائنات المحاكية داخل فئة منطق العمل، مما يسمح باختبار المنطق الداخلي بشكل معزول تماماً وبسرعة فائقة دون الحاجة للاتصال بالخوادم الفعلية.
+Interviewers frequently evaluate your ability to link SOLID principles with common software design patterns:
+* **Single Responsibility Principle (SRP) & Repository Pattern**: The Repository pattern is used to isolate data retrieval and persistence logic from the core business models (Domain) and user interfaces (UI), ensuring separation of concerns.
+* **Open-Closed Principle (OCP) & Strategy/Factory Patterns**: The Strategy pattern allows switching algorithms (like payment processors or discount calculators) at runtime, while the Factory pattern creates compatible objects without modifying the client code requesting them.
+* **Liskov Substitution Principle (LSP) & State Pattern**: Ensures that concrete state classes (subclasses) can replace the base state class cleanly without throwing unexpected runtime exceptions.
+* **Interface Segregation Principle (ISP) & Role Interfaces**: We divide broad interfaces into small, role-specific interfaces (such as `Enrollable` and `Payable`) and combine them via class Composition as needed.
+* **Dependency Inversion Principle (DIP) & Dependency Injection Frameworks**: We utilize Service Locators or Inversion of Control (IoC) Containers to manage and inject dependencies automatically, increasing application flexibility.
 
 ---
 
-## استراتيجيات إعادة الهيكلة للأنظمة القائمة (Legacy Code Refactoring)
+## SOLID Principles in Testing & Mocking
 
-عند السؤال: إذا تسلمت نظاماً قديماً غير منظم (Legacy Code) وينتهك مبادئ SOLID ولكنه يعمل بشكل مستقر في البيئة الفعلية (Production)، فكيف تبدأ بإعادة هيكلته؟
-1. **تجنب التعديل دون وجود اختبارات**: الخطوة الأولى هي كتابة اختبارات تكاملية (Integration/Characterization Tests) لتغطية سلوك النظام الحالي بالكامل وضمان حماية وظائفه المستقرة، مما يشكل شبكة أمان أثناء التعديل.
-2. **إعادة الهيكلة التدريجية**: تجنب إعادة بناء النظام بالكامل دفعة واحدة (Big Bang Refactoring)، وقم بتقسيم التعديلات إلى خطوات صغيرة عبر فئة واحدة في كل مرة.
-3. **البدء بمبدأ المسؤولية الواحدة (SRP)**: افصل المسؤوليات الخارجية (مثل قواعد البيانات، والاتصال بالشبكة، والإشعارات) إلى خدمات مستقلة تماماً.
-4. **إنشاء الواجهات المجردة**: استبدل الاعتماديات المادية والمباشرة بالتجريدات (Abstractions) تدريجياً لترسيخ مبدأي DIP وOCP.
-5. **تشغيل الاختبارات مع كل تعديل**: تأكد من سلامة الكود واستمرار عمل الاختبارات بنجاح بعد كل تعديل بسيط تجريه.
+A standard interview question asks: How does applying SOLID principles simplify Unit Testing?
+* **Without SOLID**: The codebase is tightly coupled. If you try to write a unit test for a service class, it will attempt to open real connections to database engines or make live network requests. This makes tests slow, fragile, and difficult to set up.
+* **With SOLID (specifically SRP & DIP)**:
+  - The service class receives its dependencies as interfaces via the constructor.
+  - During testing, we instantiate lightweight mock classes that implement the same interfaces in memory.
+  - We inject these mocks into the service class, enabling us to test its internal logic in complete isolation with high speed and reliability.
 
 ---
 
-## أسئلة المقابلات الفنية للمستوى المتوسط
+## Refactoring Legacy Systems
 
-### س1: ما الفرق بين التماسك (Cohesion) والارتباط (Coupling)؟
-**الجواب**:
-- **التماسك (Cohesion)**: يقيس مدى ترابط وتركيز الدوال والمتغيرات داخل الفئة الواحدة لخدمة غرض محدد. والممارسات السليمة تتطلب تماسكاً عالياً (High Cohesion) توافقاً مع مبدأ SRP.
-- **الارتباط (Coupling)**: يقيس مدى اعتماد الفئات على بعضها البعض. والممارسات السليمة تتطلب ارتباطاً ضعيفاً (Low/Loose Coupling) لضمان عدم تأثر الفئات الأخرى عند تعديل فئة معينة توافقاً مع مبدأ DIP.
+How do you approach refactoring a legacy system that violates SOLID principles but is currently stable in production?
+1. **Write Protection Tests First**: Never modify code without a safety net. Write integration or characterization tests to capture the current behavior of the system, establishing a baseline.
+2. **Refactor Incrementally**: Avoid full system rewrites (Big Bang Refactoring). Break down changes into small, low-risk steps, refactoring one component at a time.
+3. **Isolate Concerns (SRP)**: Extract external infrastructure details (such as databases, email senders, and network clients) into separate, dedicated service classes.
+4. **Introduce Abstractions**: Replace direct concrete dependencies with abstract interfaces to transition the codebase toward OCP and DIP.
+5. **Run Tests Continuously**: Run your test suite after every small change to catch regressions immediately.
 
-### س2: إذا كانت الفئة `User` تحتوي على دالتي `toJson` و`fromJson`، فهل يعتبر هذا انتهاكاً لمبدأ المسؤولية الواحدة (SRP)؟
-**الجواب**: نظرياً، نعم، لأن تحويل البيانات إلى JSON يعد مسؤولية معالجة وتحويل منفصلة (Serialization/Parsing). ولكن عملياً، وفي سياق كائنات نقل البيانات (DTO Pattern)، يُعامل هذا الأمر كاستثناء مقبول وشائع لتسهيل تبادل البيانات، بشرط أن يكون منطق التحويل بسيطاً وخالياً من العمليات المعقدة أو الاتصال بالشبكة.
+---
 
-### س3: كيف يساعد نمط التصميم بالتعاقد (Design by Contract) في تحقيق مبدأ إحلال ليسكوف (LSP)؟
-**الجواب**: يفرض نمط التصميم بالتعاقد شروطاً مسبقة (Pre-conditions) وشروطاً لاحقة (Post-conditions) للعمليات داخل الفئة. وبما أن مبدأ LSP يشترط ألا تقوم الفئة الابنة بتضييق الشروط المسبقة أو إضعاف الشروط اللاحقة التي وضعتها الفئة الأب، فإن الالتزام بهذا التعاقد يضمن سلامة وأمان عملية الإحلال البرمجي بالكامل.
+## Key Mid-Level Interview Questions
 
-</div>
+### Q1: What is the difference between Cohesion and Coupling?
+**Answer**:
+- **Cohesion** measures how closely related the fields and methods within a single class are. We aim for high cohesion (SRP), ensuring a class does one thing well.
+- **Coupling** measures the degree of interdependence between different classes. We aim for low/loose coupling (DIP), ensuring that changing one class does not break others.
+
+### Q2: If a `User` entity contains `toJson` and `fromJson` methods, does this violate the Single Responsibility Principle (SRP)?
+**Answer**: Technically yes, because serialization/deserialization is a separate concern from the core user domain logic. However, in the context of Data Transfer Objects (DTOs), this is a widely accepted exception to simplify data exchange, provided the serialization logic remains straightforward and does not perform complex validation or IO operations.
+
+### Q3: How does the "Design by Contract" concept support the Liskov Substitution Principle (LSP)?
+**Answer**: Design by Contract defines preconditions (what must be true before a method runs) and postconditions (what must be true after a method runs) for class operations. To satisfy LSP, a subclass must not strengthen preconditions (make them stricter) or weaken postconditions (make them looser) defined by the base class. Adhering to these contracts guarantees that client classes can safely substitute subclass instances without unexpected behavior.

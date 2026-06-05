@@ -1,33 +1,33 @@
-// كود عك بيخالف مبدأ الـ LSP
-// كلاس الابن (AuditorStudent) مش بيقدر ينفذ ميثود الأب وبيرمي Exception بيبوظ السيستم!
+// Non-compliant code violating the Liskov Substitution Principle (LSP)
+// The subclass (AuditorStudent) cannot fulfill the parent's contract and throws an Exception, breaking the system behavior.
 
 class Student {
   final String name;
   Student(this.name);
 
   void study() {
-    print('$name بيذاكر المحاضرات.');
+    print('$name is studying the lectures.');
   }
 
   void applyForScholarship() {
-    print('$name قدم على المنحة الدراسية بنجاح.');
+    print('$name successfully applied for the scholarship.');
   }
 }
 
-// طالب منتظم (Regular Student) - ابن ملتزم بسلوك الأب
+// Regular Student - A subtype that adheres to the parent's behaviors
 class RegularStudent extends Student {
   RegularStudent(String name) : super(name);
 }
 
-// طالب مستمع (Auditor Student) - طالب بيحضر محاضرات بس ملوش شهادات ولا منح
+// Auditor Student - A student attending lectures without grades/scholarship privileges
 class AuditorStudent extends Student {
   AuditorStudent(String name) : super(name);
 
   @override
   void applyForScholarship() {
-    // كسر مبدأ الـ LSP! الطالب المستمع مش من حقه يقدم على منحة.
-    // اضطرينا نرمي Exception عشان نلغي السلوك الموروث!
-    throw Exception('خطأ: الطالب المستمع $name لا يمكنه التقديم على المنحة الدراسية!');
+    // Violates LSP! An auditor student should not have the ability to apply for scholarships.
+    // We are forced to throw an exception to override/disable the inherited behavior!
+    throw Exception('Error: Auditor student $name cannot apply for scholarships!');
   }
 }
 
@@ -36,18 +36,18 @@ void processScholarshipApplications(List<Student> students) {
     try {
       student.applyForScholarship();
     } catch (e) {
-      print('كارثة حصلت في السيستم: $e');
+      print('An error occurred in the system: $e');
     }
   }
 }
 
 void main() {
-  print('--- تشغيل كود المنح العك (Bad LSP Example) ---');
+  print('--- Running Non-compliant Code (Bad LSP Example) ---');
   
   final List<Student> universityStudents = [
-    RegularStudent('علي حسن'),
-    RegularStudent('منى أحمد'),
-    AuditorStudent('عمر مكرم'), // ده هيبوظ عملية المعالجة!
+    RegularStudent('Ali Hassan'),
+    RegularStudent('Mona Ahmed'),
+    AuditorStudent('Omar Makram'), // This breaks the application processing loop!
   ];
 
   processScholarshipApplications(universityStudents);

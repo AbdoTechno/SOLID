@@ -1,36 +1,32 @@
-<div dir="rtl">
+# Compliant Design Explanation (Good Design)
 
-# شرح التصميم البرمجي المتوافق (Good Design): good-example.md
-
-في ملف الكود [good.dart](code/good.dart)، قمنا بحل مشكلة تداخل المسؤوليات من خلال تقسيم الكلاس الضخم إلى ثلاثة كلاسات مستقلة ومتخصصة:
+In [good.dart](code/good.dart), we resolved the bloated class problem by separating responsibilities into three independent, specialized classes:
 
 ---
 
-## البنية الجديدة وتوزيع المسؤوليات (The Separation)
+## New Structure and Separation of Responsibilities
 
-1. **كلاس `Student`**: 
-   يقتصر دور هذا الكلاس على تمثيل وإدارة البيانات الأساسية وحالة الطالب (الاسم، البريد الإلكتروني، وقائمة المواد الدراسية المسجل فيها). لا يحتوي هذا الكلاس على أي تفاصيل تتعلق بقواعد البيانات أو شبكات إرسال الرسائل، مما يجعله مستقلاً ومحدد المسؤولية.
+1. **`Student` class**: 
+   Only represents and manages the core attributes and state of a student (ID, name, email, and enrolled courses list). It contains zero details about database infrastructure or email services, making it clean and focused.
 
-2. **كلاس `StudentRepository`**:
-   هو المكون المسؤول عن عمليات التخزين والحفظ (Persistence). يستقبل كائن الطالب ويقوم بمعالجة إجراءات حفظه في قاعدة البيانات. في حال تغيير آلية التخزين أو مزود قاعدة البيانات، يقتصر التعديل على هذا الكلاس فقط دون التأثير على بقية مكونات النظام.
+2. **`StudentRepository` class**:
+   Acts as the data access/persistence layer. It accepts a student object and manages saving it. If the storage mechanism or database provider changes, only this class is modified, leaving the rest of the application untouched.
 
-3. **كلاس `EmailService`**:
-   هو المكون المسؤول عن الاتصالات وإرسال الإشعارات. يختص بإرسال البريد الإلكتروني الترحيبي للطالب. وعند الحاجة لتعديل محتوى الرسالة أو تغيير خادم الإرسال, يتم التعديل داخل هذا الكلاس حصريًا.
+3. **`EmailService` class**:
+   Manages network communication and notifications. It is dedicated to sending welcome emails. If the email template changes or we switch to a different SMTP server, modifications are restricted to this class.
 
 ---
 
-## الفوائد والمميزات المكتسبة
+## Acquired Benefits
 
-* **التعديل الآمن والمنفصل (Safe Modification)**: 
-   عند وجود رغبة في تعديل آلية حفظ البيانات في قاعدة البيانات، يتم التعديل مباشرة داخل كلاس `StudentRepository` بكل موثوقية ودون قلق بشأن استقرار النظام، ودون احتمالية التأثير على منطق تسجيل المواد في كلاس `Student`.
-   
-* **سهولة اختبار المكونات (Easy Testing)**:
-   للتحقق من صحة منطق تسجيل المواد الدراسية للطالب، يمكن اختبار كلاس `Student` بشكل معزول تمامًا وسريع دون الحاجة لمحاكاة (Mocking) معقدة لقاعدة البيانات أو خدمات البريد الإلكتروني.
+* **Safe and Decoupled Modifications**: 
+   When changing database engines, we modify `StudentRepository` safely without editing the `Student` class. The business logic of course enrollment remains protected.
 
-* **الحد من تعارضات دمج الكود (Reducing Conflicts)**:
-   يسهم فصل المكونات في توزيع المهام البرمجية على ملفات مستقلة؛ حيث يعدل المطور المسؤول عن منطق الاتصال في ملف `EmailService.dart` بينما يعمل المطور المسؤول عن التخزين في ملف `StudentRepository.dart` بشكل متوازٍ ودون حدوث أي تضارب برمجية عند دمج الكود.
+* **Simplified Unit Testing**:
+   To test student enrollment logic, we can test the `Student` class directly. We no longer need to mock complex database repositories or email servers, making tests execute in milliseconds.
 
-* **المرونة وقابلية التوسع**:
-   إذا دعت الحاجة لإرسال رسائل نصية قصيرة (SMS) بدلاً من البريد الإلكتروني أو بجانبه، يمكن إضافة كلاس جديد مثل `SmsService` دون الاضطرار لتعديل بنية كلاس `Student` أو كلاس `StudentRepository`.
+* **Reduced Code Conflicts**:
+   Dividing tasks across separate files means developers can work on different tasks simultaneously. A developer optimizing database connections modifies `StudentRepository.dart`, while another editing the email format works on `EmailService.dart`. Git merges are resolved automatically.
 
-</div>
+* **High Extensibility**:
+   If we need to send SMS notifications instead of or in addition to emails, we can introduce an `SmsService` class without modifying the `Student` or `StudentRepository` classes.

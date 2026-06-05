@@ -1,83 +1,79 @@
-<div dir="rtl">
+# Technical Interview Questions on the Single Responsibility Principle (SRP)
 
-# أسئلة مقابلات فنية حول مبدأ المسؤولية الواحدة: interview-questions.md
-
-مجموعة من الأسئلة والأجوبة التقنية المتوقعة في المقابلات الفنية (Interviews) حول مبدأ المسؤولية الواحدة (SRP)، مقسمة حسب المستويات المهنية:
+A collection of technical interview questions and answers regarding the Single Responsibility Principle (SRP), categorized by professional experience level:
 
 ---
 
-## مستوى المبتدئين (Junior Level)
+## Junior Level
 
-### س1: ما هو مفهوم مبدأ المسؤولية الواحدة (SRP)؟
-**الجواب**: هو اختصار لـ Single Responsibility Principle، وينص على أن الكلاس أو المكون البرمجي يجب أن يتخصص في أداء وظيفة محددة واحدة في النظام، بحيث يكون له سبب واحد فقط للتغيير.
+### Q1: What is the Single Responsibility Principle (SRP)?
+**Answer**: SRP is the first principle of SOLID. It states that a class or module should specialize in executing one specific function in the system, meaning it should have one, and only one, reason to change.
 
-### س2: ما هي المشكلات الناتجة عن إنشاء كلاس واحد ضخم يقوم بكافة المهام (God Class)؟
-**الجواب**: يؤدي ذلك إلى زيادة تعقيد الكود وصعوبة فهمه وصيانته وتعديله. كما أن تغيير جزء بسيط قد يؤدي إلى ظهور أخطاء غير متوقعة في أجزاء أخرى مستقلة، فضلاً عن زيادة احتمالية حدوث تعارضات عند دمج الكود البرمجي (Merge Conflicts) بين المطورين.
+### Q2: What problems arise from creating a single massive class that handles all tasks (a God Class)?
+**Answer**: A God Class increases code complexity, making it difficult to read, maintain, and refactor. Modifying one part can cause unexpected side effects in unrelated areas. It also increases the probability of merge conflicts when multiple developers work on the same file.
 
-### س3: هل يتطلب مبدأ SRP أن يحتوي الكلاس على دالة واحدة (Method) فقط؟
-**الجواب**: لا، يمكن للكلاس أن يحتوي على دوال متعددة شريطة أن تخدم جميعها نفس المسؤولية أو المفهوم البرمجي الواحد (مثل كلاس الاتصال بالشبكة الذي يحتوي على دوال للإرسال والاستقبال وجلب البيانات).
+### Q3: Does SRP require a class to have only a single method?
+**Answer**: No. A class can have multiple methods as long as they all serve the same single responsibility or business concept (e.g., a database access class can have methods for saving, deleting, and updating records, as they all serve user storage).
 
-### س4: كيف يمكن الاستدلال على أن الكلاس يخالف مبدأ SRP؟
-**الجواب**: إذا تبين عند وصف وظيفة الكلاس أنه يقوم بمهام متعددة ومنفصلة (على سبيل المثال: "يجلب البيانات ويقوم بتحليلها وحفظها في قاعدة البيانات ثم يرسل بريدًا إلكترونيًا"). تداخل هذه الوظائف يعد مؤشرًا واضحًا على مخالفة المبدأ.
+### Q4: How can you detect that a class violates SRP?
+**Answer**: Look at how you describe the class's purpose. If you use conjunctions like "and" to explain what it does (e.g., "It fetches data, **and** parses it, **and** saves it to DB, **and** prints logs"), the class is violating SRP.
 
-### س5: ما هي علاقة مبدأ SRP باختبارات وحدة الكود (Unit Testing)؟
-**الجواب**: تسهل هيكلة الكود وفقًا لمبدأ SRP من عملية كتابة اختبارات الوحدة بشكل معزول ومباشر، دون الحاجة للقيام بعمليات محاكاة (Mocking) معقدة لخدمات خارجية لا علاقة لها بالاختبار الحالي.
+### Q5: What is the relationship between SRP and Unit Testing?
+**Answer**: Structuring code according to SRP makes writing unit tests straightforward and focused. You can test each class in isolation without needing complex mock objects for unrelated dependencies.
 
-### س6: إذا كان لدينا كلاس `Invoice` يقوم بحساب قيمة الفاتورة وتصديرها بصيغة PDF، فهل يعد هذا التصميم سليمًا؟
-**الجواب**: هذا التصميم يخالف مبدأ SRP؛ فحساب الفاتورة يندرج تحت منطق العمليات المالية (Business Logic)، بينما التصدير لصيغة PDF يمثل مسؤولية عرض وإخراج (Presentation/UI). التصميم السليم يقتضي فصلهما إلى كلاسين: `Invoice` لمعالجة الحسابات، و `InvoicePdfPrinter` لتوليد ملف الـ PDF.
+### Q6: If an `Invoice` class calculates invoice amounts and exports them as PDFs, is this design SRP-compliant?
+**Answer**: No. Calculating invoice amounts is business logic, while exporting PDFs is a presentation concern. The correct design splits this into two classes: `Invoice` for financial calculations, and `InvoicePdfPrinter` to handle PDF generation.
 
-### س7: ماذا يعني مصطلح "Actor" في سياق مبدأ SRP؟
-**الجواب**: الـ Actor يمثل الجهة أو الإدارة أو المستخدمين الذين يطلبون تغييرًا في متمتطلبات النظام. يوجه مبدأ SRP بأن يخدم الكلاس Actor واحدًا فقط لتفادي تداخل متطلبات الجهات المختلفة في ملف برمجي واحد.
-
----
-
-## المستوى المتوسط (Mid-Level)
-
-### س8: كيف يمكن إعادة هيكلة كود قديم (Legacy Code) يخالف مبدأ SRP؟
-**الجواب**: نقوم بتحليل الكلاس وتحديد مصادر طلب التغيير. إذا تبين أن الكلاس يتأثر بتغيير متطلبات واجهة المستخدم وتعديل منطق قواعد البيانات معًا، يتم فصل هذه الأجزاء إلى خدمات (Services) مستقلة، مع إمكانية إبقاء الكلاس الأصلي كوسيط تنسيقي خفيف.
-
-### س9: ما الفرق بين مبدأ SRP ومبدأ Separation of Concerns (SoC)؟
-**الجواب**: مبدأ SoC هو مفهوم عام في هندسة البرمجيات يركز على تقسيم النظام إلى طبقات منفصلة (مثل طبقة الواجهة، وطبقة منطق العمليات، وطبقة البيانات). بينما يركز مبدأ SRP بشكل أدق على مستوى الكلاسات والوحدات البرمجية للتأكد من أن كل مكون داخل تلك الطبقات يمتلك مسؤولية واحدة ومحددة.
-
-### س10: ألا يؤدي تقسيم الكود لكلاسات صغيرة إلى زيادة عدد الملفات وتعقيد تتبع المشروع؟
-**الجواب**: نعم، قد يزداد عدد الملفات، ولكن تنظيمها داخل مجلدات واضحة وهياكل محددة يسهل من عملية صيانتها وتطويرها مقارنة بملف واحد ضخم يحتوي على آلاف الأسطر البرمجية المتشابكة وصعبة القراءة والتعديل.
-
-### س11: في إطار عمل Flutter، هل تقع مسؤولية التحقق من صحة البيانات (Validation) على كلاس الواجهة (Widget)؟
-**الجواب**: تقتصر مسؤولية الواجهة (UI) على التحقق الشكلي البسيط (مثل التأكد من أن الحقل ليس فارغًا). أما عمليات التحقق المرتبطة بالمنطق البرمجي وقواعد العمل (مثل التحقق من عدم تكرار البريد الإلكتروني في النظام) فيجب إسنادها إلى منطق العمليات (Cubit أو Controller) التزامًا بمبدأ SRP.
-
-### س12: إذا كان كلاس البيانات `User` يحتوي على دالتين `toJson()` و `fromJson()`، فهل يعد ذلك مخالفًا لمبدأ SRP؟
-**الجواب**: من الناحية الأكاديمية الصارمة نعم، ولكن عمليًا يعد هذا استثناءً مقبولاً وشائعًا (تحت نمط Data Transfer Object)، لأن هذه الدوال تخدم بنية البيانات الداخلية للكلاس نفسه دون كتابة منطق تحليل معقد أو إجراء اتصالات شبكية مباشرة.
-
-### س13: كيف يتم التعامل مع الكلاسات الخدمية العامة (Utility Classes) وفقًا لمبدأ SRP؟
-**الجواب**: يتم تقسيمها أيضًا بناءً على التخصص. بدلاً من إنشاء كلاس واحد عام يضم وظائف متنوعة، يتم إنشاء كلاسات متخصصة مثل `DateFormatter` للتواريخ، و `CurrencyConverter` للعملات، وهكذا.
-
-### س14: ما هي العلامات التحذيرية (Red Flags) التي تشير إلى أن الكلاس يحتاج إلى إعادة تقسيم؟
-**الجواب**:
-1. تضخم حجم الكلاس وعدد الأسطر البرمجية بشكل كبير.
-2. كثرة عمليات الاستيراد (Imports) لحزم برمجية غير مترابطة.
-3. صعوبة إيجاد اسم بسيط ومحدد يصف وظيفة الكلاس بدقة.
-4. ضعف التماسك (Low Cohesion) داخل الكلاس، حيث تستخدم بعض الدوال متغيرات حالة مختلفة تمامًا عن بقية الدوال.
+### Q7: What does the term "Actor" mean in the context of SRP?
+**Answer**: An "Actor" refers to a specific user, department, or business role that requests changes in the software requirements. SRP directs that a class should serve only one actor to avoid conflicting requirements overlapping in the same file.
 
 ---
 
-## مستوى المحترفين (Advanced/Senior Level)
+## Mid-Level
 
-### س15: كيف يسهم مبدأ SRP في تطوير المعماريات الموزعة (Microservices)؟
-**الجواب**: يمثل مبدأ SRP الفلسفة الأساسية للمعماريات الموزعة؛ حيث يجب أن تركز كل خدمة مصغرة على أداء وظيفة عمل واحدة متكاملة ومستقلة (مثل خدمة الدفع، أو خدمة الإشعارات). وإذا تداخلت المسؤوليات داخل الخدمة الواحدة، يتحول النظام إلى بنية متشابكة يصعب إدارتها وصيانتها.
+### Q8: How would you refactor legacy code that violates SRP?
+**Answer**: First, analyze the class and identify the sources of change requests (Actors). If the class is modified due to UI layout updates and database schema updates, extract the persistence logic into a repository class and the layout logic into a view class, leaving the original class to act as a lightweight coordinator if necessary.
 
-### س16: اشرح مفهوم التماسك (Cohesion) وعلاقته بمبدأ SRP؟
-**الجواب**: يقيس التماسك (Cohesion) مدى ترابط الدوال والمتغيرات داخل الكلاس الواحد. يهدف مبدأ SRP إلى تحقيق تماسك مرتفع (High Cohesion)، مما يعني أن تعمل جميع الدوال والمتغيرات معًا لخدمة غرض محدد وواحد. انخفاض التماسك يعكس وجود مسؤوليات متعددة تتطلب فصل الكلاس.
+### Q9: What is the difference between SRP and Separation of Concerns (SoC)?
+**Answer**: SoC is a high-level architectural pattern focused on dividing the system into logical layers (e.g., Presentation, Domain, Data). SRP is a class-level design principle ensuring that individual classes and modules within those layers have a single, highly-focused responsibility.
 
-### س17: كيف يمكن تحقيق التوازن بين مبدأ SRP ومبدأ الإغلاق المشترك Common Closure Principle (CCP)؟
-**الجواب**: ينص مبدأ CCP على جمع الكلاسات التي تتأثر بنفس أسباب التغيير معًا في حزمة برمجية واحدة. يتم تحقيق التوازن بفصل المسؤوليات على مستوى الكلاسات الفردية (SRP) منعًا للتداخل، مع تنظيم وتجمع الكلاسات المترابطة التي تخدم نفس نطاق العمل في مجلد أو وحدة برمجية واحدة لتسهيل إدارتها.
+### Q10: Doesn't dividing code into small classes increase the number of files and make tracing difficult?
+**Answer**: It does increase the file count, but organizing them within clear folder structures makes them much easier to manage, review, and test compared to wading through a single file containing thousands of tangled lines of code.
 
-### س18: هل يؤدي التطبيق المفرط لمبدأ SRP إلى نشوء نموذج الدومين الفقير (Anemic Domain Model)؟ وكيف نتجنب ذلك؟
-**الجواب**: نعم، قد يحدث ذلك إذا تم إفراغ كلاسات الدومين (Entities) من كافة منطق العمل ونقلها بالكامل إلى كلاسات الخدمات (Services)، مما يحول كائنات الدومين إلى مجرد هياكل بيانات فارغة. ولتجنب ذلك، يجب الإبقاء على منطق العمل المرتبط مباشرة بحالة الكائن الداخلية وقواعد التحقق الخاصة به داخل كلاس الدومين، وفصل العمليات الخارجية فقط مثل الاتصال بقواعد البيانات أو الشبكات.
+### Q11: In a Flutter application, should input validation be handled inside the Widget class?
+**Answer**: The Widget (UI) should only handle simple syntactic checks (like verifying a field isn't empty). Business validation logic (like checking if an email is already registered) belongs to the business logic layer (e.g., Bloc, Cubit, or Controller) to adhere to SRP.
 
-### س19: إذا لاحظت في مراجعة كود (Pull Request) وجود كود يعمل بشكل صحيح ولكنه يخالف مبدأ SRP، فما هو الإجراء المتبع؟
-**الجواب**: يتم توضيح المخاطر المعمارية المترتبة على هذا التصميم للمطور (مثل صعوبة صيانة الكود مستقبلاً أو تعقيد عملية كتابة الاختبارات)، مع اقتراح بديل مناسب يوضح كيفية فصل الكلاس وتبيان الفوائد المستدامة لهذا التقسيم.
+### Q12: If a `User` data model contains `toJson()` and `fromJson()` methods, does it violate SRP?
+**Answer**: Academically, yes, since serialization is a separate concern. Practically, however, this is a widely accepted exception (Data Transfer Object pattern) because these methods only serialize the internal properties of the class itself and do not contain complex networking or mapping logic.
 
-### س20: كيف يسهم مبدأ عكس الاعتمادية (DIP) في دعم مبدأ SRP؟
-**الجواب**: يتيح مبدأ DIP ربط الكلاسات المفصولة (المبنية على SRP) ببعضها البعض عبر واجهات برمجية مجردة (Interfaces) بدلاً من الاعتماد المباشر، مما يمنع الترابط الوثيق بينها ويسمح بتعديل أو استبدال أي كلاس متخصص دون التأثير على بقية أجزاء النظام.
+### Q13: How should utility classes (Utility Classes) be structured under SRP?
+**Answer**: Instead of creating a single generic `Utils` class containing mixed functions, create specialized utility classes such as `DateFormatter` for date operations, `CurrencyConverter` for financial formats, and `MathHelper` for mathematical operations.
 
-</div>
+### Q14: What are the warning signs (Red Flags) indicating that a class needs to be refactored?
+**Answer**:
+1. High line count and massive file size.
+2. A large list of unrelated import statements.
+3. Difficulty finding a simple, descriptive name for the class.
+4. Low cohesion: different methods utilizing completely different subsets of class instance variables.
+
+---
+
+## Senior Level
+
+### Q15: How does SRP apply to Microservices Architecture?
+**Answer**: SRP is the guiding philosophy behind microservices. Each service should focus on a single business capability (e.g., Payment Service, Notification Service). If a single service handles multiple domain boundaries, it turns the architecture into a "Distributed Monolith," which is highly complex and fragile.
+
+### Q16: Explain Cohesion and its relationship to SRP.
+**Answer**: Cohesion measures how closely related the methods and variables within a class are. SRP aims for High Cohesion, meaning all class members work together to achieve a single task. Low cohesion indicates the class is trying to do too much and should be split.
+
+### Q17: How do you balance SRP with the Common Closure Principle (CCP)?
+**Answer**: CCP states that classes that change together should be packaged together. We achieve balance by separating distinct responsibilities into dedicated classes (SRP), while grouping related classes that serve the same domain under the same package or module (CCP) to simplify release management.
+
+### Q18: Can over-applying SRP lead to an Anemic Domain Model? How do you avoid it?
+**Answer**: Yes. If you strip domain entities of all logic and move it entirely to service classes, the entities become mere data containers (Anemic Domain Model). To avoid this, keep core domain rules and validations that govern the entity's internal state within the entity class, and only extract external dependencies (like DB queries or API requests) to external services.
+
+### Q19: If you find code that works correctly but violates SRP during a Pull Request, what is your approach?
+**Answer**: Explain the architectural risks of the tight coupling (e.g., regression bugs during updates, lack of testability), and provide a concrete refactoring suggestion showing how splitting the class improves future maintenance and unit testing.
+
+### Q20: How does the Dependency Inversion Principle (DIP) support SRP?
+**Answer**: DIP decouples SRP-compliant classes by allowing them to communicate via abstract interfaces rather than concrete implementations. This ensures that changing the implementation of one specialized class does not require modifying the class that consumes it.

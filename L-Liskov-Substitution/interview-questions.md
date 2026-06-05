@@ -1,93 +1,89 @@
-<div dir="rtl">
+# Technical Interview Questions on the Liskov Substitution Principle (LSP)
 
-# أسئلة مقابلات فنية حول مبدأ إحلال ليسكوف: interview-questions.md
-
-مجموعة من الأسئلة والأجوبة التقنية المتوقعة في المقابلات الفنية (Interviews) حول مبدأ إحلال ليسكوف (LSP)، مقسمة حسب المستويات المهنية:
+A collection of technical interview questions and answers regarding the Liskov Substitution Principle (LSP), categorized by professional experience level:
 
 ---
 
-## مستوى المبتدئين (Junior Level)
+## Junior Level
 
-### س1: ما هو مفهوم مبدأ إحلال ليسكوف (LSP) باختصار؟
-**الجواب**: ينص المبدأ على أن أي كلاس مشتق (Subclass) يجب أن يكون قادرًا على الحلول محل الكلاس الأساسي (Base Class) المستمد منه في أي جزء من أجزاء النظام دون التأثير على صحة سلوك البرنامج أو التسبب في توقفه.
+### Q1: What is the Liskov Substitution Principle (LSP) in simple terms?
+**Answer**: LSP states that subclasses must be substitutable for their parent (base) classes. The system must run correctly and predictably without any crashes or modifications when child class objects replace parent class objects.
 
-### س2: من هي الجهة التي صاغت هذا المبدأ ولماذا سمي بهذا الاسم؟
-**الجواب**: سمي المبدأ نسبةً إلى عالمة الحاسوب باربارا ليسكوف (Barbara Liskov) التي قامت بصياغته وتوضيحه لأول مرة في ورقة بحثية عام 1987.
+### Q2: Who formulated this principle and why is it named "Liskov"?
+**Answer**: The principle is named after Barbara Liskov, a prominent computer scientist who introduced it in a 1987 conference keynote address.
 
-### س3: ما هي أشهر العلامات التحذيرية (Red Flags) التي تشير لمخالفة كلاس الابن لمبدأ LSP؟
-**الجواب**: إعادة تعريف دالة موروثة من كلاس الأب وجعلها تلقي استثناءات مثل `UnimplementedError` أو `UnsupportedError` أو أي استثناء يرفض تنفيذ السلوك المفترض.
+### Q3: What is the most common red flag indicating that a subclass violates LSP?
+**Answer**: Overriding a method inherited from the parent class and throwing a runtime exception (such as `UnimplementedError` or `UnsupportedOperationException`) to disable that behavior because it doesn't apply to the subclass.
 
-### س4: هل يجوز لكلاس الابن تغيير نوع القيمة المرجعة (Return Type) للدالة المعرفة في كلاس الأب؟
-**الجواب**: لا يجوز ذلك؛ حيث يجب أن تكون الأنواع متوافقة. تفرض لغات البرمجة الحديثة (مثل Dart) توافق الأنواع، ولكن يركز مبدأ LSP أيضًا على ثبات السلوك والمعنى المنطقي للدوال وليس فقط مطابقة الأنواع الفنية.
+### Q4: Can a subclass change the return type of an inherited method?
+**Answer**: Generally, no. Subclasses must return the same type or a subtype of the return type declared by the parent class. In addition to technical type matching, LSP also requires semantic consistency: the subclass method must behave according to the logical expectations of the parent's contract.
 
-### س5: اشرح معضلة المربع والمستطيل (Square and Rectangle Problem) في هندسة البرمجيات؟
-**الجواب**: على الرغم من أن المربع هو مستطيل من الناحية الرياضية، إلا أن وراثته برمجياً من كلاس المستطيل تكسر مبدأ LSP. المستطيل يتيح تعديل الطول والعرض بشكل مستقل، بينما يفرض المربع تعديلهما معًا تلقائيًا. ويؤدي استدعاء دوال تعديل الأبعاد للمستطيل على كائن مربع إلى نتائج مساحة خاطئة تخالف توقعات النظام.
+### Q5: Explain the classic Square-Rectangle problem.
+**Answer**: Mathematically, a square is a special type of rectangle. However, if we inherit `Square` from `Rectangle`, we break LSP. A `Rectangle` has independent width and height properties. Changing the width of a rectangle does not alter its height. A `Square` forces width and height to change together. If client code changes the width of a `Rectangle` reference and calculates its area, it will get incorrect math if a `Square` instance is passed in.
 
-### س6: إذا كانت هناك دالة في الأب تقبل مدخلات رقمية من 1 إلى 100، وقام الابن بتعديلها لتقبل من 1 إلى 50 فقط، فهل يتوافق ذلك مع مبدأ LSP؟
-**الجواب**: هذا التصميم يخالف مبدأ LSP؛ لأن كلاس الابن قام بتضييق الشروط المسبقة (Pre-conditions). يلتزم الأب أمام النظام بقبول المدخلات حتى 100، وبالتالي لا يحق للابن التراجع عن هذا الالتزام والتسبب في حدوث خطأ عند إرسال القيمة 80 مثلاً.
+### Q6: If a parent method accepts integers from 1 to 100, and a subclass overrides it to only accept 1 to 50, does this violate LSP?
+**Answer**: Yes, this violates LSP. The subclass is strengthening pre-conditions. The client code is built to expect a valid input range up to 100. If it passes 80 to a subclass instance, the subclass will fail or throw an exception, breaking substitution safety.
 
-### س7: ما المقصود بـ "اختبار البطة" (Duck Test) في سياق هذا المبدأ؟
-**الجواب**: يعني أنه إذا كان المكون يبدو مثل البطة ويصدر صوتها ولكنه يحتاج لبطارية ليعمل، فهناك خلل في التجريد. ويشير ذلك برمجياً إلى أن محاولة محاكاة كلاس الأب ظاهريًا مع العجز عن تنفيذ وظائفه الأساسية تعني عدم صحة علاقة التوريث المتبعة.
-
----
-
-## المستوى المتوسط (Mid-Level)
-
-### س8: كيف يمكن معالجة مشكلة الاستثناءات غير المدعومة (UnimplementedError) دون خرق مبدأ LSP؟
-**الجواب**: يتم ذلك عبر إعادة تصميم شجرة التوريث؛ حيث نسحب الدالة المسببة للمشكلة من الكلاس الأب، وننقلها إلى واجهة منفصلة (Interface) أو كلاس وسيط يرث منه فقط الأبناء المؤهلون لتنفيذ تلك الوظيفة.
-
-### س9: ما هي شروط الـ Pre-conditions والـ Post-conditions في سياق مبدأ LSP؟
-**الجواب**:
-- **الشروط المسبقة (Pre-conditions)**: لا يجوز لكلاس الابن جعلها أكثر تضييقًا أو قوة مقارنة بكلاس الأب.
-- **الشروط اللاحقة (Post-conditions)**: لا يجوز لكلاس الابن جعلها أضعف أو أقل التزامًا بالنتائج مقارنة بكلاس الأب. يجب على الابن تقديم نتائج مساوية لوعود الأب أو متفوقة عليها.
-
-### س10: كيف يقلل الالتزام بمبدأ LSP من كتابة جمل التحقق من الأنواع (Type Checking)؟
-**الجواب**: يضمن مبدأ LSP اتساق السلوك؛ فالمطور يكون واثقًا من أن أي كائن مستمد من الكلاس الأب سينفذ الدوال المشتركة بأمان، مما يلغي الحاجة لكتابة شروط التحقق مثل `if (student is RegularStudent)` ويحافظ على نظافة البنية المعمارية.
-
-### س11: هل يمنع مبدأ LSP إعادة تعريف الدوال (Method Overriding)؟
-**الجواب**: لا، فإعادة تعريف الدوال هي أساس تعدد الأشكال (Polymorphism). يمنع المبدأ فقط التعديلات التي تفسد المعنى البرمجي أو السلوك المتوقع للعملية.
-
-### س12: ما المقصود بـ "التوريث لغرض إعادة استخدام الكود" (Inheritance for Code Reuse) ولماذا يعد خطيرًا؟
-**الجواب**: هو جعل كلاس يرث من آخر لمجرد الرغبة في إعادة استخدام بعض الدوال الجاهزة دون وجود علاقة منطقية حقيقية بين الكلاسين. يؤدي ذلك إلى إجبار كلاس الابن على وراثة وظائف لا تناسب طبيعته، مما يضطره لتعطيلها وخرق مبدأ LSP.
-
-### س13: ما هي القاعدة المعمارية البديلة للتوريث العشوائي؟
-**الجواب**: القاعدة الذهبية هي: **"تفضيل التركيب على التوريث" (Favor Composition over Inheritance)**. عند عدم التأكد من صحة علاقة التوريث بنسبة 100%، يفضل تضمين كائن داخل الكلاس للاستفادة من وظائفه بدلاً من الوراثة المباشرة منه.
-
-### س14: إذا كانت دالة الأب تعيد كائنًا من نوع `List<String>`، فهل يجوز للابن جعلها تعيد `List<int>`؟
-**الجواب**: لا يجوز ذلك؛ لأنه يمثل خرقًا لسلامة الأنواع ولمبدأ LSP. يجب أن يلتزم الابن بالأنواع المرجعة من الأب أو يرجع نوعًا فرعيًا منها (Covariance) لضمان متانة وتكامل الكود.
+### Q7: What does the "Duck Test" mean in the context of LSP?
+**Answer**: "If it looks like a duck and quacks like a duck but needs batteries to run, you have the wrong abstraction." In programming, this means mimicking a class signature superficially while failing to implement its core behaviors indicates an invalid inheritance model.
 
 ---
 
-## مستوى المحترفين (Advanced/Senior Level)
+## Mid-Level
 
-### س15: اشرح مفهومي التوافق الفوقي (Covariance) والتوافق التحتي (Contravariance) وعلاقتهما بمبدأ LSP؟
-**الجواب**:
-- **Covariance (التوافق الفوقي)**: يخص القيمة المرجعة (Return Type)؛ حيث يسمح لكلاس الابن بإرجاع نوع فرعي (Subtype) من النوع المحدد في كلاس الأب.
-- **Contravariance (التوافق التحتي)**: يخص المعاملات المدخلة (Method Parameters)؛ حيث يجب منطقياً أن يقبل الابن نوعاً أعم (Supertype) من النوع الذي يقبله الأب لتوسيع نطاق المدخلات، على الرغم من أن معظم لغات البرمجة تفرض التوافق التام (Invariance) تسهيلاً للتطوير.
-تضمن هذه القواعد رياضياً إمكانية إحلال الابن محل الأب دون خلل في الأنواع.
+### Q8: How can you resolve an LSP violation caused by `UnimplementedError` exceptions?
+**Answer**: By refactoring the inheritance hierarchy. Extract the unsupported method from the base class and move it to a separate abstract interface or an intermediate class. Only the subclasses that actually support this behavior should implement the new interface.
 
-### س16: كيف تصمم عقود الواجهات البرمجية (API Contracts) لضمان الالتزام بمبدأ LSP مستقبلاً؟
-**الجواب**: نعتمد على كتابة واجهات برمجية صارمة (Strict Interfaces) وتطبيق اختبارات العقود (Contract Testing)؛ حيث يتم فحص كلاسات الأبناء باستخدام نفس مجموعة اختبارات الكلاس الأب للتأكد من التزامها بنفس الشروط والحدود وتجنب خرق السلوك المتوقع.
+### Q9: What are pre-conditions and post-conditions in the context of LSP?
+**Answer**:
+- **Pre-conditions**: Conditions that must be true before a method runs. A subclass cannot make these conditions stricter or harder to fulfill.
+- **Post-conditions**: Conditions that must be true after a method completes. A subclass cannot weaken these guarantees; it must return results that match or exceed the parent's promises.
 
-### س17: هل توجد أمثلة شهيرة لمخالفة مبدأ LSP في المكتبات القياسية للغات البرمجة؟
-**الجواب**: نعم، في لغة Java على سبيل المثال، تعيد الدالة `Collections.unmodifiableList()` لستة تنفذ واجهة `List` القياسية. ولكن عند استدعاء دالة الإضافة `add()`، تلقي الدالة استثناء `UnsupportedOperationException`. يمثل هذا التصميم خرقًا صريحًا لمبدأ LSP لأن اللستة المرجعة عجزت عن الحلول محل الواجهة الأساسية بشكل كامل.
+### Q10: How does adhering to LSP reduce type-checking blocks?
+**Answer**: LSP guarantees behavioral consistency. When a developer is confident that any subclass executes the parent methods safely, they do not need to write type checks like `if (student is RegularStudent)`. This results in cleaner, polymorphically sound code.
 
-### س18: كيف يتم تطبيق منهجية "التصميم بالعقود" (Design by Contract - DbC) لضمان تحقيق LSP؟
-**الجواب**: يفرض DbC شروطًا برمجية صارمة:
-1. **الشروط المسبقة (Preconditions)**: لا يحق للابن تشديدها.
-2. **الشروط اللاحقة (Postconditions)**: لا يحق للابن إضعافها.
-3. **ثوابت الكلاس (Invariants)**: يجب على الابن الحفاظ على ثوابت حالة الأب دون تغيير.
-يتم تنفيذ ذلك بكتابة جمل التأكيد (Asserts) واختبارات التحقق المستمرة في الكود والـ Tests.
+### Q11: Does LSP forbid method overriding?
+**Answer**: No. Method overriding is the foundation of polymorphism. LSP only forbids overrides that change the semantic meaning or break the expected logical outcomes of the parent's contract.
 
-### س19: لو واجهت مشروعًا كبيرًا يعاني من كثرة استخدام جمل التحقق من النوع (`is` أو `instanceof`) بسبب مشاكل التوريث، فكيف تعالج ذلك؟
-**الجواب**: نتبع خطة تدريجية لإحلال التركيب محل التوريث (Composition over Inheritance):
-1. تحديد كلاسات الأبناء التي تعطل الدوال الموروثة وتسبب خرق المبدأ.
-2. عزل الدوال المتغيرة ونقلها إلى واجهات منفصلة ورشيقة.
-3. تبسيط الكلاس الأب ليتضمن فقط الدوال المشتركة بنسبة 100% بين كافة المشتقات.
-4. جعل الكلاسات تنفذ الواجهات المخصصة لها فقط.
-5. استخدام نمط المصنع (Factory Pattern) لإدارة عملية إنشاء الكائنات بشكل معزول مع تغطية الكود باختبارات الوحدة.
+### Q12: What is "Inheritance for Code Reuse" and why is it dangerous?
+**Answer**: It is the practice of inheriting class B from class A just to reuse some of A's methods, even though there is no logical "Is-A" relationship. This forces subclass B to inherit methods it does not support, leading to disabled methods, exceptions, and LSP violations.
 
-### س20: كيف يؤثر مبدأ LSP على تصميم التجميعات (Aggregates) في منهجية التطوير الموجه بالدومين (DDD)؟
-**الجواب**: في الـ DDD، يتولى الـ Aggregate Root مسؤولية حماية ثوابت الحالة (Invariants). ويؤدي استخدام التوريث المعقد داخل التجميعات إلى خطر خرق ثوابت الحالة بواسطة كلاسات الأبناء التي قد تعدل البيانات بطرق غير مطابقة للأنظمة المعتمدة. لتفادي ذلك، يُحظر التوريث المعقد في DDD ويُعتمد على الكائنات المستقلة والـ Value Objects المرتبطة بالتركيب (Composition) فقط لضمان سلامة الـ Domain Model.
+### Q13: What is the recommended design alternative to arbitrary inheritance?
+**Answer**: The golden rule is: **"Favor Composition over Inheritance"**. If you cannot guarantee a true "Is-A" relationship under all circumstances, embed an instance of the class as a field inside your new class instead of inheriting from it directly.
 
-</div>
+### Q14: If a base method returns a `List<String>`, can a subclass override it to return a `List<int>`?
+**Answer**: No. Changing type parameters to an incompatible type breaks type safety and violates LSP. The subclass must return the exact type or a subtype (Covariance) of the parent's return type to keep client code compiling and executing safely.
+
+---
+
+## Senior Level
+
+### Q15: Explain Covariance and Contravariance in the context of LSP.
+**Answer**:
+- **Covariance**: Relates to return types. A subclass method can return a more specific subtype than what is declared in the parent method.
+- **Contravariance**: Relates to method parameters. A subclass method should logically accept a more generic supertype for its parameters to broaden input capabilities.
+Modern type systems enforce covariance for return values, but typically enforce strict invariance (exact type match) for parameters to keep the compiler checks stable and simple.
+
+### Q16: How do you design API Contracts to guarantee LSP compliance?
+**Answer**: We write strict interface specifications and run Contract Tests. Subclasses are subjected to the exact same suite of unit tests as the base class to verify that they conform to the pre-conditions, post-conditions, and expected behavior invariants.
+
+### Q17: Are there any famous LSP violations in standard programming libraries?
+**Answer**: Yes, in Java, `Collections.unmodifiableList()` returns an object that implements the standard `List` interface. However, calling `add()` on this list throws an `UnsupportedOperationException`. This is a classic LSP violation because the returned list cannot substitute for the base `List` interface without breaking client code that writes to lists.
+
+### Q18: How do you apply "Design by Contract" (DbC) to enforce LSP?
+**Answer**: DbC dictates that subclasses must:
+1. Accept pre-conditions that are no stricter than the base class.
+2. Guarantee post-conditions that are no weaker than the base class.
+3. Maintain the base class invariants (core properties and states that must remain constant).
+This is enforced using assertion statements and comprehensive test suites checking all derived classes.
+
+### Q19: If you inherit a legacy project riddled with type-checking statements (`is` or `instanceof`), what is your refactoring plan?
+**Answer**: We transition from inheritance to composition:
+1. Identify subclasses that disable inherited methods and cause violations.
+2. Extract the varying methods into small, specialized interfaces.
+3. Clean the base class so it only contains methods supported by 100% of the subtypes.
+4. Have subclasses implement only the interfaces they actually support.
+5. Use the Factory Pattern to manage object creation and cover the refactored code with unit tests.
+
+### Q20: How does LSP impact Aggregate design in Domain-Driven Design (DDD)?
+**Answer**: In DDD, the Aggregate Root is responsible for protecting state invariants. Deep inheritance hierarchies inside an aggregate risk breaking these invariants because subclasses can manipulate internal fields in ways that violate business rules. Therefore, DDD discourages complex inheritance and favors Composition and Value Objects to protect the domain model's integrity.

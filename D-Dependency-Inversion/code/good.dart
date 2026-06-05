@@ -1,63 +1,63 @@
-// كود نظيف ومتصلح بناءً على مبدأ الـ DIP
-// كلاس البيزنس بقى يعتمد على Abstraction والداتا بيز بنحقنها من برة بكل مرونة!
+// Compliant code adhering to the Dependency Inversion Principle (DIP)
+// The business logic class depends on Abstraction, and the database is injected from the outside.
 
 import 'dart:io';
 
-// 1. التجريد (Abstraction - الفيشة القياسية)
+// 1. Abstraction (Interface)
 abstract class DatabaseService {
   void saveStudent(String id, String name);
 }
 
-// 2. موديولات منخفضة المستوى بتنفذ التجريد ده (Concrete Details)
+// 2. Low-level modules implementing the Abstraction (Concrete Details)
 class MySqlDatabase implements DatabaseService {
   @override
   void saveStudent(String id, String name) {
-    print('جاري الاتصال بقاعدة بيانات MySQL...');
+    print('Connecting to MySQL database...');
     sleep(Duration(milliseconds: 400));
-    print('تم حفظ الطالب $name (ID: $id) في جدول MySQL Students.');
+    print('Student $name (ID: $id) successfully saved to MySQL Students table.');
   }
 }
 
 class MongoDatabase implements DatabaseService {
   @override
   void saveStudent(String id, String name) {
-    print('جاري الاتصال بقاعدة بيانات MongoDB (NoSQL)...');
+    print('Connecting to MongoDB database (NoSQL)...');
     sleep(Duration(milliseconds: 400));
-    print('تم حفظ الطالب $name (ID: $id) كـ Document في MongoDB.');
+    print('Student $name (ID: $id) successfully saved as a Document in MongoDB.');
   }
 }
 
-// 3. موديول عالي المستوى (High-level module)
-// الكلاس ده محمي ونظيف، مش معتمد على تكنولوجيا معينة ومفتوح للتمديد
+// 3. High-level module
+// Protected and decoupled: depends on Abstraction, not concrete technology
 class StudentEnrollmentSystem {
-  // بنعتمد على الـ Abstraction مش الـ Details
+  // Depends on Abstraction, not Details
   final DatabaseService _databaseService;
 
-  // بنحقن الاعتمادية من برة (Dependency Injection)
+  // Dependency is injected from the outside (Dependency Injection)
   StudentEnrollmentSystem(this._databaseService);
 
   void enrollStudent(String id, String name) {
-    print('بدء عملية تسجيل الطالب $name في السيستم...');
-    // بننادي الميثود التجريدية
+    print('Starting student enrollment process for $name...');
+    // Calls the abstract method
     _databaseService.saveStudent(id, name);
-    print('عملية التسجيل تمت بالكامل بنجاح.\n');
+    print('Enrollment process completed successfully.\n');
   }
 }
 
 void main() {
-  print('--- تشغيل كود التسجيل النظيف (Good DIP Example) ---');
+  print('--- Running Compliant Code (Good DIP Example) ---');
 
-  // سيناريو 1: العميل شغال بـ MySQL
-  print('=== سيناريو تشغيل MySQL ===');
+  // Scenario 1: Using MySQL
+  print('=== Scenario: MySQL Database ===');
   final mysqlDb = MySqlDatabase();
   final systemWithMySql = StudentEnrollmentSystem(mysqlDb);
-  systemWithMySql.enrollStudent('1001', 'سامح عبد العزيز');
+  systemWithMySql.enrollStudent('1001', 'Sameh Abdelaziz');
 
   print('--------------------------------------------------');
 
-  // سيناريو 2: قررنا ننقل لـ MongoDB (في ثواني وبدون تعديل كلاس السيستم!)
-  print('=== سيناريو تشغيل MongoDB ===');
+  // Scenario 2: Swapping to MongoDB (done in seconds without modifying StudentEnrollmentSystem!)
+  print('=== Scenario: MongoDB Database ===');
   final mongoDb = MongoDatabase();
   final systemWithMongo = StudentEnrollmentSystem(mongoDb);
-  systemWithMongo.enrollStudent('1002', 'مروان الشافعي');
+  systemWithMongo.enrollStudent('1002', 'Marwan El-Shafei');
 }

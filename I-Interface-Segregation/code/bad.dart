@@ -1,5 +1,5 @@
-// كود عك بيخالف مبدأ الـ ISP
-// واجهة واحدة ضخمة بتجبر الطالب والمدرس يكتبوا ميثودس ملهمش علاقة بيها!
+// Non-compliant code violating the Interface Segregation Principle (ISP)
+// A single bloated interface forces both Student and Teacher to implement methods irrelevant to them.
 
 abstract class UniversityMember {
   void attendClass();
@@ -9,91 +9,91 @@ abstract class UniversityMember {
   void calculateSalary();
 }
 
-// كلاس الطالب مضطر يطبق كل ميثودس المدرس والموظف غصب عنه!
+// Student is forced to implement Teacher and Employee methods!
 class Student implements UniversityMember {
   final String name;
   Student(this.name);
 
   @override
   void attendClass() {
-    print('$name حضر المحاضرة في المدرج.');
+    print('$name attended the lecture in the hall.');
   }
 
   @override
   void submitAssignment() {
-    print('$name سلم التكليف العملي.');
+    print('$name submitted the practical assignment.');
   }
 
-  // عك كسر الـ ISP! الطالب مش بيدرس كورسات
+  // Violates ISP! A student does not teach courses.
   @override
   void teachCourse() {
-    throw UnimplementedError('الطالب لا يمكنه تدريس الكورسات!');
+    throw UnimplementedError('Students cannot teach courses!');
   }
 
-  // عك كسر الـ ISP! الطالب مش بيصحح امتحانات
+  // Violates ISP! A student does not grade exams.
   @override
   void gradeExams() {
-    throw UnimplementedError('الطالب لا يمكنه تصحيح الامتحانات!');
+    throw UnimplementedError('Students cannot grade exams!');
   }
 
-  // عك كسر الـ ISP! الطالب مش بياخد مرتب، هو بيدفع مصاريف
+  // Violates ISP! A student does not receive a salary; they pay tuition.
   @override
   void calculateSalary() {
-    throw UnimplementedError('الطالب لا يتقاضى راتباً!');
+    throw UnimplementedError('Students do not receive a salary!');
   }
 }
 
-// كلاس المدرس مضطر يطبق ميثود تسليم الواجب بتاعة الطلاب!
+// Teacher is forced to implement the Student method of submitting assignments!
 class Teacher implements UniversityMember {
   final String name;
   Teacher(this.name);
 
   @override
   void attendClass() {
-    print('الدكتور $name دخل المدرج عشان يشرح.');
+    print('Dr. $name entered the lecture hall to teach.');
   }
 
-  // عك كسر الـ ISP! الدكتور مش بيسلم واجبات
+  // Violates ISP! A teacher does not submit assignments.
   @override
   void submitAssignment() {
-    throw UnimplementedError('الدكتور لا يسلم تكليفات، هو من يطلبها!');
+    throw UnimplementedError('Teachers do not submit assignments; they assign them!');
   }
 
   @override
   void teachCourse() {
-    print('الدكتور $name بيشرح كورس البرمجة.');
+    print('Dr. $name is teaching the programming course.');
   }
 
   @override
   void gradeExams() {
-    print('الدكتور $name بيصحح أوراق الامتحانات.');
+    print('Dr. $name is grading the exam papers.');
   }
 
   @override
   void calculateSalary() {
-    print('تم حساب مرتب الدكتور $name بنجاح.');
+    print('Salary for Dr. $name successfully calculated.');
   }
 }
 
 void main() {
-  print('--- تشغيل كود الجامعة العك (Bad ISP Example) ---');
+  print('--- Running Non-compliant Code (Bad ISP Example) ---');
   
-  final student = Student('كريم يوسف');
+  final student = Student('Karim Youssef');
   student.attendClass();
   student.submitAssignment();
 
   try {
-    student.teachCourse(); // هيعمل Crash!
+    student.teachCourse(); // Will crash!
   } catch (e) {
-    print('خطأ في السيستم: $e');
+    print('System Error: $e');
   }
 
-  final teacher = Teacher('د. أحمد جمال');
+  final teacher = Teacher('Dr. Ahmed Gamal');
   teacher.teachCourse();
   
   try {
-    teacher.submitAssignment(); // هيعمل Crash!
+    teacher.submitAssignment(); // Will crash!
   } catch (e) {
-    print('خطأ في السيستم: $e');
+    print('System Error: $e');
   }
 }

@@ -1,66 +1,62 @@
-<div dir="rtl">
+# Real-World Examples of the Single Responsibility Principle
 
-# أمثلة عملية على تطبيق مبدأ المسؤولية الواحدة: real-world-example.md
-
-يظهر مبدأ المسؤولية الواحدة (SRP) بشكل واضح في تصميم الأنظمة البرمجية الكبيرة وفي الحياة اليومية. وفيما يلي خمسة أمثلة توضيحية:
+The Single Responsibility Principle (SRP) is highly relevant in both software architecture and daily life. Below are five illustrative examples:
 
 ---
 
-## 1. مثال في إطار عمل Flutter (إدارة الواجهة والمنطق البرمجي)
+## 1. Flutter Framework Example (UI vs. Business Logic)
 
-* **التصميم غير المتوافق (Bad Design)**:
-  إنشاء كلاس للواجهة (Widget مثل `UserScreen`) يحتوي داخل دالة البناء `build` على منطق طلب البيانات عبر شبكة الإنترنت (HTTP Request)، مع تحديث حالة الواجهة وتعديل العناصر الرسومية، وعرض نافذة تنبيه في حال حدوث خطأ. هذا التصميم يدمج واجهة المستخدم والمنطق البرمجي والاتصال بالشبكة في مكون واحد.
-* **التطبيق الصحيح للمبدأ (SRP)**:
-  - **كلاس `UserScreen` (UI)**: يقتصر دوره على عرض المكونات الرسومية وتفاعل المستخدم معها.
-  - **كلاس `UserViewModel` أو `UserCubit` (State Management)**: يتولى إدارة حالة الشاشة والتنسيق بين العمليات المختلفة.
-  - **كلاس `UserRepository` أو `UserService` (Network)**: يختص بإجراء طلبات الشبكة والحصول على البيانات الخام.
-  - **كلاس `UserSerializer` (Data Mapping)**: يتولى تحويل البيانات المستلمة (JSON) إلى كائنات برمجية (Models) في لغة Dart.
-
----
-
-## 2. مثال في نظام إدارة المستشفيات (Hospital System)
-
-* **التصميم غير المتوافق (Bad Design)**:
-  كلاس `Doctor` يحتوي على البيانات الشخصية للطبيب، وجدول مواعيده، ودوال لحساب راتبه الشهري بناءً على عدد الحالات والعمليات، بالإضافة إلى دالة لتوليد التقرير الطبي للمريض وتصديره بصيغة PDF.
-* **التطبيق الصحيح للمبدأ (SRP)**:
-  - **كلاس `Doctor`**: يحتوي فقط على بيانات الطبيب الأساسية وتخصصه الطبي.
-  - **كلاس `DoctorScheduler`**: يتولى إدارة مواعيد الطبيب وحجوزات العيادة.
-  - **كلاس `PayrollCalculator`**: يختص بحساب مستحقات الطبيب المالية والرواتب.
-  - **كلاس `MedicalReportGenerator`**: يتولى صياغة وتصدير التقارير الطبية للمرضى بصيغة PDF.
+* **Non-compliant Design (Bad Design)**:
+  Creating a Widget class (e.g., `UserScreen`) that contains an HTTP network request within its `build` method, parses the response, updates widget states, manages errors, and triggers popup alerts. This combines UI, business logic, networking, and error handling in a single component.
+* **Compliant Design (SRP)**:
+  - **`UserScreen` class (UI)**: Responsible only for rendering the user interface and delegating user interactions.
+  - **`UserViewModel` or `UserCubit` (State Management)**: Manages screen states and coordinates background requests.
+  - **`UserRepository` or `UserService` (Network/Persistence)**: Handles raw HTTP requests and database read/writes.
+  - **`UserSerializer` (Data Mapping)**: Converts raw data (e.g., JSON) to typed Dart models.
 
 ---
 
-## 3. مثال في الأنظمة المصرفية (Banking System)
+## 2. Hospital Management System
 
-* **التصميم غير المتوافق (Bad Design)**:
-  كلاس `BankAccount` يحتفظ ببيانات الحساب ورصيده الحالي، ويقوم بمعالجة عمليات السحب والإيداع، وحساب الفوائد السنوية، بالإضافة إلى توليد كشف الحساب (Account Statement) وإرساله للعميل عبر البريد الإلكتروني.
-* **التطبيق الصحيح للمبدأ (SRP)**:
-  - **كلاس `BankAccount`**: يقتصر دوره على تخزين بيانات الحساب الأساسية ورصيده الحالي وحالة الحساب.
-  - **كلاس `TransactionManager`**: يدير عمليات السحب والإيداع والتحويلات المالية لضمان الأمان والموثوقية والتتبع.
-  - **كلاس `InterestCalculator`**: يختص بحساب الفوائد والنسب المالية المستحقة للحساب.
-  - **كلاس `StatementGenerator`**: يتولى تجميع العمليات المالية وبناء كشف الحساب وتصديره.
-
----
-
-## 4. مثال في نظام تطبيقات التوصيل (Delivery App)
-
-* **التصميم غير المتوافق (Bad Design)**:
-  كلاس `Order` يحتفظ بتفاصيل الطلب والمواد المشتراة، ويقوم بحساب المسافة وتكلفة التوصيل، ويتواصل مع خوادم Firebase لإرسال إشعارات للعميل تفيد بخروج الطلب، ويقوم بمعالجة الدفع عن طريق الاتصال ببوابة الدفع مثل Stripe.
-* **التطبيق الصحيح للمبدأ (SRP)**:
-  - **كلاس `Order`**: يمثل نموذج بيانات يحتوي على تفاصيل الطلب والعميل والوجبات المطلوبة فقط.
-  - **كلاس `DeliveryPricingCalculator`**: يختص بحساب تكلفة التوصيل بناءً على المسافة والوقت وحالة الطقس.
-  - **كلاس `NotificationService`**: يتولى إرسال الإشعارات والرسائل التنبيهية للعميل.
-  - **كلاس `PaymentProcessor`**: يتولى إدارة الدفع الإلكتروني والتواصل مع بوابات الدفع الخارجية مثل Stripe.
+* **Non-compliant Design (Bad Design)**:
+  A `Doctor` class containing doctor profile attributes, patient visit schedules, salary calculation logic (based on consultations and surgeries), and medical report generation logic to export files as PDFs.
+* **Compliant Design (SRP)**:
+  - **`Doctor` class**: Represents the doctor's profile and medical specialty.
+  - **`DoctorScheduler` class**: Manages doctor schedules, shift rosters, and patient appointments.
+  - **`PayrollCalculator` class**: Calculates financial dues, doctor cuts, and monthly salaries.
+  - **`MedicalReportGenerator` class**: Handles formatting and exporting patient reports to PDF format.
 
 ---
 
-## 5. مثال في نظام المطاعم (Restaurant System)
+## 3. Banking System
 
-* **التصميم غير المتوافق (Bad Design)**:
-  كلاس `Chef` يحتوي على دوال لطهي الطعام، ودوال أخرى لغسيل الأواني وتنظيف المطبخ، ودوال لحساب الميزانية وشراء المواد الخام من السوق.
-* **التطبيق الصحيح للمبدأ (SRP)**:
-  - **كلاس `Chef`**: يقتصر دوره على إعداد وطهي الطعام فقط.
-  - **كلاس `Dishwasher`**: يتولى أعمال التنظيف وغسيل الأواني.
-  - **كلاس `PurchasingManager`**: يختص بإدارة المخازن وشراء المكونات والتعامل مع الموردين.
+* **Non-compliant Design (Bad Design)**:
+  A `BankAccount` class holding account data and balance, processing deposits/withdrawals, calculating annual interest, and generating account statement files to send to customers via email.
+* **Compliant Design (SRP)**:
+  - **`BankAccount` class**: Stores only the account's unique identifier, balance, owner, and active status.
+  - **`TransactionManager` class**: Validates and executes deposits, withdrawals, and bank transfers safely.
+  - **`InterestCalculator` class**: Calculates yearly interest rates and updates account balances.
+  - **`StatementGenerator` class**: Compiles transaction logs, formats bank statements, and handles exports.
 
-</div>
+---
+
+## 4. Delivery Application
+
+* **Non-compliant Design (Bad Design)**:
+  An `Order` class holding order items and customer information, calculating delivery distance fees, connecting to Firebase to send push notifications, and calling Stripe APIs to process electronic transactions.
+* **Compliant Design (SRP)**:
+  - **`Order` class**: Represents the order data model containing items, total amount, and delivery details.
+  - **`DeliveryPricingCalculator` class**: Calculates delivery fees based on distance, time, traffic, and weather.
+  - **`NotificationService` class**: Handles sending push notifications, SMS, or emails to the customer.
+  - **`PaymentProcessor` class**: Manages online transactions and integrates with third-party APIs like Stripe.
+
+---
+
+## 5. Restaurant Operations
+
+* **Non-compliant Design (Bad Design)**:
+  A `Chef` class containing methods for cooking dishes, washing pots, cleaning the kitchen area, calculating the budget, and purchasing raw materials from the market.
+* **Compliant Design (SRP)**:
+  - **`Chef` class**: Focuses solely on preparing and cooking food items.
+  - **`KitchenStaff` class**: Manages pot washing and kitchen cleanliness.
+  - **`InventoryManager` class**: Manages stock levels, kitchen budgets, and orders ingredients from suppliers.

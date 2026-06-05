@@ -1,15 +1,13 @@
-<div dir="rtl">
+# Junior Level Technical Interview Guidelines
 
-# إرشادات المقابلات الفنية للمبتدئين (Junior Level)
-
-إذا كنت تتقدم لوظيفتك الأولى كمطور برمجيات مبتدئ (Junior Developer)، أو في بداية مسيرتك المهنية، فإن هذه الوثيقة تقدم لك أهم الأسئلة والإرشادات الأساسية التي يجب عليك استيعابها جيداً قبل إجراء المقابلة الفنية.
+If you are applying for your first job as a junior software developer or are early in your career, this document provides the core questions, concepts, and guidelines you need to master before your technical interview.
 
 ---
 
-## ما هي مبادئ SOLID ولماذا نستخدمها؟
+## What are the SOLID Principles and Why Do We Use Them?
 
-تعد **SOLID** اختصاراً يجمع الحروف الأولى لخمسة مبادئ أساسية في التصميم الكائني (Object-Oriented Design) قام بصياغتها وجمعها المهندس روبرت مارتن (Uncle Bob).
-الهدف من تطبيق هذه المبادئ هو: **كتابة كود نظيف، مرن، سهل الصيانة والتوسيع، ومقاوم للأخطاء عند تعديله**.
+**SOLID** is an acronym representing five core design principles for object-oriented software, compiled and defined by Robert C. Martin (Uncle Bob).
+The primary goals of applying these principles are to write code that is: **clean, flexible, easy to maintain, easy to extend, and resistant to regression bugs when modified**.
 
 1. **S** -> Single Responsibility Principle (SRP)
 2. **O** -> Open-Closed Principle (OCP)
@@ -19,39 +17,37 @@
 
 ---
 
-## أهم الأسئلة المتوقعة وإجاباتها المختصرة
+## Frequently Asked Questions & Concise Answers
 
-### س1: ما هو المفهوم الأساسي لمبدأ المسؤولية الواحدة (SRP)؟
-**الجواب**: أن تكون الفئة مسؤولة عن وظيفة محددة واحدة فقط في النظام. وإذا كانت الفئة تؤدي وظائف متعددة، فيجب تقسيمها إلى فئات أصغر لضمان عدم تأثر باقي الوظائف عند تعديل أي منها.
+### Q1: What is the core concept of the Single Responsibility Principle (SRP)?
+**Answer**: A class should be responsible for only one specific part of the system's functionality. If a class has multiple reasons to change, it should be split into smaller, focused classes so that modifying one feature does not inadvertently break or impact other features.
 
-### س2: ما هو مبدأ المفتوح والمغلق (OCP) وكيف يتم تطبيقه؟
-**الجواب**: يعني أن يكون الكود البرمجي مفتوحاً للتمديد (إضافة ميزات جديدة) ومغلقاً للتعديل (عدم تعديل الكود القديم المستقر). ويتم تطبيقه باستخدام التجريد (Abstraction) وتعدد الأشكال (Polymorphism)، حيث يتم إنشاء فئات جديدة لإضافة الميزات دون المساس بالبنية القديمة.
+### Q2: What is the Open-Closed Principle (OCP) and how do you apply it?
+**Answer**: Software entities should be open for extension (adding new functionality) but closed for modification (not changing existing, verified code). It is applied using Abstraction and Polymorphism, allowing you to introduce new subclasses or implementations without modifying existing source code.
 
-### س3: كيف يمكن شرح مبدأ إحلال ليسكوف (LSP) باختصار؟
-**الجواب**: يجب أن تكون الفئة الابنة قادرة على تعويض الفئة الأب في أي مكان بالبرنامج دون حدوث خلل. وإذا قمت بوراثة فئة واضطررت لرمي استثناء (Exception) لإلغاء دالة موروثة غير متوافقة، فإنك بذلك تنتهك هذا المبدأ.
+### Q3: How do you briefly explain the Liskov Substitution Principle (LSP)?
+**Answer**: Subclasses must be completely substitutable for their base classes without altering the correctness of the program. If you subclass a class and are forced to throw an exception (such as `UnsupportedError`) to disable an inherited method, you are violating LSP.
 
-### س4: ما المقصود بمبدأ فصل الواجهات (ISP)؟
-**الجواب**: عدم إجبار أي فئة على تنفيذ دوال لا تحتاج إليها. بدلاً من ذلك، يتم تقسيم الواجهات الكبيرة إلى واجهات أصغر وأكثر تحديداً، بحيث تنفذ كل فئة ما يتوافق مع دورها الفعلي فقط.
+### Q4: What is the Interface Segregation Principle (ISP)?
+**Answer**: Clients should not be forced to depend on interfaces or methods they do not use. Instead of creating large, bloated interfaces, split them into smaller, role-specific interfaces so that implementing classes only implement methods relevant to their purpose.
 
-### س5: ما الفرق بين مبدأ عكس الاعتمادية (DIP) وحقن الاعتمادية (Dependency Injection - DI)؟
-**الجواب**: مبدأ عكس الاعتمادية (DIP) هو المبدأ التصميمي (الاعتماد على الواجهات المجردة بدلاً من الفئات المادية). أما حقن الاعتمادية (DI) فهو طريقة التنفيذ العملية التي يتم من خلالها تمرير الكائن المطلوب إلى مشيد الفئة من الخارج بدلاً من إنشائه داخلياً باستخدام الكلمة المفتاحية `new` أو ما يعادلها.
-
----
-
-## مؤشرات المشكلات البرمجية (Code Smells)
-
-عند السؤال في المقابلات الشخصية عن كيفية تحديد الكود الذي يحتاج إلى إعادة هيكلة (Refactoring)، يمكن الإشارة إلى المؤشرات التالية:
-* **وجود فئة ضخمة للغاية** (God Class) تقوم بأدوار متعددة وتتجاوز مئات الأسطر.
-* **وجود جمل شرطية** (`if-else` أو `switch`) طويلة ومتشعبة تزداد تعقيداً كلما أضيفت ميزة جديدة.
-* **وجود دوال معطلة** ترمي استثناءات عدم التنفيذ (مثل `throw UnimplementedError()`).
-* **استخدام الكلمة المفتاحية `new`** لإنشاء كائنات الخدمات الخارجية وقواعد البيانات مباشرة داخل فئات منطق العمل.
+### Q5: What is the difference between the Dependency Inversion Principle (DIP) and Dependency Injection (DI)?
+**Answer**: DIP is a high-level design principle advising modules to depend on abstractions rather than concrete classes. DI is a structural design pattern used to implement DIP by passing (injecting) dependencies into a class constructor from the outside, rather than instantiating them internally using the constructor.
 
 ---
 
-## إرشادات وتوجيهات لمقابلات المبتدئين
+## Technical Red Flags (Code Smells)
 
-* **الاستعانة بأمثلة عملية**: يفضل تجنب المصطلحات الأكاديمية البحتة دون فهم، والاستعانة بأمثلة من الحياة اليومية (مثل مقبس الكهرباء القياسي أو طريقة حجز التذاكر)، مما يثبت استيعابك العملي للمفاهيم.
-* **التركيز على المصطلحات الفنية الصحيحة**: استخدام المفاهيم الهندسية مثل (Polymorphism, Abstraction, Coupling, Cohesion, Dependency Injection) في سياقها الصحيح يعكس خلفية تقنية قوية.
-* **الأمانة العلمية والوضوح**: في حال عدم تذكر اسم المبدأ بالتحديد، يفضل شرح السلوك والهدف منه بوضوح بدلاً من تقديم إجابات غير دقيقة.
+When asked in an interview how to identify code that needs refactoring, watch for the following symptoms:
+* **The God Class**: A single class that does almost everything, containing thousands of lines of code and handling multiple responsibilities.
+* **Bloated Conditional Blocks**: Long, nested `if-else` or `switch` statements that grow larger every time a new feature is added.
+* **Dead/Stubbed Methods**: Subclasses containing empty method bodies or methods that throw `UnimplementedError()` just to satisfy compiler contracts.
+* **Direct Service Instantiations**: Extensive use of direct class instantiations for database drivers or network clients inside business logic classes.
 
-</div>
+---
+
+## Tips for Junior Developers in Interviews
+
+* **Use Simple Analogies**: Instead of relying purely on academic jargon, explain concepts using real-world analogies (like wall outlets or printers) to prove you understand how to apply the concepts practically.
+* **Use Correct Technical Terminology**: Frame your answers using established engineering concepts such as *Polymorphism*, *Abstraction*, *Coupling*, *Cohesion*, and *Dependency Injection* to demonstrate professional literacy.
+* **Be Clear and Honest**: If you forget a specific acronym or name, focus on explaining the architectural problem and the design solution clearly rather than guessing.

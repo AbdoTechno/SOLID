@@ -1,71 +1,67 @@
-<div dir="rtl">
+# Real-World Examples of the Interface Segregation Principle
 
-# أمثلة عملية على تطبيق مبدأ فصل الواجهات: real-world-example.md
-
-يسهم مبدأ فصل الواجهات (ISP) في إبقاء الواجهات البرمجية بسيطة وسهلة الاستخدام. وفيما يلي خمسة أمثلة عملية توضح تطبيق المبدأ في مجالات برمجية مختلفة:
+The Interface Segregation Principle (ISP) keeps APIs lean, cohesive, and easy to consume. Below are five practical examples illustrating its application in different software domains:
 
 ---
 
-## 1. مثال في إطار عمل Flutter (معالجة النصوص وحالة الحقول)
+## 1. Flutter Framework Example (Text Fields and Formatting)
 
-* **التصميم غير المتوافق (Bad Design)**:
-  تخيل لو كان إطار عمل Flutter يوفر واجهة برمجية موحدة باسم `TextFieldHelper` تضم كافة المهام الخاصة بحقول الإدخال: دوال للتحكم في مؤشر التركيز (Focus)، وتنسيق النصوص (Formatting)، وعمليات النسخ واللصق، والتحقق من صحة المدخلات (Validation). عند الرغبة في إنشاء منسق نصي بسيط يمنع إدخال الأرقام، سنضطر لتنفيذ كافة هذه الدوال وتركها فارغة دون استخدام.
-* **التطبيق الصحيح للمبدأ (ISP)**:
-  قامت Flutter بتقسيم هذه الوظائف إلى واجهات صغيرة ومحددة التخصص:
-  - `TextInputFormatter`: تحتوي على دالة واحدة `formatEditUpdate` لتنسيق النص وتعديله فقط.
-  - `FocusNode`: تختص بإدارة وتوجيه مؤشر التركيز فقط.
-  - `FormFieldValidator`: تختص بالتحقق من صحة القيم المدخلة.
-  يتيح هذا الفصل للمطور تنفيذ واجهة `TextInputFormatter` بشكل مستقل تمامًا لإنشاء منسق نصوص مخصص بأمان وسهولة.
-
----
-
-## 2. مثال في نظام إدارة المستشفيات (أدوار الكادر الطبي)
-
-* **التصميم غير المتوافق (Bad Design)**:
-  إنشاء واجهة باسم `HospitalWorker` تحتوي على دوال: إجراء العمليات الجراحية `performSurgery()`، وكتابة الوصفات الطبية `prescribeMedication()`، وإعطاء الحقن العلاجية `administerInjection()`، وأعمال التنظيف `cleanRooms()`.
-  عند قيام الممرض أو عامل النظافة بتنفيذ هذه الواجهة، سيضطر لتعطيل دالة إجراء العمليات الجراحية وإلقاء استثناء لأنها وظيفة تقتصر على الجراح المؤهل فقط.
-* **التطبيق الصحيح للمبدأ (ISP)**:
-  تقسيم الواجهة العامة إلى واجهات متخصصة:
-  - `Surgeon`: تحتوي على دالة `performSurgery()`.
-  - `Prescriber`: تحتوي على دالة `prescribeMedication()`.
-  - `CareGiver`: تحتوي على دالة `administerInjection()`.
-  - `SanitationWorker`: تحتوي على دالة `cleanRooms()`.
+* **Non-compliant Design (Bad Design)**:
+  Imagine if Flutter provided a single unified interface named `TextFieldHelper` containing all tasks for input fields: focus node handling, text formatting, copy-paste operations, and input validation. To create a simple text formatter that filters out numbers, developers would have to implement all these unrelated methods and leave them empty.
+* **Compliant Design (ISP)**:
+  Flutter splits these concerns into small, focused interfaces:
+  - `TextInputFormatter`: Declares a single `formatEditUpdate()` method dedicated solely to modifying and formatting input text.
+  - `FocusNode`: Manages only focus state and keyboard events.
+  - `FormFieldValidator`: Defines the signature for input validation.
+  This allows developers to implement `TextInputFormatter` independently to create a custom formatting class without bloating.
 
 ---
 
-## 3. مثال في الأنظمة المصرفية (خدمات الصراف الآلي - ATM)
+## 2. Hospital Management System (Medical Roles)
 
-* **التصميم غير المتوافق (Bad Design)**:
-  تصميم واجهة باسم `AtmService` تحتوي على الدوال التالية: السحب النقدي `withdrawCash()`، والإيداع `depositCash()`، والتحويل المالي `transferMoney()`، وتقديم طلبات القروض `applyForLoan()`، وتحديث الرقم السري `updatePin()`.
-  ماكينات الصراف الآلي التقليدية البسيطة لا تدعم تقديم القروض من شاشاتها؛ وبالتالي ستضطر لإلقاء استثناء عند استدعاء هذه الوظيفة غير المدعومة.
-* **التطبيق الصحيح للمبدأ (ISP)**:
-  - واجهة `BasicAtm`: تحتوي على وظائف السحب والإيداع والاستعلام عن الرصيد فقط.
-  - واجهة `AdvancedAtm`: ترث من الواجهة الأولى وتضيف وظائف التحويل المالي وتحديث الرقم السري.
-  - واجهة `BankPortalService`: تختص بالعمليات الاستثمارية المعقدة وتقديم القروض عبر البوابة الإلكترونية للفرع.
-
----
-
-## 4. مثال في تطبيقات التوصيل (مهام السائقين ووسائل النقل)
-
-* **التصميم غير المتوافق (Bad Design)**:
-  واجهة باسم `Courier` تحتوي على دوال: قيادة السيارة `driveCar()`، وقيادة الدراجة `rideBike()`، وتوجيه الطائرات المسيرة `flyDrone()`، وتحصيل المبالغ النقدية `collectCash()`، ومعالجة البطاقات الائتمانية `processCreditCard()`.
-  مندوب التوصيل الذي يستخدم دراجة عادية لا يمكنه قيادة سيارة، والطائرة المسيرة (Drone) لا يمكنها استلام المبالغ النقدية كاش من العميل.
-* **التطبيق الصحيح للمبدأ (ISP)**:
-  - واجهة `RoadNavigator`: تختص بالتوجيه وقيادة المركبات البرية.
-  - واجهة `CashHandler`: للمندوبين المسؤولين عن تحصيل الأموال نقدًا عند الاستلام.
-  - واجهة `DroneNavigator`: للتحكم وتوجيه الطائرات المسيرة ذاتية القيادة.
+* **Non-compliant Design (Bad Design)**:
+  Creating a global interface named `HospitalWorker` containing methods like: `performSurgery()`, `prescribeMedication()`, `administerInjection()`, and `cleanRooms()`.
+  When a nurse or janitor implements this interface, they are forced to write empty overrides or throw exceptions for `performSurgery()` because that action belongs strictly to qualified surgeons.
+* **Compliant Design (ISP)**:
+  Segregate the global interface into dedicated interfaces:
+  - `Surgeon`: Declares the `performSurgery()` method.
+  - `Prescriber`: Declares the `prescribeMedication()` method.
+  - `CareGiver`: Declares the `administerInjection()` method.
+  - `SanitationWorker`: Declares the `cleanRooms()` method.
 
 ---
 
-## 5. مثال في أنظمة المطاعم (أدوار العاملين)
+## 3. Banking System (ATM Services)
 
-* **التصميم غير المتوافق (Bad Design)**:
-  واجهة باسم `Staff` تحتوي على دوال: تسجيل الطلبات `takeOrder()`، وتحضير الأطعمة `prepareFood()`، وتقديم الوجبات `serveFood()`، وتنظيف الطاولات `cleanTables()`، وحساب الفاتورة `calculateBill()`.
-  النادل لا يقوم بطهي الطعام، والطاهي لا يتولى تنظيف الطاولات في حال وجود كادر مخصص لأعمال النظافة.
-* **التطبيق الصحيح للمبدأ (ISP)**:
-  - واجهة `OrderTaker`: لتسجيل طلبات العملاء.
-  - واجهة `FoodPreparer`: للطهاة لإعداد وتحضير الطعام.
-  - واجهة `FoodServer`: للنادلين لتقديم الأطباق للعملاء.
-  - واجهة `TableCleaner`: لعمال النظافة المتخصصين.
+* **Non-compliant Design (Bad Design)**:
+  Designing an interface named `AtmService` containing methods like: `withdrawCash()`, `depositCash()`, `transferMoney()`, `applyForLoan()`, and `updatePin()`.
+  Standard, low-cost ATMs do not support loan applications from their physical terminals; therefore, implementing this class forces developers to throw exceptions when loan methods are invoked.
+* **Compliant Design (ISP)**:
+  - `BasicAtm`: Declares only basic services like withdrawals, deposits, and balance inquiries.
+  - `AdvancedAtm` extends `BasicAtm` and adds fund transfers and PIN update methods.
+  - `BankPortalService`: Dedicated to complex investment operations and loan applications through the bank's main web portal.
 
-</div>
+---
+
+## 4. Delivery Application (Courier Services)
+
+* **Non-compliant Design (Bad Design)**:
+  A `Courier` interface containing methods like: `driveCar()`, `rideBike()`, `flyDrone()`, `collectCash()`, and `processCreditCard()`.
+  A delivery rider using a bicycle cannot drive a car, and an autonomous delivery drone cannot collect cash payments from customers.
+* **Compliant Design (ISP)**:
+  - `RoadNavigator`: Handles route calculation and driving land vehicles.
+  - `CashHandler`: For human couriers authorized to collect cash on delivery.
+  - `DroneNavigator`: Declares navigation and flight controls for autonomous delivery drones.
+
+---
+
+## 5. Restaurant System (Employee Shifts)
+
+* **Non-compliant Design (Bad Design)**:
+  An interface named `Staff` containing methods like: `takeOrder()`, `prepareFood()`, `serveFood()`, `cleanTables()`, and `calculateBill()`.
+  The waiter does not cook food, and the chef does not clean customer tables if the restaurant employs dedicated cleaning staff.
+* **Compliant Design (ISP)**:
+  - `OrderTaker`: For employees taking customer orders.
+  - `FoodPreparer`: For chefs preparing and cooking meals.
+  - `FoodServer`: For waitstaff serving dishes to customer tables.
+  - `TableCleaner`: For sanitation staff cleaning tables.

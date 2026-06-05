@@ -1,12 +1,10 @@
-<div dir="rtl">
+# Code Explanation Line-by-Line
 
-# شرح الكود سطرًا بسطر لمبدأ LSP: code-explanation.md
-
-شرح تفصيلي للتصميم البرمجي المتوافق المكتوب في ملف [good.dart](code/good.dart):
+A detailed explanation of the compliant software design implemented in [good.dart](code/good.dart):
 
 ---
 
-## 1. كلاس الأب التجريدي `Student`
+## 1. Abstract Base Class `Student`
 
 ```dart
 abstract class Student {
@@ -16,12 +14,12 @@ abstract class Student {
   void study();
 }
 ```
-- **`Student`**: الكلاس الأساسي المشترك لجميع فئات الطلاب في النظام.
-- **`study()`**: دالة مجردة (Abstract Method). بما أن جميع الطلاب يشتركون في صفة الدراسة وحضور المحاضرات (كلٌ وفق أسلوبه)، تم الإعلان عنها كعقد برمجي يلتزم به أي كلاس يرث من `Student`.
+- **`Student`**: The unified base class representing common attributes of all students in the university.
+- **`study()`**: An abstract method. Since all students are expected to study and attend classes in their own way, we declare this action as a contract that all subclasses inheriting from `Student` must implement.
 
 ---
 
-## 2. كلاس المرشح للمنح `ScholarshipCandidate`
+## 2. Scholarship Candidate Abstraction `ScholarshipCandidate`
 
 ```dart
 abstract class ScholarshipCandidate extends Student {
@@ -30,49 +28,49 @@ abstract class ScholarshipCandidate extends Student {
   void applyForScholarship();
 }
 ```
-- **`extends Student`**: كلاس مجرد يرث من الكلاس الأساسي `Student`.
-- **`applyForScholarship()`**: دالة إضافية مخصصة لفئة الطلاب المؤهلين لتقديم طلبات المنح الدراسية فقط. ويضمن هذا الفصل عدم إتاحة ميزة التقديم للمنح للفئات غير المؤهلة.
+- **`extends Student`**: An abstract class extending the base class `Student`.
+- **`applyForScholarship()`**: An additional method contract designated exclusively for students eligible to apply for scholarships. Isolating this method prevents ineligible student categories from having access to it.
 
 ---
 
-## 3. كلاسات الطلاب الحقيقية (Concrete Classes)
+## 3. Concrete Subclasses
 
-### الطالب المنتظم `RegularStudent`
+### Regular Student `RegularStudent`
 ```dart
 class RegularStudent extends ScholarshipCandidate {
   RegularStudent(String name) : super(name);
 
   @override
   void study() {
-    print('$name بيذاكر المحاضرات ويحل التكليفات.');
+    print('$name is studying lectures and completing assignments.');
   }
 
   @override
   void applyForScholarship() {
-    print('$name قدم على المنحة الدراسية بنجاح.');
+    print('$name successfully applied for the scholarship.');
   }
 }
 ```
-- يرث من الكلاس الوسيط `ScholarshipCandidate`؛ وبالتالي يرث كلتا الدالتين: دالة الدراسة ودالة التقديم للمنحة.
-- يعيد تعريف الدالتين (`@override`) ويحدد سلوكهما الفعلي دون إلقاء استثناءات أو أخطاء.
+- Inherits from the intermediate class `ScholarshipCandidate`, thereby receiving both contracts: `study` and `applyForScholarship`.
+- Overrides both methods (`@override`) to define their concrete behaviors, without throwing exceptions or disabling inherited behavior.
 
-### الطالب المستمع `AuditorStudent`
+### Auditor Student `AuditorStudent`
 ```dart
 class AuditorStudent extends Student {
   AuditorStudent(String name) : super(name);
 
   @override
   void study() {
-    print('$name بيحضر المحاضرات للاستماع فقط بدون امتحانات.');
+    print('$name is attending lectures as an auditor, without exams.');
   }
 }
 ```
-- يرث من كلاس الأب `Student` مباشرة؛ وبالتالي لا يرث سوى دالة الدراسة `study()`.
-- لا يحتوي الكلاس على دالة التقديم للمنحة، مما يقيه من الاضطرار لكتابة وظائف غير متوافقة مع طبيعته أو إلقاء استثناءات لتعطيل سلوك موروث غير مرغوب فيه.
+- Inherits directly from the base `Student` class, thus only receiving the `study()` contract.
+- By not inheriting from `ScholarshipCandidate`, it has no access to the scholarship application method, protecting it from having to disable unsupported behaviors or throw exceptions.
 
 ---
 
-## 4. دالة المعالجة الفنية ونقطة الانطلاق `main()`
+## 4. Application Processing and the Main Method
 
 ```dart
 void processScholarshipApplications(List<ScholarshipCandidate> candidates) {
@@ -81,13 +79,11 @@ void processScholarshipApplications(List<ScholarshipCandidate> candidates) {
   }
 }
 ```
-- تم تحديد نوع المدخلات في الدالة لتستقبل قائمة من نوع `List<ScholarshipCandidate>` بدلاً من القائمة العامة للطلاب. يضمن ذلك على مستوى المترجم (Compile-time) أن كافة العناصر الممررة تدعم دالة التقديم للمنحة ولن تتسبب في حدوث أخطاء أثناء التشغيل.
+- The input parameter type is constrained to `List<ScholarshipCandidate>` rather than a general list of students. This ensures at compile-time that all elements passed into the loop safely support the `applyForScholarship` method and will not crash at runtime.
 
 ```dart
   final List<ScholarshipCandidate> scholarshipCandidates = allStudents
       .whereType<ScholarshipCandidate>()
       .toList();
 ```
-- في الدالة الرئيسية `main` يتم استخدام الدالة `whereType<ScholarshipCandidate>()` لتصفية قائمة الطلاب العامة واقتطاع الطلاب المؤهلين للمنح فقط وتمريرهم للدالة المعنية بأمان تام، بما يتوافق بالكامل مع معايير مبدأ LSP.
-
-</div>
+- In the main entry point `main()`, we use Dart's `whereType<ScholarshipCandidate>()` utility method to filter the general student list, extracting only the eligible candidates and passing them safely to the processor, in full compliance with the Liskov Substitution Principle.

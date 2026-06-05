@@ -1,38 +1,34 @@
-<div dir="rtl">
+# Compliant Design Explanation (Good Design)
 
-# شرح التصميم البرمجي المتوافق (Good Design): good-example.md
-
-في ملف الكود [good.dart](code/good.dart)، قمنا بإعادة هيكلة شجرة التوريث وتصحيح توزيع المسؤوليات والوظائف كالتالي:
+In [good.dart](code/good.dart), we restructured the inheritance hierarchy and aligned responsibilities as follows:
 
 ---
 
-## بنية الحل البرمجي الجديد
+## New Solution Structure
 
-1. **الاحتفاظ بالسلوكيات المشتركة الفعلية في كلاس الأب (`Student`)**:
-   بما أن جميع فئات الطلاب تشترك في صفة الدراسة وحضور المحاضرات، قمنا بحصر كلاس الأب `Student` في أداء السلوك المشترك الفعلي فقط، وهو دالة الدراسة `study()`.
+1. **Common Behavior in Base Class (`Student`)**:
+   Since all students study and attend lectures, we limited the base class `Student` to common behaviors, primarily the abstract `study()` method.
 
-2. **إنشاء كلاس وسيط لفئة مؤهلي المنح (`ScholarshipCandidate`)**:
-   قمنا بإنشاء كلاس وسيط يرث من `Student` باسم `ScholarshipCandidate` ليضم فئات الطلاب المؤهلين لتقديم طلبات المنح الدراسية، وحصرنا دالة التقديم للمنح `applyForScholarship` داخل هذا الكلاس.
+2. **Specialized Class for Scholarship Candidates (`ScholarshipCandidate`)**:
+   We introduced a specialized abstract class named `ScholarshipCandidate` that extends `Student`. This class holds the `applyForScholarship()` method contract, which is only relevant to students eligible for scholarships.
 
-3. **إعادة توزيع علاقات التوريث بشكل سليم**:
-   - كلاس `RegularStudent` (الطالب المنتظم) يرث من الكلاس الوسيط `ScholarshipCandidate` (لأنه يدرس ويحق له التقديم على المنح).
-   - كلاس `AuditorStudent` (الطالب المستمع) يرث مباشرة من كلاس الأب `Student` (لأنه يدرس فقط ولا يحق له التقديم على المنح).
+3. **Restructuring the Inheritance Relationships**:
+   - `RegularStudent` extends the intermediate `ScholarshipCandidate` class (because they study and qualify for scholarships).
+   - `AuditorStudent` extends the base `Student` class directly (because they only study and do not qualify for scholarships).
 
 ---
 
-## الفوائد والمميزات المعمارية المكتسبة
+## Acquired Architectural Benefits
 
-* **ضمان سلامة وأمان الأنواع في مرحلة الترجمة (Compile-time Safety)**:
-   أصبحت الدالة المسؤولة عن معالجة طلبات المنح تستقبل قائمة من نوع المرشحين للمنح فقط `List<ScholarshipCandidate>`:
+* **Compile-Time Type Safety**:
+   The routine responsible for processing scholarship applications now strictly requires a list of `ScholarshipCandidate` objects:
    ```dart
    void processScholarshipApplications(List<ScholarshipCandidate> candidates) { ... }
    ```
-   بفضل هذا التحديد، سيمنع مصرف لغة Dart (Compiler) تمرير أي طالب مستمع `AuditorStudent` لهذه الدالة لأن نوعه لا يتوافق مع `ScholarshipCandidate`. وبذلك، تم حسم ومعالجة الخطأ المحتمل أثناء كتابة الكود وقبل تشغيله الفعلي.
+   Thanks to this restriction, the Dart compiler prevents developers from passing an `AuditorStudent` instance to this method. Potential runtime bugs are caught and resolved during development.
 
-* **الامتثال التام لمبدأ LSP**:
-   أصبح بمقدور أي كلاس مشتق من `Student` (سواء كان طالبًا منتظمًا أو مستمعًا) الحلول محل كلاس الأب في أي جزء من النظام يتطلب سلوك الدراسة `study()`، دون التسبب في إلقاء استثناءات أو حدوث أخطاء غير متوقعة.
+* **Full Compliance with LSP**:
+   Now, any subclass deriving from `Student` (whether regular or auditing) can substitute for the parent class `Student` in any context requesting the common `study()` method, without throwing exceptions or breaking client expectations.
 
-* **الاستغناء عن جمل التحقق الشرطية**:
-   تم التخلص تمامًا من جمل التحقق مثل `if (student is AuditorStudent)`، مما يتيح الاعتماد على تعدد الأشكال (Polymorphism) بشكل نظيف وسليم ومتوافق مع المعايير المعمارية.
-
-</div>
+* **No More Type Checks**:
+   We completely eliminated conditional patches like `if (student is AuditorStudent)`. The codebase leverages polymorphism cleanly and conforms to modern architectural standards.

@@ -1,31 +1,31 @@
-// كود عك بيخالف مبدأ الـ OCP
-// هنا لو حابين نضيف نوع طالب جديد بخصم جديد، هنضطر نعدل في الكلاس الرئيسي ونزود Case جديدة!
+// Non-compliant code violating the Open-Closed Principle (OCP)
+// If we want to add a new student type with a new discount, we must modify the main class and add a new case to the switch statement.
 
 enum StudentType { regular, vip, scholarship }
 
 class DiscountCalculator {
-  // الميثود دي بتخالف الـ OCP بشكل صارخ!
+  // This method violates OCP because it is not closed for modification.
   double calculateDiscount(double originalPrice, StudentType type) {
     switch (type) {
       case StudentType.regular:
-        return originalPrice * 0.10; // خصم 10% للطلاب العاديين
+        return originalPrice * 0.10; // 10% discount for regular students
       case StudentType.vip:
-        return originalPrice * 0.20; // خصم 20% للطلاب الـ VIP
+        return originalPrice * 0.20; // 20% discount for VIP students
       case StudentType.scholarship:
-        return originalPrice * 0.50; // خصم 50% لطلاب المنح الدراسية
+        return originalPrice * 0.50; // 50% discount for scholarship students
     }
   }
 }
 
 void main() {
-  print('--- تشغيل كود حساب الخصم العك (Bad OCP Example) ---');
+  print('--- Running Non-compliant Code (Bad OCP Example) ---');
   final calculator = DiscountCalculator();
   
   final regularDiscount = calculator.calculateDiscount(1000, StudentType.regular);
   final vipDiscount = calculator.calculateDiscount(1000, StudentType.vip);
   final scholarshipDiscount = calculator.calculateDiscount(1000, StudentType.scholarship);
 
-  print('خصم الطالب العادي: $regularDiscount جنيه');
-  print('خصم الطالب الـ VIP: $vipDiscount جنيه');
-  print('خصم طالب المنحة: $scholarshipDiscount جنيه');
+  print('Regular Student Discount: \$$regularDiscount');
+  print('VIP Student Discount: \$$vipDiscount');
+  print('Scholarship Student Discount: \$$scholarshipDiscount');
 }

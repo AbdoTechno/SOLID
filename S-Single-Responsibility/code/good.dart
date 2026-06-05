@@ -1,9 +1,9 @@
-// كود نظيف ومتصلح بناءً على مبدأ الـ SRP
-// كل كلاس هنا ليه وظيفة واحدة وسبب واحد للتغيير.
+// Compliant code adhering to the Single Responsibility Principle (SRP)
+// Each class here has a single responsibility and only one reason to change.
 
 import 'dart:io';
 
-// 1. كلاس الطالب: مسؤول فقط عن الاحتفاظ ببيانات الطالب والكورسات المسجل فيها
+// 1. Student class: Only responsible for holding student data and their enrolled courses
 class Student {
   final String id;
   final String name;
@@ -14,42 +14,42 @@ class Student {
 
   void enrollInCourse(String courseName) {
     enrolledCourses.add(courseName);
-    print('تم تسجيل الطالب $name في كورس: $courseName');
+    print('Student $name enrolled in course: $courseName');
   }
 }
 
-// 2. كلاس المخزن: مسؤول فقط عن عمليات الحفظ وجلب البيانات (Database/Persistence operations)
+// 2. StudentRepository class: Only responsible for persistence/database operations
 class StudentRepository {
   void saveToDatabase(Student student) {
-    print('جاري الاتصال بقاعدة البيانات...');
-    // محاكاة حفظ في الداتا بيز
+    print('Connecting to the database...');
+    // Simulate database write delay
     sleep(Duration(milliseconds: 500));
-    print('تم حفظ الطالب ${student.name} بنجاح في جدول Students.');
+    print('Student ${student.name} successfully saved to Students table.');
   }
 }
 
-// 3. كلاس خدمة الإيميل: مسؤول فقط عن إرسال الرسائل والإشعارات (Notification operations)
+// 3. EmailService class: Only responsible for sending notifications
 class EmailService {
   void sendWelcomeEmail(Student student) {
-    print('جاري إرسال إيميل ترحيبي إلى ${student.email} ...');
-    // محاكاة إرسال إيميل
+    print('Sending welcome email to ${student.email}...');
+    // Simulate email sending delay
     sleep(Duration(milliseconds: 500));
-    print('تم إرسال الإيميل بنجاح: "أهلاً بك يا ${student.name} في كليتنا!"');
+    print('Email successfully sent: "Welcome ${student.name} to our college!"');
   }
 }
 
 void main() {
-  print('--- تشغيل الكود النظيف (Good SRP Example) ---');
+  print('--- Running Compliant Code (Good SRP Example) ---');
   
-  // 1. بننشئ الطالب
-  final student = Student(id: '101', name: 'أحمد محروس', email: 'ahmed@example.com');
-  student.enrollInCourse('علم الحاسوب 101');
+  // 1. Create student
+  final student = Student(id: '101', name: 'Ahmed Mahrous', email: 'ahmed@example.com');
+  student.enrollInCourse('Computer Science 101');
   
-  // 2. بنحفظ الطالب عن طريق الريبوزتري المخصص
+  // 2. Save student using the dedicated repository
   final repo = StudentRepository();
   repo.saveToDatabase(student);
   
-  // 3. بنبعت الإيميل عن طريق سيرفس الإيميل المخصصة
+  // 3. Send welcome email using the dedicated email service
   final emailService = EmailService();
   emailService.sendWelcomeEmail(student);
 }

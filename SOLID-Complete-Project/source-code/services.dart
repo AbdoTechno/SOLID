@@ -1,40 +1,40 @@
-// موديولات منطق العمل والخدمات (Services/Business Logic Layer)
-// بيعبر عن الـ SRP وتنسيق التعاون بين الكائنات بشكل سليم
+// Business Logic Services (Services/Business Logic Layer)
+// Implements SRP by separating student registration, course enrollment, and grading services
 
 import 'interfaces.dart';
 import 'models.dart';
 
-// 1. خدمة تسجيل الطلاب (SRP): مسؤولة فقط عن حفظ الطالب في الداتا بيز
+// 1. Student Registration Service (SRP): Only responsible for registering a student in storage
 class StudentRegistry {
   final StudentRepository _repository;
 
   StudentRegistry(this._repository);
 
   void registerStudent(BaseStudent student) {
-    print('\n[Registry] جاري تسجيل الطالب الجديد: ${student.name}...');
+    print('\n[Registry] Registering new student: ${student.name}...');
     _repository.save(student);
-    print('[Registry] تم تسجيل الطالب ${student.name} بنجاح.');
+    print('[Registry] Student ${student.name} registered successfully.');
   }
 }
 
-// 2. خدمة إدارة التسجيل في المواد (SRP): مسؤولة فقط عن إضافة الكورسات للطالب
+// 2. Course Enrollment Service (SRP): Only responsible for enrolling students in courses
 class EnrollmentManager {
   void enrollStudentInCourse(BaseStudent student, Course course) {
-    print('\n[Enrollment] محاولة تسجيل مادة ${course.name} للطالب ${student.name}...');
+    print('\n[Enrollment] Attempting to enroll student ${student.name} in course ${course.name}...');
     student.enroll(course);
   }
 }
 
-// 3. خدمة رصد الدرجات (SRP & LSP & ISP): مسؤولة عن رصد الدرجات للطلاب المؤهلين
+// 3. GradeBook Service (SRP & LSP & ISP): Responsible for assigning grades to eligible students (Gradable)
 class GradeBook {
   void assignGrade(BaseStudent student, Course course, String grade) {
-    print('\n[GradeBook] محاولة رصد درجة مادة ${course.name} للطالب ${student.name}...');
+    print('\n[GradeBook] Attempting to record grade for student ${student.name} in course ${course.name}...');
     
-    // تشيك احترام الـ LSP: لو الطالب بيطبق واجهة الـ Gradable نرصد له الدرجة، غير كدة نرفض بأمان
+    // LSP Compliance Check: If student implements Gradable, record the grade. Otherwise, skip safely.
     if (student is Gradable) {
       (student as Gradable).addGrade(course, grade);
     } else {
-      print('تنبيه أمان (LSP): الطالب ${student.name} هو طالب مستمع (Audit). لا يمكن رصد درجات له في النظام.');
+      print('Security Alert (LSP): Student ${student.name} is an auditor (AuditStudent). Cannot assign grades to audit students in this system.');
     }
   }
 }

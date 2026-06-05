@@ -1,45 +1,41 @@
-<div dir="rtl">
+# Quick Revision Sheet for Interface Segregation Principle (ISP)
 
-# ورقة المراجعة السريعة لمبدأ فصل الواجهات: revision-sheet.md
-
-دليل المراجعة السريعة لمبدأ فصل الواجهات (ISP)، مصمم للاسترجاع السريع للمفاهيم الأساسية:
+A quick guide for the Interface Segregation Principle (ISP), designed for fast recall of core concepts:
 
 ---
 
-## التعريف الأساسي (Definition)
+## Core Definition
 
-ينص المبدأ على عدم إجبار أي كلاس على الاعتماد أو تنفيذ واجهات برمجية أو دوال لا يستخدمها في عمله الفعلي. ويتم تحقيق ذلك بتفتيك وتجزئة الواجهات الكبيرة الضخمة إلى واجهات متخصصة أصغر حجمًا.
-
----
-
-## الخلاصة (One-Line Summary)
-
-> **"يجب ألا تفرض الواجهات البرمجية دوالاً غير ضرورية على الكلاسات المنفذة لها."**
+No class should be forced to depend on or implement interfaces or methods that it does not use. This is achieved by splitting large, bloated interfaces into smaller, more specific ones.
 
 ---
 
-## فوائد التطبيق (Benefits)
+## One-Line Summary
 
-1. **كود رشيق ونظيف** وخالٍ تمامًا من الدوال الميتة أو الصورية.
-2. **عزل كامل للتأثيرات البرمجية** وتقليل الترابط الوثيق (Loose Coupling).
-3. **تبسيط عمليات المحاكاة** (Mocking) وتسهيل اختبارات الوحدة.
-4. **مرونة فائقة** في دمج وتركيب الواجهات لبناء أدوار معقدة وجديدة (Role-based Design).
+> **"Interfaces should not force classes to implement methods they do not need."**
 
 ---
 
-## العلامات التحذيرية لمخالفة المبدأ (Red Flags)
+## Benefits
 
-* وجود دوال منفذة داخل الكلاس تلقي استثناءات التعطيل مثل `throw UnimplementedError()`.
-* كتابة دوال فارغة تمامًا لا تؤدي وظيفة فعلية فقط من أجل استكمال شروط المترجم.
-* احتواء الواجهة الواحدة على دوال تخدم جهات ومصالح متباينة في النظام (مثل التخزين والعرض معًا).
-* تأثر كلاسات متعددة برمجياً عند تعديل دالة في واجهة، على الرغم من عدم استخدام الكلاسات لهذه الدالة نهائيًا.
+1. **Clean and Lean Code**: Completely free of dead or stubbed methods.
+2. **Reduced Coupling**: Complete isolation of behavior, leading to loose coupling.
+3. **Easier Mocking**: Simpler simulation of dependencies during unit testing.
+4. **High Flexibility**: Better composition of interfaces to build complex, role-based behaviors.
 
 ---
 
-## إرشادات سريعة للمقابلات الفنية (Interview Tips)
+## Red Flags (Violations)
 
-* **المصطلحات المحورية**: التركيز على مفاهيم "واجهة الدور" (Role Interface)، و"الواجهة المتضخمة" (Bloated/Fat Interface).
-* **المثال النموذجي**: شرح مثال عضو الجامعة `UniversityMember` وكيفية تجزئته إلى واجهات متخصصة مثل `ClassAttendee`, `CourseInstructor` و `SalariedEmployee`.
-* **العلاقة بالمبادئ**: توضيح أن مبدأ ISP هو بمثابة مبدأ المسؤولية الواحدة (SRP) ولكن عند تطبيقه على الواجهات البرمجية (Interfaces) بدلاً من الكلاسات.
+* The presence of methods throwing `UnimplementedError()` or similar exceptions.
+* Empty methods implemented solely to satisfy compiler/interface requirements.
+* A single interface containing methods serving unrelated responsibilities (e.g., storage and display in the same interface).
+* Modifying a method in an interface causes compilation errors or requires changes in classes that do not use that method.
 
-</div>
+---
+
+## Technical Interview Tips
+
+* **Key Concepts**: Focus on "Role Interface" vs. "Fat/Bloated Interface".
+* **Standard Example**: The University Member example, showing how it is split into specialized interfaces like `ClassAttendee`, `CourseInstructor`, and `SalariedEmployee`.
+* **Relationship to Other Principles**: ISP is essentially the Single Responsibility Principle (SRP) applied to interfaces instead of classes.

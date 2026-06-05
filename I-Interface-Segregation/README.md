@@ -1,54 +1,50 @@
-<div dir="rtl">
+# Interface Segregation Principle (ISP)
 
-# مبدأ فصل الواجهات: Interface Segregation Principle (ISP)
-
-يعد مبدأ فصل الواجهات (ISP) المبدأ الرابع من مبادئ SOLID، ويهدف إلى صياغة واجهات برمجية (Interfaces) رشيقة ومحددة التخصص لحماية الكود من الدوال الزائدة غير المستخدمة.
+The Interface Segregation Principle (ISP) is the fourth of the SOLID principles. It aims to design lean, highly specialized interfaces to protect classes from bloating with unused and irrelevant methods.
 
 ---
 
-## تعريف المبدأ (What is ISP?)
+## What is ISP?
 
-ينص مبدأ فصل الواجهات على ما يلي: **"لا ينبغي إجبار أي كلاس على الاعتماد على واجهات برمجية أو دوال لا يستخدمها"** (Clients should not be forced to depend upon interfaces that they do not use).
+The Interface Segregation Principle states: **"Clients should not be forced to depend upon interfaces that they do not use."**
 
-وبعبارة أخرى، بدلاً من تصميم واجهة واحدة ضخمة تحتوي على عدد كبير من الدوال وإلزام جميع الكلاسات بتنفيذها بالكامل، يوجه المبدأ نحو تقسيمها إلى واجهات صغيرة متخصصة، لكي يختار كل كلاس الواجهة المناسبة لاحتياجاته الفعلية فقط.
-
----
-
-## دواعي وجود المبدأ (Why it Exists?)
-
-لتوضيح أهمية المبدأ، نفترض أننا قمنا بتصميم واجهة عامة باسم `UniversityMember` وحشدنا داخلها كافة الدوال المرتبطة بالمنتسبين للجامعة: دوال للتعليم، والتدريس، وحساب الرواتب، وحراسة البوابات، وأعمال التنظيف.
-
-عند محاولة إنشاء كلاس يمثل الطالب `Student` وينفذ هذه الواجهة، سيجد المطور نفسه مجبرًا على كتابة كود برمجى فارغ أو إلقاء استثناءات لتعطيل دوال مثل حساب الرواتب وحراسة البوابة لعدم تناسبها مع طبيعة الطالب. يمثل هذا التداخل عيبًا تصميميًا واضحًا يعوق صيانة وتوسيع النظام.
+In other words, instead of designing a single, massive interface containing a large number of method signatures and forcing all implementing classes to provide concrete definitions for all of them, OCP directs us to divide the interface into smaller, specialized interfaces. This allows each class to implement only the interface contracts relevant to its actual business needs.
 
 ---
 
-## المشكلات التي يحلها المبدأ (Problems it Solves)
+## Why it Exists?
 
-1. **الواجهات المتضخمة (Fat/Bloated Interfaces)**: يمنع حشد وظائف متباينة وغير مترابطة في واجهة برمجية واحدة.
-2. **التمثيل البرمجي الصوري (Dummy Implementations)**: يخلص المشروع من الدوال الفارغة التي تُكتب فقط لإرضاء المترجم (Compiler)، مثل:
-   `void doSomething() { /* لا توجد وظيفة فعلية */ }`
-3. **هشاشة الكود واعتماديته**: في الواجهات الضخمة، يؤدي تعديل دالة واحدة إلى إجبار كافة الكلاسات التي تنفذ تلك الواجهة على إعادة البناء والترجمة (Recompile)، حتى لو كانت تلك الكلاسات لا تستخدم الدالة المعدلة نهائيًا.
+To illustrate the importance of the principle, suppose we designed a single global interface named `UniversityMember` and packed it with all method contracts related to university staff and students: teaching lectures, grading exams, paying tuition fees, security shifts, and kitchen tasks.
 
----
-
-## فوائد تطبيق المبدأ (Benefits)
-
-* **واجهات برمجية رشيقة ومحددة (Lean Interfaces)**: يضمن أن يحتوي كل كلاس على الوظائف الفعلية التي يحتاجها ويقوم بتنفيذها فقط.
-* **تقليل وقت الترجمة والاعتماديات (Reduced Build Time)**: في المشاريع الكبيرة، يمنع هذا التقسيم إعادة بناء (Rebuild) المكونات التي لم تتأثر بالتغيير الفعلي.
-* **مرونة معمارية عالية**: يتيح دمج واجهات صغيرة متعددة (Interface Composition) لتلبية الاحتياجات المتغيرة بمرونة تامة.
+When trying to create a `Student` class implementing this interface, the developer is forced to write empty mock definitions or throw runtime exceptions to disable methods like `calculateSalary()` or `gradeExams()`. This bloated design is a massive code smell that hampers the maintainability and scalability of the system.
 
 ---
 
-## عواقب تجاهل المبدأ (Drawbacks if Ignored)
+## Problems it Solves
 
-* **تراكم الكود غير المستخدم (Dead Code)**: تضخم ملفات المشروع بدوال فارغة وميتة لا وظيفة لها، مما يربك المطورين ويصعب قراءة الكود.
-* **صعوبة الصيانة وتحديث الواجهات**: يؤدي تعديل واجهة رئيسية متضخمة إلى إحداث خلل وتعديلات قسرية في أجزاء واسعة من النظام.
+1. **Bloated Interfaces**: Prevents mixing unrelated actions and responsibilities in a single, massive interface.
+2. **Dummy Implementations**: Eliminates empty method bodies written solely to satisfy the compiler:
+   `void doSomething() { /* No actual operation */ }`
+3. **Fragile Recompilations**: In large codebases, modifying a single method signature in a bloated interface forces all classes implementing that interface to recompile and rebuild, even if those classes do not consume the modified method.
 
 ---
 
-## العلاقة بمبادئ SOLID الأخرى (Relation to other SOLID Principles)
+## Benefits
 
-* **مع مبدأ المسؤولية الواحدة (SRP)**: يمثل ISP تطبيقًا لمبدأ SRP ولكن على مستوى الواجهات البرمجية (Interfaces)؛ حيث يركز SRP على تحديد مسؤولية الكلاسات، بينما يركز ISP على تحديد مسؤولية الواجهات.
-* **مع مبدأ إحلال ليسكوف (LSP)**: يضمن تطبيق مبدأ ISP عدم اضطرار الكلاسات المشتقة لتعطيل دوال موروثة غير مرغوبة عبر إلقاء استثناءات، مما يحافظ على سلامة الامتثال لمبدأ LSP.
+* **Lean Interfaces**: Guarantees that every class only implements the methods it actually needs to perform its job.
+* **Reduced Rebuild Times**: In large projects, decoupling interfaces prevents rebuilding system components that were not affected by the code modification.
+* **Better Architectural Composition**: Small interfaces can be combined dynamically (Interface Composition) to meet changing business requirements.
 
-</div>
+---
+
+## Drawbacks if Ignored
+
+* **Accumulation of Dead Code**: The codebase becomes cluttered with empty, unused methods, confusing developers and reducing code readability.
+* **Rigid Maintenance**: Modifying a bloated global interface triggers a chain reaction of forced updates across many unrelated classes in the system.
+
+---
+
+## Relation to other SOLID Principles
+
+* **Single Responsibility Principle (SRP)**: ISP is effectively SRP applied at the interface level. While SRP guides us to limit a class's responsibility, ISP guides us to limit the scope of interfaces.
+* **Liskov Substitution Principle (LSP)**: Adhering to ISP ensures subclasses are not forced to disable unsupported parent behaviors by throwing exceptions, maintaining full compliance with LSP.

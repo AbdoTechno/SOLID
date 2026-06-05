@@ -1,41 +1,38 @@
-<div dir="rtl">
+# Non-compliant Design Explanation (Bad Design)
 
-# شرح التصميم البرمجي غير المتوافق (Bad Design): bad-example.md
-
-في ملف الكود [bad.dart](code/bad.dart), يوضح المثال التالي الخلل الناتج عن استخدام التوريث غير الصحيح وكيف يؤدي إلى خلل في استقرار النظام:
+In [bad.dart](code/bad.dart), the example illustrates the architectural instability and issues caused by incorrect inheritance:
 
 ---
 
-## تحليل المشكلة البرمجية في الكود
+## Core Problem Analysis
 
-قمنا بإنشاء كلاس أب باسم `Student` يحتوي على دالة `applyForScholarship` (التقديم على منحة دراسية).
-بعد ذلك، قمنا بإنشاء كلاس ابن باسم `AuditorStudent` (الطالب المستمع) يرث من كلاس `Student`.
-تكمن المشكلة في أن الطالب المستمع في نظام الجامعة لا يحق له التقديم على المنح الدراسية؛ إذ يقتصر دوره على حضور المحاضرات فقط. ولكن بسبب علاقة التوريث، فُرض على كلاس `AuditorStudent` وراثة دالة `applyForScholarship`.
+We created a parent class named `Student` containing an `applyForScholarship` method.
+Subsequently, we created a subclass named `AuditorStudent` (an auditing student attending lectures without grades) that inherits from `Student`.
 
-ولحل هذه المعضلة بشكل سريع ومؤقت، قام المطور بإعادة تعريف الدالة (Override) وجعلها تلقي استثناءً عند الاستدعاء:
+The problem is that in a university system, an auditor student is not eligible to apply for scholarships; they only attend lectures. However, due to the inheritance relationship, `AuditorStudent` is forced to inherit the `applyForScholarship` method.
+
+To resolve this logically mismatching behavior, the developer overrode the method to throw a runtime exception when invoked:
 ```dart
-throw Exception('خطأ: الطالب المستمع لا يمكنه التقديم على منحة دراسية...');
+throw Exception('Error: Auditor student cannot apply for scholarships...');
 ```
 
-يمثل هذا التصميم انتهاكًا صريحًا لمبدأ **إحلال ليسكوف (LSP)**؛ لأن كلاس الابن (`AuditorStudent`) لا يمكنه الحلول محل الأب (`Student`) دون إحداث خطأ برمجي يسبب توقف النظام.
+This design directly violates the **Liskov Substitution Principle (LSP)** because the subclass (`AuditorStudent`) cannot substitute for its parent class (`Student`) without throwing an exception and breaking client code.
 
 ---
 
-## المشكلات الناتجة وصعوبة الصيانة (Maintenance Issues)
+## Maintenance Issues
 
-1. **انهيار النظام في مرحلة التشغيل (Runtime Crash)**:
-   عند استخدام دالة المعالجة الجماعية للمرور على قائمة من الطلاب `List<Student>` واستدعاء الدالة `applyForScholarship` لكل طالب (وهو تصرف برمي متوقع وسليم بناءً على وعود كلاس الأب)، سينهار النظام فورًا بمجرد وصول الدورة إلى كائن من نوع `AuditorStudent`.
+1. **Runtime Crashes**:
+   When client code processes a collection of students (`List<Student>`) and invokes `applyForScholarship()` on each element—which is expected and safe behavior under the parent's contract—the system crashes the moment the loop encounters an `AuditorStudent` object.
 
-2. **الترقيع البرمجي (Code Smells)**:
-   لتفادي انهيار البرنامج، سيضطر المطور لكتابة شروط برمجية لتفحص النوع يدويًا مثل:
+2. **Code Smells and Rigid Patching**:
+   To prevent runtime crashes, developers are forced to check the object type manually:
    ```dart
    if (student is! AuditorStudent) {
      student.applyForScholarship();
    }
    ```
-   يعد هذا الحل مؤشرًا سلبيًا على جودة التصميم (Code Smell)؛ حيث ينتهك مبدأ OCP نظرًا للحاجة لتعديل هذا الشرط مستقبلاً مع كل نوع طالب جديد لا يستحق المنحة (مثل الطالب الزائر). كما أنه يوضح عدم موثوقية علاقة التوريث المنشأة.
+   This type check is a classic code smell. It violates OCP because this condition must be modified every time a new student subtype is introduced that does not qualify for scholarships (e.g., visitor students). It proves that the inheritance hierarchy is unreliable.
 
-3. **تضليل المطورين الآخرين**:
-   عندما يرى مطورو الفريق وجود دالة التقديم للمنح في الكلاس الأب `Student`، سيفترضون إمكانية استدعائها بأمان لكافة فئات الطلاب. ويؤدي ظهور استثناءات غير متوقعة أثناء التشغيل الفعلي إلى تراجع الثقة في البنية المعمارية للنظام وصعوبة تتبع الأخطاء.
-
-</div>
+3. **Misleading Interface Contracts**:
+   When other team members see `applyForScholarship` defined in the base `Student` class, they assume it can be invoked safely on any `Student` instance. Unexpected exceptions at runtime destroy trust in the system's architecture and make debugging difficult.

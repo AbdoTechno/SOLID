@@ -1,34 +1,30 @@
-<div dir="rtl">
+# Non-compliant Design Explanation (Bad Design)
 
-# شرح التصميم البرمجي غير المتوافق (Bad Design): bad-example.md
-
-في ملف الكود [bad.dart](code/bad.dart)، يمثل كلاس `Student` نموذجًا للتصميم غير المتوافق مع مبدأ المسؤولية الواحدة (SRP):
+In [bad.dart](code/bad.dart), the `Student` class is a textbook example of a design that violates the Single Responsibility Principle (SRP).
 
 ---
 
-## تحليل المشكلة الأساسية في الكود
+## Core Problem Analysis
 
-يتحمل كلاس `Student` بمسؤوليات متعددة لا تقع ضمن اختصاصه المباشر. ويمكن تصنيف هذه المسؤوليات كالتالي:
-1. **إدارة البيانات الأساسية للطالب**: الاحتفاظ باسم الطالب وبريده الإلكتروني والمواد الدراسية التي يسجل فيها (وهذه هي مسؤوليته الأساسية المقبولة).
-2. **إدارة عمليات حفظ البيانات (Persistence)**: يحتوي الكلاس على تفاصيل الاتصال بقاعدة البيانات وكتابة كود الاستعلام والحفظ (وهي مسؤولية تقع خارج نطاق منطق الطالب البرمجي).
-3. **إرسال الإشعارات والبريد الإلكتروني**: يحتوي الكلاس على منطق الاتصال بخادم البريد الإلكتروني وإرسال الرسائل (وهي وظيفة تتبع لخدمة اتصالات مستقلة).
+The `Student` class takes on multiple responsibilities that do not fall under its primary domain. These responsibilities are:
+1. **Managing Core Student Data**: Holding the student's name, email, and enrolled courses (this is its only valid primary responsibility).
+2. **Database Persistence**: Managing database connection details and save logic (which should belong to a database infrastructure class).
+3. **Notification/Email Services**: Managing connection details to mail servers and formatting email messages (which should belong to an independent notification service).
 
 ---
 
-## المشكلات المتوقع حدوثها مستقبلاً (Future Problems)
+## Future Problems
 
-عند اعتماد هذا التصميم في بيئة العمل الفعلية، تظهر مشكلات رئيسية:
+Adopting this non-compliant design in a production environment leads to several major issues:
 
-1. **الاعتمادية عند تعديل طريقة حفظ البيانات**: 
-   إذا قررت المؤسسة تغيير نظام قاعدة البيانات المستخدم (على سبيل المثال من SQL إلى MongoDB)، فسنضطر إلى تعديل كلاس `Student` وتحديث الدالة `saveToDatabase`. إن إقحام تفاصيل حفظ البيانات داخل منطق الطالب يعرض الكود بأكمله للخلل عند أي تغيير في البنية التحتية لقاعدة البيانات.
+1. **Fragile Database Changes**: 
+   If the organization decides to switch the database system (for instance, from SQL to MongoDB), we are forced to open the `Student` class and modify the `saveToDatabase` method. Mixing database details with core business logic risks introducing bugs into unrelated student behavior whenever the storage infrastructure is updated.
 
-2. **الاعتمادية عند تعديل خدمات الإرسال**:
-   في حال تغيير مزود خدمة البريد الإلكتروني أو آلية إرسال الرسائل الترحيبية، سنضطر مجددًا لفتح كلاس `Student` لتعديل الدالة `sendWelcomeEmail`. أي لمس أو تعديل في كود هذا الكلاس يهدد استقرار بقية الوظائف البرمجية الأخرى.
+2. **Fragile Notification Changes**:
+   If the email provider changes, or if we want to change the greeting format, we have to open the `Student` class and modify `sendWelcomeEmail`. Modifying a stable class for unrelated infrastructure changes threatens the stability of the entire system.
 
-3. **صعوبة اختبار الوحدات (Unit Testing)**:
-   عند الحاجة لاختبار دالة تسجيل الطالب في مادة دراسية `enrollInCourse` والتحقق من صحتها، سنجد أن الكلاس يعتمد بشكل وثيق على الاتصال الفعلي بقاعدة البيانات وشبكة البريد الإلكتروني. يفرض ذلك توفير محاكاة (Mocking) معقدة وغير ضرورية لقواعد البيانات والشبكات لمجرد إجراء اختبار بسيط لوظيفة إضافة عنصر إلى قائمة.
+3. **Untestable Business Logic**:
+   If we want to write a unit test for the course enrollment method `enrollInCourse` to verify its logic, the class forces a real connection to the database and mail servers. We would be forced to write complex mock implementations for networks and databases just to test a simple list insertion.
 
-4. **تضارب التعديلات البرمجية (Merge Conflicts)**:
-   إذا كان هناك مطوران يعملان معًا؛ حيث يقوم الأول بتحديث آلية إرسال البريد الإلكتروني، ويقوم الثاني بتطوير آلية تخزين البيانات، فسيضطر كلاهما للتعديل في نفس الملف (`Student.dart`). يؤدي ذلك إلى حدوث تعارضات كبيرة عند دمج الكود باستخدام أنظمة التحكم في الإصدار (Git).
-
-</div>
+4. **Frequent Merge Conflicts**:
+   If two developers work on different tasks—one updating the email template and the other optimizing database queries—both must modify the exact same file (`bad.dart`). This leads to severe merge conflicts when integrating changes via Git.

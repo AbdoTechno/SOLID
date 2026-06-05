@@ -1,12 +1,10 @@
-<div dir="rtl">
+# Code Explanation Line-by-Line
 
-# شرح الكود سطرًا بسطر: code-explanation.md
-
-شرح تفصيلي للتصميم البرمجي المتوافق المكتوب في ملف [good.dart](code/good.dart):
+A detailed explanation of the compliant software design implemented in [good.dart](code/good.dart):
 
 ---
 
-## 1. كلاس الطالب `Student`
+## 1. Student Class
 
 ```dart
 class Student {
@@ -17,82 +15,80 @@ class Student {
 
   Student({required this.id, required this.name, required this.email});
 ```
-- **المتغيرات (`id`, `name`, `email`)**: تمثل الخصائص الأساسية للطالب. تم تعريف هذه المتغيرات بتهيئة ثابتة `final` مما يعني عدم إمكانية تعديلها بعد التحديد الأول، وهو ما يضمن استقرار وثبات حالة الكائن (Object State).
-- **القائمة `enrolledCourses`**: قائمة مخصصة لتخزين أسماء المواد الدراسية التي يسجل فيها الطالب.
-- **مشيد الكلاس (Constructor)**: يستقبل البيانات المطلوبة باستخدام الكلمة المفتاحية `required` لضمان عدم إنشاء كائن طالب دون تزويد المعرف والاسم والبريد الإلكتروني.
+- **State Fields (`id`, `name`, `email`)**: Represent the core properties of a student. These variables are declared as `final`, meaning their values cannot be reassigned after initialization. This ensures the stability of the object state.
+- **`enrolledCourses` list**: A dedicated list for storing the names of courses the student registers for.
+- **Constructor**: Receives parameters with the `required` keyword to guarantee that a student object cannot be created without an ID, name, and email.
 
 ```dart
   void enrollInCourse(String courseName) {
     enrolledCourses.add(courseName);
-    print('تم تسجيل الطالب $name في كورس: $courseName');
+    print('Student $name enrolled in course: $courseName');
   }
 }
 ```
-- **الدالة `enrollInCourse`**: تختص بإضافة مادة دراسية جديدة لقائمة الطالب وطباعة رسالة تأكيد. تمثل هذه الدالة جوهر مسؤولية الطالب الأكاديمية.
+- **`enrollInCourse` method**: Responsible for adding a new course to the student's list and printing a confirmation message. This is the core academic responsibility of the Student class.
 
 ---
 
-## 2. كلاس مستودع حفظ البيانات `StudentRepository`
+## 2. StudentRepository Class
 
 ```dart
 class StudentRepository {
   void saveToDatabase(Student student) {
-    print('جاري الاتصال بقاعدة البيانات...');
-    // محاكاة حفظ في قاعدة البيانات
+    print('Connecting to the database...');
+    // Simulate database write delay
     sleep(Duration(milliseconds: 500));
-    print('تم حفظ الطالب ${student.name} بنجاح في جدول Students.');
+    print('Student ${student.name} successfully saved to Students table.');
   }
 }
 ```
-- **المسؤولية**: لا يحتوي هذا الكلاس على متغيرات حالة، وإنما يمثل كلاس خدمة (Service/Repository Class) يختص بعمليات التخزين.
-- **الدالة `saveToDatabase`**:
-  - تستقبل كائنًا من نوع `Student` كمعامل (Parameter). يمثل هذا النمط حقنًا بسيطًا للاعتمادية (Dependency Injection)؛ حيث لا يتولى الكلاس إنشاء كائن الطالب بنفسه، بل يستقبله جاهزًا لأداء عملية الحفظ.
-  - تستخدم الدالة `sleep(Duration(milliseconds: 500))` لمحاكاة التأخير الزمني الفعلي المصاحب لعمليات الاتصال بقواعد البيانات الحقيقية.
-  - تطبع رسالة تأكيد تفيد بنجاح عملية الحفظ.
-- **أهمية التصميم**: في حال تغيير وسيط التخزين إلى ملف JSON أو نظام آخر، يقتصر التعديل على هذا المكون فقط دون أي تأثير على منطق كلاس `Student`.
+- **Responsibility**: This class holds no state properties. It acts as a stateless service/repository class dedicated to database persistence.
+- **`saveToDatabase` method**:
+  - Accepts a `Student` instance as a parameter. This demonstrates Dependency Injection: the repository class does not create the student object itself, but receives it externally to process the persistence logic.
+  - Calls `sleep(Duration(milliseconds: 500))` to simulate the latency associated with network-based database writes.
+  - Prints a confirmation message indicating a successful save operation.
+- **Design Advantage**: If we change the storage engine to a local JSON file or a web service, the modification is confined entirely to this class, without affecting the `Student` class.
 
 ---
 
-## 3. كلاس خدمة البريد الإلكتروني `EmailService`
+## 3. EmailService Class
 
 ```dart
 class EmailService {
   void sendWelcomeEmail(Student student) {
-    print('جاري إرسال إيميل ترحيبي إلى ${student.email} ...');
-    // محاكاة إرسال بريد إلكتروني
+    print('Sending welcome email to ${student.email}...');
+    // Simulate email sending delay
     sleep(Duration(milliseconds: 500));
-    print('تم إرسال الإيميل بنجاح: "أهلاً بك يا ${student.name} في كليتنا!"');
+    print('Email successfully sent: "Welcome ${student.name} to our college!"');
   }
 }
 ```
-- **المسؤولية**: يختص هذا الكلاس بالاتصال بالشبكة وإرسال رسائل البريد الإلكتروني.
-- **الدالة `sendWelcomeEmail`**:
-  - تستقبل كائن `Student` لقراءة اسم الطالب وبريده الإلكتروني.
-  - تطبع رسالة محاكاة لإرسال البريد الإلكتروني عبر الشبكة.
-- **أهمية التصميم**: تعديل محتوى الرسالة أو تغيير مزود الخدمة يتم بشكل مستقل تمامًا داخل هذا الكلاس.
+- **Responsibility**: Manages SMTP server connections and executes notification dispatches.
+- **`sendWelcomeEmail` method**:
+  - Accepts a `Student` instance to read their name and destination email.
+  - Simulates sending the email and prints a success log.
+- **Design Advantage**: Updating email templates or switching SMTP providers is done independently within this class.
 
 ---
 
-## 4. نقطة الانطلاق `main()`
+## 4. Main Entry Point `main()`
 
 ```dart
 void main() {
-  print('--- تشغيل الكود النظيف (Good SRP Example) ---');
+  print('--- Running Compliant Code (Good SRP Example) ---');
   
-  // 1. إنشاء كائن الطالب وتنسيق تسجيل المواد الدراسية
-  final student = Student(id: '101', name: 'أحمد محروس', email: 'ahmed@example.com');
-  student.enrollInCourse('علم الحاسوب 101');
+  // 1. Create student and enroll in courses
+  final student = Student(id: '101', name: 'Ahmed Mahrous', email: 'ahmed@example.com');
+  student.enrollInCourse('Computer Science 101');
   
-  // 2. حفظ بيانات الطالب عبر المستودع المخصص للعملية
+  // 2. Save student using the dedicated repository
   final repo = StudentRepository();
   repo.saveToDatabase(student);
   
-  // 3. إرسال البريد الإلكتروني الترحيبي بواسطة الخدمة المعنية
+  // 3. Send welcome email using the dedicated email service
   final emailService = EmailService();
   emailService.sendWelcomeEmail(student);
 }
 ```
-- يعكس منطق الدالة الرئيسية تكامل المكونات المستقلة معًا بانسيابية؛ حيث يؤدي كل كلاس وظيفته دون ترابط وثيق مباشر (Loose Coupling) مع الكلاسات الأخرى.
-- يسهل تتبع الكود وقراءته نتيجة تقسيمه إلى خطوات منطقية مستقلة ومنظمة.
-
-</div>
+- The main method coordinates the integration of decoupled classes. Each class executes its specific task without direct tight coupling.
+- The code structure is easy to trace, read, and maintain.

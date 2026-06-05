@@ -1,40 +1,38 @@
-<div dir="rtl">
+# Code Explanation Line-by-Line
 
-# شرح الكود سطرًا بسطر لمبدأ OCP: code-explanation.md
-
-شرح تفصيلي للتصميم البرمجي المتوافق المكتوب في ملف [good.dart](code/good.dart):
+A detailed explanation of the compliant software design implemented in [good.dart](code/good.dart):
 
 ---
 
-## 1. التجريد (Abstraction)
+## 1. Abstraction
 
 ```dart
 abstract class DiscountStrategy {
   double calculateDiscount(double originalPrice);
 }
 ```
-- **`abstract class`**: كلاس تجريدي، لا يمكن إنشاء كائن (Instance) منه مباشرة. يهدف إلى توفير واجهة برمجية موحدة بمثابة عقد تلتزم به الكلاسات المشتقة.
-- **الدالة `calculateDiscount`**: دالة مجردة دون تنفيذ (Without Body)، تعلن فقط عن الاسم والمعاملات ونوع القيمة المرجعة (`double`). أي كلاس يقوم بتنفيذ (Implement) هذه الواجهة يجب عليه كتابة تفاصيل تشغيل هذه الدالة.
+- **`abstract class`**: An abstract class cannot be instantiated directly. Its purpose is to define a standard interface and establish a contract that all concrete subclasses must fulfill.
+- **`calculateDiscount` method**: An abstract method without a body. It only declares the method name, parameter signature, and return type (`double`). Any class implementing this interface is obligated to write the execution details of this method.
 
 ---
 
-## 2. التطبيقات العملية (Concrete Strategies)
+## 2. Concrete Strategies
 
 ```dart
 class RegularDiscount implements DiscountStrategy {
   @override
   double calculateDiscount(double originalPrice) {
-    return originalPrice * 0.10; // خصم 10%
+    return originalPrice * 0.10; // 10% discount
   }
 }
 ```
-- **`implements DiscountStrategy`**: تشير إلى التزام كلاس `RegularDiscount` بتنفيذ الواجهة البرمجية المجردة وتقديم الآلية المناسبة لحساب خصم الفئة العادية.
-- **`@override`**: توجيه للمترجم (Compiler) في لغة Dart يفيد بإعادة كتابة سلوك الدالة المعرفة في الواجهة الأب.
-- **المنطق الحسابي**: ضرب السعر الأصلي في القيمة `0.10` لاستخراج الخصم (10%). ويتكرر نفس المفهوم مع بقية الفئات مثل `VipDiscount` و `ScholarshipDiscount` بنسب مختلفة.
+- **`implements DiscountStrategy`**: Indicates that `RegularDiscount` promises to implement the abstract interface and provide the specific calculation rules for regular student discounts.
+- **`@override`**: A Dart compiler annotation indicating that this method overrides the definition declared in the parent interface.
+- **Calculation Logic**: Multiplies the original price by `0.10` to return a 10% discount. The same structure is used in `VipDiscount` (20%) and `ScholarshipDiscount` (50%) with different rates.
 
 ---
 
-## 3. كلاس الحساب `DiscountCalculator`
+## 3. The Calculator Class
 
 ```dart
 class DiscountCalculator {
@@ -43,13 +41,13 @@ class DiscountCalculator {
   }
 }
 ```
-- يكمن جوهر التصميم هنا؛ حيث أصبح كلاس `DiscountCalculator` مستقلاً تمامًا عن تفاصيل الفئات الحسابية المختلفة.
-- **المعامل `strategy`**: تستقبل الدالة معاملًا من نوع الواجهة التجريدية `DiscountStrategy`.
-- **التنفيذ الفعلي**: يتم استدعاء الدالة `strategy.calculateDiscount(originalPrice)`. وهنا يظهر مفهوم **تعدد الأشكال (Polymorphism)**؛ ففي مرحلة التشغيل (Runtime)، يتم تحديد الدالة المناسبة بناءً على كائن الخصم الممرر (سواء كان `VipDiscount` أو غيره). كود هذا الكلاس يظل ثابتًا ومحميًا من التعديل مستقبلاً، على الرغم من مرونته الكاملة للتعامل مع أي خصومات جديدة مضافة.
+- This class is the core of our OCP design: `DiscountCalculator` is completely decoupled from individual discount subclasses.
+- **`strategy` parameter**: The `calculate` method accepts a parameter typed as the abstract interface `DiscountStrategy`.
+- **Dynamic Dispatch**: When calling `strategy.calculateDiscount(originalPrice)`, the system uses **Polymorphism** to resolve the correct subclass calculation logic at runtime. If a `VipDiscount` is passed, the VIP formula runs. The source code of `DiscountCalculator` remains static and closed for modification, yet open to supporting any new strategy.
 
 ---
 
-## 4. نقطة الانطلاق `main()`
+## 4. Main Entry Point `main()`
 
 ```dart
 void main() {
@@ -61,8 +59,6 @@ void main() {
   ...
 }
 ```
-- يتم إنشاء كائن المحاسب لمرة واحدة.
-- لحساب قيمة الخصم، نقوم بتمرير السعر الأصلي وكائن الاستراتيجية المطلوب تطبيقها (مثل `RegularDiscount()`).
-- يوضح الكود إمكانية تشغيل `StaffDiscount` المضاف حديثًا دون الحاجة لتغيير أي جزء من كلاس `DiscountCalculator` المستقر، مما يعكس متانة الكود وأمانه.
-
-</div>
+- We instantiate `DiscountCalculator` once.
+- To calculate a discount, we pass the original price along with the specific strategy instance (e.g., `RegularDiscount()`).
+- The code demonstrates how the newly introduced `StaffDiscount` works seamlessly without modifying the `DiscountCalculator` class, proving the design is open for extension and closed for modification.

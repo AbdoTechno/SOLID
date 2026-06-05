@@ -1,59 +1,55 @@
-<div dir="rtl">
+# Theoretical Explanation of Dependency Inversion Principle (DIP)
 
-# الشرح النظري لمبدأ عكس الاعتمادية: theory.md
-
-يمثل مبدأ عكس الاعتمادية (DIP) قمة النضج المعماري في هندسة البرمجيات. ولفهمه بشكل دقيق، يجب استيعاب دلالة كلمة **"عكس" (Inversion)** وما يتم عكسه في بنية الاعتماديات.
+The Dependency Inversion Principle (DIP) represents the pinnacle of architectural maturity in software engineering. To understand it precisely, we must analyze the term **"Inversion"** and what exactly is being inverted in the structure of dependencies.
 
 ---
 
-## النموذج العقلي والتشبيه التوضيحي (Mental Model)
+## Mental Model: The Service Counter
 
-نفترض حالة **شباك الخدمة الحكومية** المخصص لإنهاء التراخيص الرسمية:
-- **التصميم التقليدي**: لإنهاء رخصة سيارتك، تذهب بنفسك للموظف "أحمد" وتتحدث معه مباشرة. إذا غاب الموظف "أحمد" تتوقف المعاملة بالكامل، وإذا غير مكانه تضطر للبحث عنه في أرجاء المبنى. أنت هنا تعتمد كليًا على شخص أحمد المادي.
-- **التصميم المقلوب (Dependency Inversion)**: تقوم الهيئة بتوفير **"نافذة خدمة" موحدة (Interface / Abstraction)** تحدد شروطًا عامة (تقديم المستندات ودفع الرسوم). أنت كعميل تتعامل مع النافذة فقط دون الاهتمام بمن يقف خلفها. ويتولى الموظفون (أحمد، أو منى، أو خالد) العمل خلف النافذة لإنجاز المعاملات.
+Consider a government office counter designated for processing vehicle licenses:
+- **Traditional Design**: To renew your license, you directly search for and interact with a specific clerk named "John". If John is absent, your entire application is halted. If John moves to another desk, you must search for him across the building. You are directly dependent on John as a concrete individual.
+- **Inverted Design (Dependency Inversion)**: The agency provides a standard **"Service Counter" (Interface / Abstraction)** that outlines general rules (submitting documents and paying fees). As a customer, you interact only with the counter, regardless of who is standing behind it. Employees (John, Mary, or David) stand behind the counter to process the transactions.
 
-في هذا التصميم، تم عكس اتجاه الاعتمادية؛ فلم تعد معتمدًا على الموظف كفرد، بل على نافذة الخدمة. والموظف بدوره يعتمد على النافذة لتلقي المعاملات. **كلا الطرفين يعتمدان على الواجهة التجريدية (Abstraction)**.
+In this design, the direction of dependency is inverted. You no longer depend on a specific employee; you depend on the service counter. Similarly, the employee depends on the rules of the counter to receive applications. **Both parties depend on the abstract interface (Abstraction).**
 
 ---
 
-## مفهوم "عكس الاعتمادية" والتحكم (Inversion of Control)
+## Decoupling Control and Inverting Dependencies
 
-في الهندسة البرمجية التقليدية، يميل التفكير الكلاسيكي لاعتبار أن المكونات الضخمة يجب أن تنشئ المكونات الأصغر داخلها مباشرة:
-*مثال*:
-كلاس `StudentManager` يقوم بإنشاء كائن قاعدة البيانات داخله:
+In traditional software design, high-level components typically instantiate their low-level helpers directly inside them:
+*Example*:
+A class `StudentManager` instantiates a concrete database object inside its constructor:
 `final db = MySqlDatabase();`
-يتجه سهم الاعتمادية هنا مباشرة من الأعلى للأسفل:
-`StudentManager` ───> `MySqlDatabase` (اعتمادية وثيقة ومباشرة).
+Here, the dependency arrow points directly from top to bottom:
+`StudentManager` ───> `MySqlDatabase` (tight, direct coupling).
 
-أما مبدأ عكس الاعتمادية، فيوجه بعكس اتجاه سهم الاعتمادية كالتالي:
-1. إنشاء واجهة برمجية مجردة (Interface) باسم `Database`.
-2. جعل كلاس `StudentManager` يستقبل الواجهة `Database` كمعامل بدلاً من كلاس قاعدة البيانات الفعلي.
-3. جعل كلاس `MySqlDatabase` ينفذ (Implement) الواجهة `Database`.
+The Dependency Inversion Principle directs us to invert this dependency direction:
+1. Define a generic interface named `Database`.
+2. Make `StudentManager` receive the abstract `Database` interface as a parameter rather than the concrete database class.
+3. Make `MySqlDatabase` implement the `Database` interface.
 
-وبذلك يتغير اتجاه الأسهم البرمجية لتشير معًا نحو الواجهة التجريدية:
+As a result, both components now point toward the abstraction:
 - `StudentManager` ───> `Database` (Abstraction)
 - `MySqlDatabase` ───> `Database` (Abstraction)
 
-تصبح التفاصيل الفنية المادية خاضعة للتصميم التجريدي العام للنظام، وتم عكس اتجاه الاعتمادية لضمان استقلالية منطق العمل.
+The technical implementation details are now subordinate to the system's abstract design. The dependency direction is inverted, ensuring that the core business logic remains independent of low-level infrastructure.
 
 ---
 
-## المفاهيم المغلوطة والأخطاء الشائعة (Common Mistakes)
+## Common Misconceptions and Errors
 
-1. **الخلط بين مبدأ عكس الاعتمادية (DIP) وحقن الاعتمادية (Dependency Injection - DI)**:
-   - **DIP**: هو مبدأ وتوجه معماري عام ينص على ضرورة اعتماد المكونات على التجريد وليس التفاصيل.
-   - **DI**: هو آلية أو أداة برمجية لتطبيق هذا المبدأ (مثل تمرير الكائنات عبر مشيد الكلاس بدلاً من إنشائها داخليًا: `StudentManager(this.database)`).
-   من الممكن استخدام آلية DI دون تحقيق مبدأ DIP؛ على سبيل المثال عند كتابة `StudentManager(MySqlDatabase db)`؛ فهنا قمنا بحقن الاعتمادية ولكننا ما زلنا نعتمد على كلاس مادي وتفاصيل فنية محددة وليس على تجريد.
+1. **Confusing Dependency Inversion (DIP) with Dependency Injection (DI)**:
+   - **DIP**: A high-level architectural principle stating that components should depend on abstractions, not concrete details.
+   - **DI**: A software pattern and technique used to supply dependencies to a class (e.g., passing a database client via the class constructor: `StudentManager(this.database)` instead of instantiating it inside).
+   It is entirely possible to use DI without adhering to DIP. For example, if you write `StudentManager(MySqlDatabase db)`, you are injecting the dependency, but your class still directly depends on a concrete, low-level implementation rather than an abstraction.
 
-2. **الاعتماد على واجهات متغيرة وغير مستقرة (Unstable Abstractions)**:
-   إنشاء واجهات برمجية تتعرض للتعديل المستمر. يجب أن تتسم الواجهات بالاستقرار والثبات البرمجي، بينما تقتصر التغييرات والتحديثات على الكلاسات الفعلية التي تقوم بتنفيذها.
+2. **Relying on Unstable Abstractions**:
+   Creating interfaces that change frequently defeats the purpose. Abstractions should be stable and robust, while implementation details change and adapt behind them.
 
 ---
 
-## الفهم العملي للمبدأ (Practical Understanding)
+## Practical Implementation of the Principle
 
-لتطبيق مبدأ DIP بنجاح في شيفرتك البرمجية:
-- **تجنب إنشاء كائنات الخدمات الخارجية داخل كلاسات منطق العمل**:
-   بدلاً من كتابة `final emailService = EmailService();` داخل دالة تسجيل الطلاب في كلاس `StudentManager`، يجب تمرير واجهة الاتصال المجردة `NotificationService` عبر كونسركتور الكلاس، والاعتماد على الدالة الرئيسية أو حاويات حقن الخدمات (مثل `GetIt` في بيئة Flutter) لتمرير الكلاس الفعلي المناسب. يضمن هذا الأسلوب بقاء منطق العمل نظيفًا ومستقلاً تمامًا عن التقنيات الخارجية.
-
-</div>
+To apply DIP successfully in your codebase:
+- **Avoid instantiating external services inside core business logic classes**:
+  Instead of writing `final emailService = EmailService();` directly inside `StudentManager`, pass an abstract interface like `NotificationService` through the constructor. Use dependency injection frameworks or service locators (like `GetIt` in Flutter) to inject the appropriate concrete instance. This keeps your business logic isolated and completely independent of external packages and providers.

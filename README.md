@@ -1,50 +1,46 @@
-<div dir="rtl">
+# SOLID Principles Educational Reference
 
-# مرجع مبادئ SOLID التعليمي
+This project is a comprehensive technical reference and educational guide for the five SOLID principles, developed based on the educational content of Engineer Omar Ahmed. It is designed to simplify revision before technical interviews, deepen your understanding of software design principles, and serve as a long-term reference for writing clean code in real-world projects.
 
-يعد هذا المشروع مرجعاً تقنياً متكاملاً ودليلاً تعليمياً لمبادئ SOLID الخمسة، تم إعداده بناءً على سلسلة شروحات المهندس عمر أحمد. يهدف هذا المرجع إلى تسهيل المراجعة قبل المقابلات الفنية، وتعميق فهم مبادئ التصميم البرمجي، ليكون دليلاً دائماً أثناء كتابة الأكواد في المشاريع الحقيقية.
-
-تمت كتابة هذا المرجع بأسلوب مبسط ومنهجي يجمع بين النظريات العلمية والأمثلة العملية؛ حيث يعتمد على طرح القصص والتشبيهات المستوحاة من الحياة اليومية (مثل شؤون الطلاب، أو المقابس القياسية)، مع توفير أمثلة برمجية فعلية بلغة **Dart**.
+The reference is written in a structured, professional tone that combines technical concepts with practical examples. It uses clear real-world analogies (such as student affairs, wall outlets, or printing systems) and provides fully functional code examples in **Dart**.
 
 ---
 
-## هيكل المشروع (Project Structure)
+## Repository Structure
 
-تم تقسيم المشروع إلى مجلدات منظمة لتسهيل الوصول إلى المعلومات المطلوبة:
+The repository is organized into distinct directories for easy access to specific information:
 
-* 📦 **`S-Single-Responsibility/`**: مبدأ المسؤولية الواحدة (SRP).
-* 📦 **`O-Open-Closed/`**: مبدأ المفتوح والمغلق (OCP).
-* 📦 **`L-Liskov-Substitution/`**: مبدأ إحلال ليسكوف (LSP).
-* 📦 **`I-Interface-Segregation/`**: مبدأ فصل الواجهات (ISP).
-* 📦 **`D-Dependency-Inversion/`**: مبدأ عكس الاعتمادية (DIP).
-* 🏫 **`SOLID-Complete-Project/`**: تطبيق عملي كامل متكامل (نظام إدارة جامعة) يوضح تكامل المبادئ الخمسة معاً.
-* 💼 **`INTERVIEW-NOTES/`**: أسئلة وإرشادات مقابلات العمل مقسمة حسب المستوى المهني (Junior, Mid-Level, Advanced).
-* 📝 **`MASTER-SUMMARY.md`**: ملخص شامل يحتوي على مقارنات سريعة وركائز أساسية لحفظ واستحضار المبادئ.
-
----
-
-## محتويات دليل كل مبدأ (For Each Principle)
-
-يحتوي المجلد الخاص بكل مبدأ (مثل `S-Single-Responsibility`) على الملفات التالية:
-
-1. **`README.md`**: التعريف بالمبدأ، ودواعي وجوده، والآثار السلبية المترتبة على تجاهله.
-2. **`theory.md`**: الشرح النظري للمبدأ، والتفكير المنطقي وراء صياغته.
-3. **`bad-example.md`**: شرح التصميم البرمجي غير المتوافق مع المبدأ والمشكلات التي يسببها.
-4. **`good-example.md`**: شرح التصميم البرمجي المتوافق ومميزاته الفنية.
-5. **`real-world-example.md`**: أمثلة واقعية متنوعة لتطبيق المبدأ في مجالات مختلفة (مثل الاتصال بالشبكة، وإرسال الرسائل).
-6. **`code-explanation.md`**: شرح الكود المصدري سطر بسطر بلغة Dart.
-7. **`interview-questions.md`**: أسئلة المقابلات الشخصية المتوقعة مع إجاباتها المنهجية.
-8. **`revision-sheet.md`**: ورقة مراجعة سريعة تحتوي على ملخص مكثف للمبدأ.
-9. **`code/`**: مجلد يحتوي على الكود المصدري الفعلي للتصميمين المتوافق وغير المتوافق (`bad.dart` و`good.dart`).
+* `S-Single-Responsibility/`: Single Responsibility Principle (SRP) resources.
+* `O-Open-Closed/`: Open-Closed Principle (OCP) resources.
+* `L-Liskov-Substitution/`: Liskov Substitution Principle (LSP) resources.
+* `I-Interface-Segregation/`: Interface Segregation Principle (ISP) resources.
+* `D-Dependency-Inversion/`: Dependency Inversion Principle (DIP) resources.
+* `SOLID-Complete-Project/`: A simplified, fully integrated project (university student affairs system) demonstrating how all five principles work together cohesively.
+* `INTERVIEW-NOTES/`: Interview questions and guidelines categorized by professional level (Junior, Mid-Level, Advanced).
+* `MASTER-SUMMARY.md`: A high-level summary table and cheat sheet for quick review.
 
 ---
 
-## كيفية الاستفادة من هذا المرجع
+## Directory Contents (For Each Principle)
 
-1. **الدراسة الأولى**: ابدأ بدراسة كل مبدأ بالترتيب عبر قراءة ملفي `README.md` و`theory.md` لتكوين الفكرة الأساسية والنظرية.
-2. **التطبيق العملي**: اطلع على ملفات الكود المصدري في مجلد `code/` وقم بتشغيل الأكواد وتجربتها بنفسك.
-3. **الاستعداد للمقابلات الشخصية**: راجع ملف `interview-questions.md` الخاص بكل مبدأ، ثم استعن بالملفات الموجودة في مجلد `INTERVIEW-NOTES` لتلخيص المفاهيم.
+Each principle's directory contains the following files:
 
-تم إعداد هذا المرجع لتبسيط المفاهيم الهندسية المعقدة وتسهيل فهمها للجميع.
+1. **`README.md`**: Introduction to the principle, its purpose, and the drawbacks of ignoring it.
+2. **`theory.md`**: Theoretical explanation and the design philosophy behind the principle.
+3. **`bad-example.md`**: Breakdown of a design that violates the principle and the problems it causes.
+4. **`good-example.md`**: Breakdown of the compliant design and its architectural benefits.
+5. **`real-world-example.md`**: Real-world application scenarios across different domains (e.g., API clients, payment gateways).
+6. **`code-explanation.md`**: Line-by-line explanation of the Dart source code.
+7. **`interview-questions.md`**: Expected technical interview questions with complete, structured answers.
+8. **`revision-sheet.md`**: A quick cheat sheet summarizing the core concepts of the principle.
+9. **`code/`**: A subdirectory containing the actual Dart source code files for the bad and good designs (`bad.dart` and `good.dart`).
 
-</div>
+---
+
+## How to Use This Reference
+
+1. **Initial Learning**: Study each principle sequentially, starting with its `README.md` and `theory.md` to establish the foundational concept.
+2. **Practical Review**: Explore the source files under the `code/` subdirectories, run the code, and examine the terminal output.
+3. **Interview Preparation**: Review the `interview-questions.md` file in each principle's directory, and study the summaries compiled in the `INTERVIEW-NOTES` directory.
+
+This reference is optimized to make advanced software design concepts accessible and easy to recall.

@@ -1,14 +1,12 @@
-<div dir="rtl">
+# System Architecture and Class Diagrams
 
-# المعمارية ومخططات العلاقات للمشروع المبسط
-
-توضح هذه المخططات العلاقات والاعتماديات المتبادلة بين الفئات والخدمات البرمجية بأبسط شكل ممكن لتسهيل الفهم والتحليل البرمجي.
+These diagrams illustrate the relationships and dependencies between classes and services in the simplified project, providing an easy-to-understand representation of the system structure.
 
 ---
 
-## 1. مخطط هيكلية الفئات ونطاق العمل (Domain Hierarchy Diagram)
+## 1. Domain Hierarchy Diagram
 
-يوضح المخطط كيفية فصل واجهة `Gradable` عن الفئة الأب لضمان التوافق مع مبدأ إحلال ليسكوف (LSP) ومبدأ فصل الواجهات (ISP):
+This diagram shows how we separated the `Gradable` interface from the parent student class to satisfy the Liskov Substitution Principle (LSP) and the Interface Segregation Principle (ISP):
 
 ```text
                      +----------------------------+
@@ -28,9 +26,9 @@
     +--------------------------+        +--------------------------+|
     |      CreditStudent       |        |       AuditStudent       ||
     +--------------------------+        +--------------------------+|
-    | - Map<Course,Str> grades |        | (يحضر المقررات دون درجات) ||
-    +--------------------------+        +--------------------------+|
-    | + addGrade(Course, Grade)|                                    |
+    | - Map<Course,Str> grades |        | (Attends courses without ||
+    +--------------------------+        |  grades)                 ||
+    | + addGrade(Course, Grade)|        +--------------------------+|
     | + getGrades()            |                                    |
     +--------------------------+                                    |
                  |                                                  |
@@ -45,20 +43,20 @@
                                                                     |
                                      +----------------------------+ |
                                      |      ExchangeStudent       | +
-                                     |    (نوع إضافي مستقبلي)     |
+                                     | (Future student type model)|
                                      +----------------------------+
 ```
 
 ---
 
-## 2. مخطط تدفق إعداد الاعتماديات والخدمات (Dependency Setup Flow)
+## 2. Dependency Setup Flow
 
-يوضح هذا المخطط كيفية عزل فئات منطق العمل عن مخازن البيانات المادية باستخدام الواجهات (Interfaces) وحقن الاعتمادية (Dependency Injection):
+This diagram demonstrates how core business logic classes are isolated from concrete storage components using interfaces and Dependency Injection (DI):
 
 ```text
             +-----------------------------------------------+
             |                   main.dart                   |
-            |     (يقوم بإنشاء الكائنات وحقنها عبر المشيدات)     |
+            |   (Creates objects & injects via constructors)  |
             +-----------------------+-----------------------+
                                     |
             +-----------------------+-----------------------+
@@ -68,14 +66,14 @@
 |    StudentRegistry    |                       |       GradeBook       |
 +-----------+-----------+                       +-----------+-----------+
             |                                               |
-            | (Depends on)                                  | (Checks)
+            | (Depends on)                                  | (Checks if Gradable)
             v                                               v
 +-----------------------+                       +-----------------------+
 | <<StudentRepository>> |                       |     <<Gradable>>      |
 |      (Interface)      |                       |   (Interface/ISP)     |
 +-----------------------+                       +-----------+-----------+
-            ^                                               ^
-            | (Implements)                                  | (Implements)
+            |                                               ^
+            | (Implemented by)                              | (Implemented by)
 +-----------------------+                       +-----------+-----------+
 |InMemoryStudentRepos.  |                       |     CreditStudent     |
 |    (Infrastructure)   |                       +-----------------------+
@@ -84,20 +82,18 @@
 
 ---
 
-## 3. تدفق البيانات أثناء عملية رصد الدرجات (Data Flow: Grading)
+## 3. Data Flow: Grading Operation
 
 ```text
-[المسار الموجه في دالة main] ──(Student, Course, Grade)──> [GradeBook Service]
-                                                                   │
-                                                   (هل ينفذ الطالب واجهة Gradable؟)
-                                                                   │
-                                            ┌──────────────────────┴──────────────────────┐
-                                            │ (نعم)                                       │ (لا)
-                                            v                                             v
-                                   [Cast to Gradable]                            [طباعة رسالة أمان فنية]
-                                (student.addGrade())                             (خروج آمن للطالب المستمع)
+[Execution path in main()] ──(Student, Course, Grade)──> [GradeBook Service]
+                                                               │
+                                               (Does student implement Gradable?)
+                                                               │
+                                         ┌─────────────────────┴─────────────────────┐
+                                         │ (Yes)                                     │ (No)
+                                         v                                           v
+                                [Cast to Gradable]                         [Print safety log message]
+                               (student.addGrade())                        (Safe exit for audit student)
 ```
 
-بذلك تظهر البنية المعمارية للمشروع واضحة وبسيطة، ومصممة لتسهيل الفهم والمراجعة السريعة لمبادئ التصميم.
-
-</div>
+This architecture establishes a flexible, decoupled system, providing a reference for reviewing SOLID design practices.

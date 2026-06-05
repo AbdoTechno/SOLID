@@ -1,14 +1,12 @@
-<div dir="rtl">
+# Non-compliant Design Explanation (Bad Design)
 
-# شرح التصميم البرمجي غير المتوافق (Bad Design): bad-example.md
-
-في ملف الكود [bad.dart](code/bad.dart), يوضح المثال التالي تصميماً يخالف مبدأ المفتوح والمغلق (OCP):
+In [bad.dart](code/bad.dart), the example illustrates a design that violates the Open-Closed Principle (OCP).
 
 ---
 
-## تحليل الخلل التصميمي في الكود
+## Core Problem Analysis
 
-في كلاس `DiscountCalculator` توجد دالة باسم `calculateDiscount` تستقبل السعر الأصلي ونوع الطالب كمتغير من نوع Enum. وتحتوي الدالة على جملة اختيار شرطية `switch` لتحديد قيمة الخصم المالي المخصص لكل فئة:
+In the `DiscountCalculator` class, the `calculateDiscount` method accepts the original price and a `StudentType` enum. The method uses a `switch` statement to determine the specific discount amount for each category:
 
 ```dart
 switch (type) {
@@ -18,22 +16,20 @@ switch (type) {
 }
 ```
 
-يكمن الخلل هنا في أن **الكلاس مفتوح للتعديل ومغلق أمام التمديد**، وهو ما يتعارض تمامًا مع جوهر المبدأ.
+The design flaw here is that **the class is open for modification and closed for extension**, which directly violates the core of the principle.
 
 ---
 
-## المشكلات الناتجة وصعوبة الصيانة (Maintenance Issues)
+## Maintenance Issues
 
-1. **الاضطرار للتعديل عند إضافة فئات خصم جديدة**:
-   إذا قررت المؤسسة تطبيق خصم جديد للموظفين (Staff) بنسبة 35%، أو خصم للطلاب الدوليين (International Students) بنسبة 15%، سنضطر للقيام بالخطوات التالية:
-   - فتح ملف الـ Enum وإضافة القيم الجديدة.
-   - فتح كلاس `DiscountCalculator` وتعديل جملة الـ `switch` لإضافة الحالات الجديدة.
-   - هذا التعديل المباشر في كود مستقر ومستعمل يعرض النظام لخطر ظهور أخطاء غير متوقعة.
+1. **Forced Modifications for New Categories**:
+   If the university decides to introduce a new discount for university staff (35% discount) or international students (15% discount), we are forced to:
+   - Modify the `StudentType` enum to add the new values.
+   - Modify the `DiscountCalculator` class to add new `case` statements inside the `switch` block.
+   - Modifying stable, running code in this manner risks introducing regression bugs.
 
-2. **تضخم وتعقيد الكود (Spaghetti Code)**:
-   جملة الـ `switch` هنا تبدو بسيطة وتتكون من سطر واحد لكل حالة. ولكن في التطبيقات الحقيقية، قد يتطلب حساب الخصم التحقق من شروط معقدة أو الاتصال بخدمات خارجية. ومع زيادة فئات الطلاب، ستتضخم جملة الـ `switch` وتتحول إلى كود معقد يصعب فهمه وصيانته.
+2. **Spaghetti Code and Complexity**:
+   While the `switch` statement looks simple with one-line return statements in this example, production grading and discount calculations are often highly complex (involving DB queries, eligibility audits, etc.). As the types of students increase, this single method will grow into a massive, unreadable conditional block.
 
-3. **تعقيد عملية الاختبار (Testing)**:
-   مع إضافة كل فئة خصم جديدة، سنضطر لإعادة تشغيل كافة الاختبارات السابقة لكلاس `DiscountCalculator` للتأكد من عدم تأثر فئات الخصم القديمة بالتعديلات الجديدة.
-
-</div>
+3. **Complex Regression Testing**:
+   With every new student category introduced, we must re-test the entire `DiscountCalculator` class to ensure that previously tested calculations (regular, VIP, scholarship) were not broken by the new code changes.

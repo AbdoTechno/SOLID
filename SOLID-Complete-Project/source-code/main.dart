@@ -1,5 +1,5 @@
-// نقطة الانطلاق الرئيسية وتشغيل النظام (Main Entry Point)
-// بتوضح تجميع كل أجزاء SOLID مع بعض في أبسط شكل ممكن شغالين بالـ DI
+// Main entry point of the integrated university management system
+// Demonstrates how all SOLID principles integrate seamlessly using Dependency Injection (DI)
 
 import 'interfaces.dart';
 import 'models.dart';
@@ -8,62 +8,62 @@ import 'services.dart';
 
 void main() {
   print('================================================================');
-  print('🏫 نظام إدارة شؤون طلاب الجامعة المتكامل المبسط (SOLID) 🏫');
+  print('🏫 Integrated University Management System (SOLID Complete) 🏫');
   print('================================================================');
 
-  // 1. تجهيز البنية التحتية (Infrastructure Setup) - DIP
+  // 1. Infrastructure Setup (DIP)
   final StudentRepository studentRepo = InMemoryStudentRepository();
 
-  // 2. تجهيز الخدمات الأساسية (Services Initialization) - SRP
+  // 2. Services Initialization (SRP)
   final StudentRegistry registry = StudentRegistry(studentRepo);
   final EnrollmentManager enrollmentManager = EnrollmentManager();
   final GradeBook gradeBook = GradeBook();
 
-  // 3. إنشاء الكورسات المتوفرة
-  final math = Course(code: 'MATH101', name: 'الرياضيات العامة');
-  final cs = Course(code: 'CS102', name: 'أساسيات البرمجة');
+  // 3. Define available courses
+  final math = Course(code: 'MATH101', name: 'General Mathematics');
+  final cs = Course(code: 'CS102', name: 'Introduction to Programming');
 
   print('\n---------------------------------------------------------');
-  print('=== 1. تسجيل الطلاب الجدد ===');
+  print('=== 1. New Student Registration ===');
   
-  // طالب ساعات معتمدة (Credit Student)
+  // Credit Student (Standard student taking exams and getting grades)
   final BaseStudent creditStudent = CreditStudent(
     id: 'CS-2026-001',
-    name: 'حازم شريف',
+    name: 'Hazem Sherif',
   );
 
-  // طالب مستمع (Audit Student)
+  // Audit Student (Student attending classes, not graded)
   final BaseStudent auditStudent = AuditStudent(
     id: 'AU-2026-999',
-    name: 'مصطفى كامل',
+    name: 'Mostafa Kamel',
   );
 
-  // تسجيل الطلاب في قاعدة البيانات المحلية
+  // Register students using the registry service
   registry.registerStudent(creditStudent);
   registry.registerStudent(auditStudent);
 
   print('\n---------------------------------------------------------');
-  print('=== 2. تسجيل الطلاب في المواد الدراسية ===');
+  print('=== 2. Student Course Enrollment ===');
 
-  // تسجيل حازم في المادتين
+  // Enroll Hazem in both courses
   enrollmentManager.enrollStudentInCourse(creditStudent, math);
   enrollmentManager.enrollStudentInCourse(creditStudent, cs);
 
-  // تسجيل مصطفى (المستمع) في مادة البرمجة فقط
+  // Enroll Mostafa (Audit Student) in the programming course only
   enrollmentManager.enrollStudentInCourse(auditStudent, cs);
 
   print('\n---------------------------------------------------------');
-  print('=== 3. رصد الدرجات ===');
+  print('=== 3. Grade Assignments ===');
 
-  // رصد درجات حازم (Credit Student) - سيناريو ناجح
+  // Assign grades to Hazem (Credit Student) - Successful scenario
   gradeBook.assignGrade(creditStudent, math, 'A+');
   gradeBook.assignGrade(creditStudent, cs, 'A');
 
-  // محاولة رصد درجات لمصطفى (Audit Student) - سيناريو أمان (LSP Compliant)
-  // السيستم هيرفض رصد الدرجات من غير ما يعمل Crash أو يرمي Exception غريبة
+  // Attempt to assign a grade to Mostafa (Audit Student) - Safe scenario (LSP Compliant)
+  // The system rejects the grade assignment gracefully without throwing runtime exceptions or crashing
   gradeBook.assignGrade(auditStudent, cs, 'B+');
 
   print('\n=========================================================');
-  print('🎉 تم تشغيل النظام بنجاح وتأكيد توافقية الـ SOLID كاملة! 🎉');
+  print('🎉 System executed successfully, validating all SOLID principles! 🎉');
   print('=========================================================');
 }

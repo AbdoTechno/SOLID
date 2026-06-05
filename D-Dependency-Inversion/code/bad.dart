@@ -1,38 +1,37 @@
-// كود عك بيخالف مبدأ الـ DIP
-// كلاس البيزنس الرئيسي ملحوم مباشرة في كلاس قاعدة البيانات الـ MySQL!
+// Non-compliant code violating the Dependency Inversion Principle (DIP)
+// The main business logic class is tightly coupled to the specific MySqlDatabase class!
 
 import 'dart:io';
 
-// 1. موديول منخفض المستوى (Low-level module)
+// 1. Low-level module
 class MySqlDatabase {
   void saveStudentData(String id, String name) {
-    print('جاري الاتصال بقاعدة بيانات MySQL...');
+    print('Connecting to MySQL database...');
     sleep(Duration(milliseconds: 500));
-    print('تم حفظ الطالب $name (ID: $id) بنجاح في جدول MySQL Students.');
+    print('Student $name (ID: $id) successfully saved to MySQL Students table.');
   }
 }
 
-// 2. موديول عالي المستوى (High-level module)
+// 2. High-level module
 class StudentEnrollmentSystem {
-  // كسر مبدأ الـ DIP! معتمدين مباشرة على الكلاس المادي MySQL
+  // Violates DIP! Directly depending on the concrete class MySqlDatabase.
   late final MySqlDatabase _database;
 
   StudentEnrollmentSystem() {
-    // الكلاس هو اللي بينشئ الاعتمادية بتاعته بنفسه جوة الكونسركتور!
+    // The class instantiates its own dependency inside the constructor!
     _database = MySqlDatabase();
   }
 
   void enrollStudent(String id, String name) {
-    print('بدء عملية تسجيل الطالب $name في السيستم...');
-    // لوجيك تسجيل وتأكيد
+    print('Starting student enrollment process for $name...');
+    // Enrollment logic
     _database.saveStudentData(id, name);
-    print('عملية التسجيل تمت بالكامل بنجاح.\n');
+    print('Enrollment process completed successfully.\n');
   }
 }
 
 void main() {
-  print('--- تشغيل كود التسجيل العك (Bad DIP Example) ---');
-  
-  final enrollmentSystem = StudentEnrollmentSystem();
-  enrollmentSystem.enrollStudent('2001', 'سامح عبد العزيز');
+  print('--- Running Non-compliant Code (Bad DIP Example) ---');
+  final system = StudentEnrollmentSystem();
+  system.enrollStudent('1001', 'Sameh Abdelaziz');
 }

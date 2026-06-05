@@ -1,5 +1,5 @@
-// كود عك بيخالف مبدأ الـ SRP
-// الكلاس ده بيعمل كل حاجة: بيانات الطالب، التسجيل في المواد، الحفظ في الداتا بيز، وبعت الإيميلات!
+// Non-compliant code violating the Single Responsibility Principle (SRP)
+// This class handles multiple responsibilities: holding student data, enrolling in courses, saving to the database, and sending notifications.
 
 import 'dart:io';
 
@@ -11,34 +11,34 @@ class Student {
 
   Student({required this.id, required this.name, required this.email});
 
-  // 1. مسؤولية إدارة الكورسات
+  // 1. Responsibility: Course management
   void enrollInCourse(String courseName) {
     enrolledCourses.add(courseName);
-    print('تم تسجيل الطالب $name في كورس: $courseName');
+    print('Student $name enrolled in course: $courseName');
   }
 
-  // 2. مسؤولية الحفظ في قاعدة البيانات (Persistence)
+  // 2. Responsibility: Database persistence
   void saveToDatabase() {
-    print('جاري الاتصال بقاعدة البيانات...');
-    // محاكاة حفظ في الداتا بيز
+    print('Connecting to the database...');
+    // Simulate database write delay
     sleep(Duration(milliseconds: 500));
-    print('تم حفظ الطالب $name بنجاح في جدول Students.');
+    print('Student $name successfully saved to Students table.');
   }
 
-  // 3. مسؤولية الإشعارات والاتصال (Notification)
+  // 3. Responsibility: Notifications
   void sendWelcomeEmail() {
-    print('جاري إرسال إيميل ترحيبي إلى $email ...');
-    // محاكاة إرسال إيميل
+    print('Sending welcome email to $email...');
+    // Simulate email sending delay
     sleep(Duration(milliseconds: 500));
-    print('تم إرسال الإيميل بنجاح: "أهلاً بك يا $name في كليتنا!"');
+    print('Email successfully sent: "Welcome $name to our college!"');
   }
 }
 
 void main() {
-  print('--- تشغيل الكود العك (Bad SRP Example) ---');
-  final student = Student(id: '101', name: 'أحمد محروس', email: 'ahmed@example.com');
+  print('--- Running Non-compliant Code (Bad SRP Example) ---');
+  final student = Student(id: '101', name: 'Ahmed Mahrous', email: 'ahmed@example.com');
   
-  student.enrollInCourse('علم الحاسوب 101');
+  student.enrollInCourse('Computer Science 101');
   student.saveToDatabase();
   student.sendWelcomeEmail();
 }

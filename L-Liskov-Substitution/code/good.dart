@@ -1,7 +1,7 @@
-// كود نظيف ومتصلح بناءً على مبدأ الـ LSP
-// شيلنا الـ Exception وفصلنا العلاقات صح بحيث الكود يكون متوقع وسليم 100%
+// Compliant code adhering to the Liskov Substitution Principle (LSP)
+// Removed exceptions and separated responsibilities so the behavior is fully predictable and safe.
 
-// 1. كلاس الأب الرئيسي: بيضم فقط السلوك المشترك بين كل الطلاب بلا استثناء
+// 1. Base Class: Contains only common behaviors shared by all students without exception
 abstract class Student {
   final String name;
   Student(this.name);
@@ -9,40 +9,40 @@ abstract class Student {
   void study();
 }
 
-// 2. كلاس وسيط أو واجهة للطلاب المؤهلين للتقديم على المنح
+// 2. Specialized Abstract Class: For students eligible for scholarships
 abstract class ScholarshipCandidate extends Student {
   ScholarshipCandidate(String name) : super(name);
 
   void applyForScholarship();
 }
 
-// 3. الطالب المنتظم: بيذاكر ومؤهل للمنح
+// 3. Regular Student: Studies and is eligible for scholarships
 class RegularStudent extends ScholarshipCandidate {
   RegularStudent(String name) : super(name);
 
   @override
   void study() {
-    print('$name بيذاكر المحاضرات ويحل التكليفات.');
+    print('$name is studying lectures and completing assignments.');
   }
 
   @override
   void applyForScholarship() {
-    print('$name قدم على المنحة الدراسية بنجاح.');
+    print('$name successfully applied for the scholarship.');
   }
 }
 
-// 4. الطالب المستمع: بيذاكر ويحضر بس مش مؤهل للمنح ومجبرش يكتب كود مش بتاعه
+// 4. Auditor Student: Studies and attends but is not eligible for scholarships
 class AuditorStudent extends Student {
   AuditorStudent(String name) : super(name);
 
   @override
   void study() {
-    print('$name بيحضر المحاضرات للاستماع فقط بدون امتحانات.');
+    print('$name is attending lectures as an auditor, without exams.');
   }
 }
 
-// الميثود دي دلوقتي بتاخد فقط الطلاب المؤهلين للمنح (ScholarshipCandidate)
-// مستحيل طالب مستمع يدخل هنا بالغلط ويبوظ الدنيا في الـ Runtime!
+// This method now only accepts students who are eligible for scholarships (ScholarshipCandidate)
+// It is impossible for an auditor student to be passed here and crash the system at runtime!
 void processScholarshipApplications(List<ScholarshipCandidate> candidates) {
   for (var candidate in candidates) {
     candidate.applyForScholarship();
@@ -50,22 +50,22 @@ void processScholarshipApplications(List<ScholarshipCandidate> candidates) {
 }
 
 void main() {
-  print('--- تشغيل كود المنح النظيف (Good LSP Example) ---');
+  print('--- Running Compliant Code (Good LSP Example) ---');
 
-  // طلاب الجامعة العاديين
+  // University students list
   final List<Student> allStudents = [
-    RegularStudent('علي حسن'),
-    RegularStudent('منى أحمد'),
-    AuditorStudent('عمر مكرم'), // طالب مستمع
+    RegularStudent('Ali Hassan'),
+    RegularStudent('Mona Ahmed'),
+    AuditorStudent('Omar Makram'), // Auditor student
   ];
 
-  print('=== 1. كل الطلاب بيذاكروا ===');
+  print('=== 1. All Students Study ===');
   for (var student in allStudents) {
     student.study();
   }
 
-  print('\n=== 2. تقديم المنح للطلاب المؤهلين فقط ===');
-  // بنعمل فلترة للطلاب المؤهلين للمنح فقط عشان نبعتهم للميثود المخصصة
+  print('\n=== 2. Apply for Scholarships (Eligible Students Only) ===');
+  // Filter only the students eligible for scholarships to process them safely
   final List<ScholarshipCandidate> scholarshipCandidates = allStudents
       .whereType<ScholarshipCandidate>()
       .toList();

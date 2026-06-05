@@ -1,40 +1,36 @@
-<div dir="rtl">
+# Analysis of the Bad Design: bad-example.md
 
-# شرح التصميم البرمجي غير المتوافق (Bad Design): bad-example.md
-
-في ملف الكود [bad.dart](code/bad.dart), يوضح هذا المثال مشكلة الاعتماد والارتباط المباشر (Tight Coupling) وكيف يؤثر سلباً على مرونة النظام:
+In the code file [bad.dart](file:///d:/Ai_student/Second%20Term/Design%20patterns/SOLID/D-Dependency-Inversion/code/bad.dart), this example demonstrates the issue of direct dependency and tight coupling, and how it negatively affects system flexibility.
 
 ---
 
-## تحليل المشكلة البرمجية في الكود
+## Technical Problem Analysis
 
-يعد كلاس `StudentEnrollmentSystem` مكوناً عالي المستوى (High-level Module) لأنه يضم منطق العمل الأساسي لإدارة عمليات تسجيل الطلاب.
-بينما يعد كلاس `MySqlDatabase` مكوناً منخفض المستوى (Low-level Module) لأنه يختص بتفاصيل تقنية فرعية متمثلة في الاتصال بقاعدة البيانات وحفظ وتخزين البيانات.
+The `StudentEnrollmentSystem` class is a high-level module because it contains the core business logic for managing student enrollments.
+Conversely, the `MySqlDatabase` class is a low-level module because it handles infrastructure details, specifically database connectivity and data storage.
 
-في هذا التصميم غير المتوافق، ارتكب المطور خطأين برمجين:
-1. جعل كلاس منطق العمل يعتمد مباشرة على الكلاس المادي `MySqlDatabase` كنوع محدد:
+In this bad design, the developer made two key mistakes:
+1. The business logic class directly depends on the concrete `MySqlDatabase` class:
    `late final MySqlDatabase _database;`
-2. قام بإنشاء كائن قاعدة البيانات بنفسه داخل المشيد (Constructor):
+2. The database object is instantiated directly inside the constructor:
    `_database = MySqlDatabase();`
 
-أدى هذا الأسلوب إلى ربط وثيق (Tight Coupling) لمنطق التسجيل بقواعد بيانات MySQL حصريًا.
+This approach tightly couples the enrollment logic to MySQL databases exclusively.
 
 ---
 
-## المشكلات الناتجة وصعوبة الصيانة (Maintenance Issues)
+## Resulting Maintenance Issues
 
-1. **صعوبة استبدال تكنولوجيا تخزين البيانات**:
-   في حال قررت الجامعة نقل البيانات إلى نظام قواعد بيانات آخر (مثل MongoDB) لتحسين السرعة والتحجيم، سنضطر للقيام بالتالي:
-   - فتح كلاس منطق العمل `StudentEnrollmentSystem.dart`.
-   - استبدال النوع `MySqlDatabase` بالنوع `MongoDatabase`.
-   - تعديل كود التهيئة داخل مشيد الكلاس.
-   - تحديث الدوال التي تتولى استدعاء عمليات الحفظ.
-   يمثل هذا التصميم انتهاكًا لمبدأ OCP؛ حيث اضطررنا لتعديل كلاس منطق العمل المستقر لمجرد تغيير تفصيل فني خارجي، مما يعرض النظام بأكمله للأخطاء.
+1. **Difficulty Swapping Data Storage Technologies**:
+   If the university decides to migrate its data store to another database engine (like MongoDB) to improve performance or scalability, we are forced to:
+   - Open the business logic class `StudentEnrollmentSystem`.
+   - Replace the `MySqlDatabase` type with `MongoDatabase`.
+   - Modify the instantiation code inside the constructor.
+   - Update the methods that call save/read operations.
+   This violates the Open-Closed Principle (OCP) because we must modify stable business logic just to change a low-level implementation detail, risking new bugs in the core system.
 
-2. **صعوبة إجراء اختبارات الوحدة (Unit Testing)**:
-   عند محاولة اختبار دالة التسجيل `enrollStudent` والتحقق من سلامتها، ستضطر الدالة لفتح اتصال حقيقي بقاعدة البيانات وإجراء عمليات حفظ فعلية:
-   - في حال توقف خادم قاعدة البيانات، سيفشل الاختبار على الرغم من سلامة الكود البرمجي للمنطق.
-   - ستستغرق الاختبارات وقتًا أطول نتيجة التواصل الفعلي مع قواعد البيانات.
-   - لن نتمكن من محاكاة (Mocking) قاعدة البيانات لأن كلاس منطق العمل ينشئ الكائن داخليًا ولا يسمح بتمرير كائن محاكاة من الخارج.
-
-</div>
+2. **Difficulty Running Unit Tests**:
+   To test the `enrollStudent` method, it is forced to establish a real connection to the MySQL database and write mock records to a physical database:
+   - If the database server is offline, the test will fail even if the business logic code is completely correct.
+   - Tests run much slower due to physical database communication.
+   - We cannot mock the database layer because the business logic class instantiates its dependency internally, preventing us from injecting a mock object.

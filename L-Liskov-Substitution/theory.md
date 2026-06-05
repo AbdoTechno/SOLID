@@ -1,55 +1,52 @@
-<div dir="rtl">
+# Theoretical Explanation of the Liskov Substitution Principle
 
-# الشرح النظري لمبدأ إحلال ليسكوف: theory.md
-
-يوفر مبدأ إحلال ليسكوف القواعد والضوابط المنطقية لتطبيق مفهوم التوريث بشكل سليم يمنع حدوث أخطاء برمجية في مرحلة التشغيل (Runtime).
+The Liskov Substitution Principle (LSP) provides the logical rules and guidelines for applying inheritance correctly to prevent runtime crashes in software execution.
 
 ---
 
-## النموذج العقلي والتشبيه التوضيحي (Mental Model)
+## Mental Model and Analogy
 
-لتوضيح هذا المبدأ، نستحضر **"اختبار البطة" (Duck Test)** الشهير في هندسة البرمجيات:
-> "إذا كان المكون يبدو مثل البطة، ويصدر صوتًا مثل البطة، ولكنه يحتاج إلى بطاريات ليعمل، فهذا يعني وجود خلل في التجريد (Abstraction)."
+To understand this principle, consider the famous **"Duck Test"** in software engineering:
+> "If it looks like a duck, quacks like a duck, but needs batteries to function, you probably have the wrong abstraction."
 
-في حال إنشاء كلاس يمثل "بطة لعبة" (Toy Duck) ووراثتها من كلاس "البطة" الأساسي (Duck) لمجرد التشابه في المظهر الخارجي، ستحدث مشكلة عندما يستدعي النظام دالة السباحة `swim()` أو دالة الأكل `eat()`. ستفشل البطة اللعبة وتتسبب في إلقاء استثناء (Exception) لأن سلوكها الفعلي يختلف عن وعود وسلوكيات البطة الحقيقية.
-التوريث السليم لا يعتمد على التشابه الظاهري فقط، بل يتطلب **تطابقًا كاملاً في السلوك والوعود البرمجية المقطوعة**.
+Suppose we create a `ToyDuck` class and inherit it from the main `Duck` class simply because they share visual properties. A problem arises when the system processes ducks and attempts to call `swim()` or `eat()`. The `ToyDuck` will fail and throw an exception because its actual behavior does not align with the functional promises of a real duck.
 
----
-
-## دوافع ابتكار المبدأ
-
-عندما صاغت باربارا ليسكوف هذا المبدأ في عام 1987، وضعت شروطًا برمجية صارمة لضمان سلامة العلاقات بين كلاس الأب وكلاس الابن. وجد المطورون أن لغات البرمجة تتيح فنيًا توريث أي كلاس من آخر دون قيود منطقية (كوراثة كلاس سيارة من كلاس دراجة هوائية لمجرد أنهما وسيلتا مواصلات)، وهو ما يؤدي لظهور استثناءات غير متوقعة أثناء التشغيل.
-
-ولعلاج ذلك، وضع المبدأ قاعدتين أساسيتين:
-1. **قاعدة العقود (Contracts)**: يجب على كلاس الابن الالتزام بنفس الشروط المسبقة واللاحقة (Pre-conditions & Post-conditions) التي حددها الأب.
-2. **قاعدة السلوك (Behavior)**: لا يجوز لكلاس الابن تغيير المفهوم البرمجي أو منطق عمل دوال الأب بشكل يتنافى مع توقعات بقية أجزاء النظام.
+Correct inheritance is not based on superficial visual similarity. It requires **exact alignment in behavioral expectations and contract promises**.
 
 ---
 
-## المفاهيم المغلوطة والأخطاء الشائعة (Common Mistakes)
+## Origin of the Principle
 
-1. **إلقاء استثناءات لتعطيل الوظائف الموروثة (Throwing UnimplementedError)**:
-   قد يلجأ بعض المطورين عند إنشاء كلاس ابن إلى تعطيل دالة موروثة لا تناسبه عبر كتابة:
-   `throw UnimplementedError("هذه الوظيفة غير مدعومة في هذا الكلاس")`.
-   يعد هذا المنهج خرقًا صريحًا لمبدأ LSP؛ فإذا حاول النظام استدعاء هذه الدالة مفترضًا قدرة الابن على الحلول محل الأب، سينهار التطبيق مباشرة.
+When Barbara Liskov formulated this principle in 1987, she defined strict mathematical rules to govern parent-child class relationships. Developers discovered that compiler rules allowed technical inheritance of any class from another (such as inheriting a `Car` class from a `Bicycle` class because they are both vehicles) without enforcing logical consistency, which led to unexpected runtime exceptions.
 
-2. **علاقة التوريث الوهمية (مثال المربع والمستطيل)**:
-   رياضيًا، يعد المربع مستطيلاً تساوت أضلاعه. لكن برمجياً، إذا ورثنا كلاس المربع (Square) من كلاس المستطيل (Rectangle):
-   - كلاس المستطيل يسمح بتغيير الطول بشكل مستقل عن العرض.
-   - كلاس المربع يفرض تغيير الطول والعرض معًا تلقائيًا للحفاظ على خصائص المربع.
-   - إذا كتب الكود الرئيسي المستدعي:
+To address this, LSP introduces two primary guidelines:
+1. **Contract Invariants**: The subclass must respect the pre-conditions and post-conditions defined by the parent class. It cannot strengthen pre-conditions (make it harder to call methods) or weaken post-conditions (guarantee less output).
+2. **Behavioral Invariants**: The subclass must not alter the core business meaning or logical side-effects of the parent's methods in a way that breaks client expectations.
+
+---
+
+## Misconceptions and Common Mistakes
+
+1. **Throwing UnimplementedError**:
+   Some developers create a subclass and disable inherited methods that do not apply to it by throwing exceptions:
+   `throw UnimplementedError("This method is not supported in this subclass.")`
+   This is a direct violation of LSP. If the client code invokes this method expecting a valid subtype to execute it, the application crashes immediately.
+
+2. **The Classic Square-Rectangle Problem**:
+   Mathematically, a square is a rectangle with equal sides. However, in OOP design, if we inherit `Square` from `Rectangle`:
+   - The `Rectangle` class allows setting the width and height independently.
+   - The `Square` class must force width and height to change together to maintain a square's proportions.
+   - If client code executes:
      `rectangle.setWidth(5); rectangle.setHeight(10);`
-     وكان الكائن الممرر هو مربع، فإن النتيجة الحسابية للمساحة ستكون خاطئة وتخالف التوقعات المنطقية للمستطيل، مما يكسر مبدأ LSP.
+     and the passed object is a `Square`, the calculated area will be incorrect and break the mathematical expectations of the client, violating LSP.
 
 ---
 
-## الفهم العملي للمبدأ (Practical Understanding)
+## Practical Understanding
 
-للتحقق من سلامة تطبيق مبدأ LSP في التصميم البرمجي:
-- **التساؤل المستمر**: هل يستطيع كلاس الابن تنفيذ كافة وعود ودوال كلاس الأب بنفس الطريقة والضمانات؟
-- **تجنب التحقق المكثف من النوع**: إذا كان الكود يحتوي على شروط تفحص نوع الكائن مثل:
+To verify if your code complies with LSP:
+- **Analyze Subtype Promises**: Can the subclass fulfill all parent class promises with the same logic and guarantees?
+- **Avoid Frequent Runtime Type Checks**: If you find yourself writing type checks like:
    `if (employee is Manager) { employee.calculateBonus(); }`
-   فهذا يدل على وجود خلل في التصميم. يجب تضمين الدالة في الكلاس الأب (حتى لو كانت تعيد صفرًا للموظف العادي) أو تقسيم الهيكل البرمجي إلى واجهات مستقلة.
-- **تفضيل التركيب على التوريث (Favor Composition over Inheritance)**: عند الشك في صحة علاقة التوريث، يفضل استخدام التركيب (Composition) بوضع كائن داخل الكلاس بدلاً من جعل الكلاس يرثه مباشرة.
-
-</div>
+   the inheritance model is flawed. You should define the method in the parent class (e.g., returning zero for standard employees) or break the structure into separate interfaces.
+- **Favor Composition over Inheritance**: When in doubt about whether S truly "Is-A" T, use composition (putting T as a field inside S) instead of direct subclassing.

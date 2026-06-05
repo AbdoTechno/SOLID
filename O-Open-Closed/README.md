@@ -1,53 +1,49 @@
-<div dir="rtl">
+# Open-Closed Principle (OCP)
 
-# مبدأ المفتوح والمغلق: Open-Closed Principle (OCP)
-
-يعد مبدأ المفتوح والمغلق (OCP) المبدأ الثاني من مبادئ SOLID، وهو الركيزة الأساسية لتصميم أنظمة برمجية مرنة قابلة للتوسع والتطور دون التعرض لخطر الانهيار.
+The Open-Closed Principle (OCP) is the second of the SOLID principles. It is the cornerstone for designing flexible software systems that can grow and evolve without the risk of breaking existing features.
 
 ---
 
-## تعريف المبدأ (What is OCP?)
+## What is OCP?
 
-ينص المبدأ على ما يلي: **"يجب أن تكون الكيانات البرمجية (مثل الكلاسات، والوحدات البرمجية، والدوال) مفتوحة للتمديد والتوسيع (Open for Extension)، ومغلقة أمام التعديل (Closed for Modification)"**.
+The principle states: **"Software entities (classes, modules, functions, etc.) should be open for extension, but closed for modification."**
 
-وبعبارة أخرى، عند الحاجة لإضافة ميزة أو سلوك جديد للنظام، يجب إنجاز ذلك عبر كتابة كود جديد (تمديد البنية الحالية) دون الحاجة لفتح وتعديل الكود القديم الذي يعمل بالفعل.
-
----
-
-## دواعي وجود المبدأ (Why it Exists?)
-
-لتوضيح الفكرة، نفترض نظام التوصيلات الكهربائية في المباني؛ حيث توفر المنافذ الكهربائية (مآخذ التيار القياسية) واجهة موحدة تتيح تشغيل أي جهاز جديد (مثل مروحة أو شاحن) دون الحاجة لتكسير الجدران وتمديد أسلاك جديدة من المصدر الرئيسي.
-
-في البرمجيات، إذا كان المطور يضطر لتعديل الكود القديم المستقر والمختبر مع كل ميزة جديدة يطلبها العميل، فإن ذلك يعرض النظام بأكمله لخطر ظهور أخطاء برمجية جديدة (Regression Bugs). لذا فإن العبث بالكود القديم المستقر يعد ممارسة برمجية خاطئة يجب تجنبها.
+In other words, when you need to add a new feature or behavior to the system, you should achieve this by writing new code (extending the existing structure) rather than modifying the old code that is already working and tested.
 
 ---
 
-## المشكلات التي يحلها المبدأ (Problems it Solves)
+## Why it Exists?
 
-1. **ظهور الأخطاء التراجعية (Regression Bugs)**: يقلل من احتمالية إفساد الوظائف البرمجية المستقرة عند إضافة ميزات جديدة.
-2. **صعوبة التوسع والتطوير**: يسهل إضافة سلوكيات جديدة للنظام دون الحاجة لإعادة كتابة أجزاء كبيرة من الكود الحالي.
-3. **تشتت التعديلات (Shotgun Surgery)**: يتفادي الاضطرار لتعديل ملفات متعددة في أماكن متفرقة من النظام من أجل إضافة ميزة واحدة، حيث يقتصر العمل على إضافة ملفات جديدة مستقلة.
+To illustrate the idea, consider the electrical outlets in building construction. Outlets provide a standard interface that allows you to plug in any new device (such as a fan or a charger) without breaking down walls to run new wires from the main power source.
 
----
-
-## فوائد تطبيق المبدأ (Benefits)
-
-* **الأمان عند التوسيع والتطوير**: إمكانية إضافة ميزات جديدة بكل موثوقية ودون قلق بشأن استقرار الكود البرمجي السابق.
-* **تسهيل الصيانة**: عزل الكود الجديد في ملفات وكلاسات مستقلة يسهل فهمها واختبارها.
-* **تعزيز التماسك وتطبيق مبدأ SRP**: يوجه المبدأ المطورين نحو تصميم مكونات محددة المسؤولية ومترابطة بشكل مرن عبر الواجهات البرمجية المجردة.
+In software, if a developer is forced to modify stable, tested code with every new feature request, it exposes the entire system to regression bugs. Tampering with stable legacy code is a risky programming practice that should be avoided.
 
 ---
 
-## عواقب تجاهل المبدأ (Drawbacks if Ignored)
+## Problems it Solves
 
-* **هشاشة الكود (Fragility)**: تصبح البنية البرمجية هشّة؛ بحيث يؤدي أي تعديل في موضع ما إلى خلل في مواضع أخرى غير متوقعة.
-* **ارتفاع تكلفة ووقت التطوير**: تتطلب إضافة الميزات البسيطة وقتًا طويلاً لمراجعة الكود القديم وإعادة اختباره لضمان سلامته.
+1. **Regression Bugs**: Minimizes the risk of breaking stable, existing features when adding new functionality.
+2. **Rigidity in Extension**: Simplifies adding new behaviors to the system without rewriting large portions of the existing codebase.
+3. **Shotgun Surgery**: Prevents the need to modify multiple files in scattered locations across the system just to implement a single new feature. Work is instead localized to adding new, independent files.
 
 ---
 
-## العلاقة بمبادئ SOLID الأخرى (Relation to other SOLID Principles)
+## Benefits
 
-* **مع مبدأ المسؤولية الواحدة (SRP)**: يعتمد تطبيق OCP بشكل أساسي على تقسيم المسؤوليات (SRP)؛ حيث يسهل توفير واجهات برمجية لكلاسات صغيرة متخصصة.
-* **مع مبدأ إحلال ليسكوف (LSP)**: يرتكز OCP على استخدام تعدد الأشكال (Polymorphism). ولكي يعمل هذا النمط بشكل سليم، يجب أن تكون كلاسات الأبناء قادرة على حل محل كلاسات الآباء دون إحداث خلل في النظام (وهو ما يحققه مبدأ LSP).
+* **Safe Extensibility**: New features can be added with absolute confidence without worrying about breaking existing behaviors.
+* **Easy Maintenance**: Isolating new code in independent classes makes it easier to trace, understand, and unit-test.
+* **Complements SRP**: Encourages designing highly focused, loosely coupled classes that interact through clean abstractions.
 
-</div>
+---
+
+## Drawbacks if Ignored
+
+* **Fragility**: The software architecture becomes fragile, where a modification in one area causes unexpected defects in unrelated areas.
+* **High Development Costs**: Implementing simple feature updates takes significantly longer because of the time needed to refactor, debug, and re-test legacy components.
+
+---
+
+## Relation to other SOLID Principles
+
+* **Single Responsibility Principle (SRP)**: OCP relies heavily on SRP. It is much easier to extend a system when responsibilities are split into small, highly specialized classes.
+* **Liskov Substitution Principle (LSP)**: OCP is implemented using polymorphism. For polymorphism to work correctly, subclasses must be able to stand in for their parent classes without breaking the system (which is what LSP guarantees).

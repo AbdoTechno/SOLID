@@ -1,7 +1,7 @@
-// كود نظيف ومتصلح بناءً على مبدأ الـ ISP
-// قسمنا الواجهة الضخمة لـ 4 واجهات رشيقة وكل كلاس بيختار اللي محتاجه بس.
+// Compliant code adhering to the Interface Segregation Principle (ISP)
+// Split the single bloated interface into 4 specialized interfaces. Each class implements only what it needs.
 
-// 1. الواجهات الصغيرة المتخصصة
+// 1. Small, Specialized Interfaces
 abstract class ClassAttendee {
   void attendClass();
 }
@@ -19,60 +19,60 @@ abstract class SalariedEmployee {
   void calculateSalary();
 }
 
-// 2. كلاس الطالب: بياخد بس دور حضور المحاضرات وتسليم الواجبات
+// 2. Student class: Only implements attending classes and submitting assignments
 class Student implements ClassAttendee, AssignmentSubmitter {
   final String name;
   Student(this.name);
 
   @override
   void attendClass() {
-    print('$name حضر المحاضرة في المدرج.');
+    print('$name attended the lecture in the hall.');
   }
 
   @override
   void submitAssignment() {
-    print('$name سلم التكليف العملي.');
+    print('$name submitted the practical assignment.');
   }
 }
 
-// 3. كلاس المدرس: بياخد دور الحضور (للشرح)، والتدريس، وحساب المرتب
+// 3. Teacher class: Implements attending classes, teaching, and receiving a salary
 class Teacher implements ClassAttendee, CourseInstructor, SalariedEmployee {
   final String name;
   Teacher(this.name);
 
   @override
   void attendClass() {
-    print('الدكتور $name دخل المدرج عشان يشرح.');
+    print('Dr. $name entered the lecture hall to teach.');
   }
 
   @override
   void teachCourse() {
-    print('الدكتور $name بيشرح كورس البرمجة.');
+    print('Dr. $name is teaching the programming course.');
   }
 
   @override
   void gradeExams() {
-    print('الدكتور $name بيصحح أوراق الامتحانات.');
+    print('Dr. $name is grading the exam papers.');
   }
 
   @override
   void calculateSalary() {
-    print('تم حساب مرتب الدكتور $name بنجاح.');
+    print('Salary for Dr. $name successfully calculated.');
   }
 }
 
 void main() {
-  print('--- تشغيل كود الجامعة النظيف (Good ISP Example) ---');
+  print('--- Running Compliant Code (Good ISP Example) ---');
 
-  // الطالب بيعمل شغله بس ومن غير ميثودس ميتة
-  final student = Student('كريم يوسف');
+  // Student does their job without dead methods
+  final student = Student('Karim Youssef');
   student.attendClass();
   student.submitAssignment();
 
   print('-----------------------------------------');
 
-  // المدرس بيعمل شغله بس ومن غير ما يجبر على تسليم واجابات الطلاب
-  final teacher = Teacher('د. أحمد جمال');
+  // Teacher does their job without being forced to implement student assignments
+  final teacher = Teacher('Dr. Ahmed Gamal');
   teacher.attendClass();
   teacher.teachCourse();
   teacher.gradeExams();

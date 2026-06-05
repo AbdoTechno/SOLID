@@ -1,53 +1,51 @@
-<div dir="rtl">
+# Liskov Substitution Principle (LSP)
 
-# مبدأ إحلال ليسكوف: Liskov Substitution Principle (LSP)
-
-يعد مبدأ إحلال ليسكوف (LSP) المبدأ الثالث من مبادئ SOLID، وهو يضع القواعد والضوابط المنطقية لعمليات التوريث (Inheritance) وتعدد الأشكال لضمان سلامة واستقرار النظام.
+The Liskov Substitution Principle (LSP) is the third of the SOLID principles. It establishes logical rules and constraints for inheritance and polymorphism to guarantee system stability and predictability.
 
 ---
 
-## تعريف المبدأ (What is LSP?)
+## What is LSP?
 
-صيغ هذا المبدأ بواسطة عالمة الحاسوب باربارا ليسكوف (Barbara Liskov)، وينص على ما يلي: **"إذا كان لدينا كلاس أب (Base Class) وكلاس ابن (Subclass) مشتق منه، فيجب أن نكون قادرين على استبدال كائن الأب بكائن الابن في أي جزء من أجزاء النظام دون أن يتأثر سلوك البرنامج أو يحدث خلل في عمله"**.
+Formulated by computer scientist Barbara Liskov, the principle states: **"If S is a subtype of T, then objects of type T may be replaced with objects of type S without altering any of the desirable properties of the program."**
 
-وبعبارة أخرى، يجب على كلاس الابن الالتزام بكافة العهود والسلوكيات المتوقعة من كلاس الأب؛ فلا يصح أن يلغي الابن سلوكًا وعد به الأب، أو يعطله عن العمل.
+In simpler terms: **Derived classes (subclasses) must be substitutable for their base classes (parent classes) in any part of the system without affecting program behavior or causing unexpected crashes.**
 
----
-
-## دواعي وجود المبدأ (Why it Exists?)
-
-في البرمجة كائنية التوجه (OOP)، يمثل التوريث أداة قوية ومفيدة. ومع ذلك، يقع المطورون أحيانًا في خطأ استخدام التوريث العشوائي لمجرد الرغبة في إعادة استخدام الكود البرمجي بين كلاسين متشابهين، دون وجود علاقة منطقية حقيقية بينهما.
-
-على سبيل المثال، لو ورثنا كلاس "البطريق" من كلاس "الطائر"، وافترض النظام أن جميع الطيور قادرة على الطيران واستدعى دالة الطيران، سيحدث خلل في البرنامج أو يتوقف عن العمل لأن البطريق لا يطير. يمثل هذا التوريث العشوائي خرقًا صريحًا لمبدأ LSP وتوقعات البنية المعمارية للنظام.
+The subclass must adhere to all the contracts and expected behaviors of the parent class. It should not disable, restrict, or break any behavior promised by the parent.
 
 ---
 
-## المشكلات التي يحلها المبدأ (Problems it Solves)
+## Why it Exists?
 
-1. **أخطاء مرحلة التشغيل (Runtime Errors)**: يمنع حدوث استثناءات مثل `UnimplementedError` أو `NullPointerException` التي تظهر عندما يستدعي النظام دالة موروثة عطلها كلاس الابن لعدم ملاءمتها له.
-2. **شروط التحقق العشوائية من النوع (Type Checking)**: يغني المطور عن كتابة شروط مثل `if (bird is Penguin)` لتفادي استدعاء دوال معينة، مما يحافظ على نظافة الكود البرمجي ومرونته.
-3. **السلوك غير المتوقع للمكونات**: يضمن اتساق سلوك الكائنات في مختلف أجزاء التطبيق.
+In Object-Oriented Programming (OOP), inheritance is a powerful tool. However, developers sometimes fall into the trap of using inheritance strictly for "code reuse" between similar classes, without a true logical "Is-A" relationship.
 
----
-
-## فوائد تطبيق المبدأ (Benefits)
-
-* **موثوقية واستقرار الكود (Predictable Code)**: يتيح استخدام تعدد الأشكال بأمان تام، مع الثقة بأن أي كلاس مشتق سيعمل بشكل صحيح دون كسر منطق النظام.
-* **قابلية التبديل التام (Interchangeability)**: إمكانية استبدال كلاسات الأبناء ببعضها البعض دون الحاجة لتغيير الكود الرئيسي المستدعي لها.
-* **تسهيل الصيانة**: تفادي الاستثناءات البرمجية المفاجئة في مرحلة التشغيل نتيجة تباين سلوك الكلاسات المشتقة.
+For example, if we inherit a `Penguin` class from a `Bird` class, and the system assumes all birds can fly and calls the `fly()` method, the program will crash because penguins cannot fly. This arbitrary inheritance violates LSP and breaks the architectural expectations of the system.
 
 ---
 
-## عواقب تجاهل المبدأ (Drawbacks if Ignored)
+## Problems it Solves
 
-* **ظهور استثناءات تؤدي لتوقف التطبيق**: مثل استدعاء وظيفة غير مدعومة `UnimplementedError()` تسبب انهيار التطبيق أمام المستخدم.
-* **تعقيد البنية بجمل التحقق من النوع**: امتلاء الكود بجمل التحقق مثل `if (entity is Subtype)`، وهو ما يعد انتهاكًا غير مباشر لمبدأ المفتوح والمغلق (OCP).
+1. **Runtime Errors**: Prevents exceptions like `UnimplementedError` or `NullPointerException` that occur when a subclass disables an inherited method that is not appropriate for it.
+2. **Arbitrary Type Checking**: Eliminates the need to write type-checking conditions such as `if (bird is Penguin)` to prevent calling certain methods, keeping the codebase clean and flexible.
+3. **Unexpected Component Behavior**: Ensures consistent and predictable object behaviors across different parts of the application.
 
 ---
 
-## العلاقة بمبادئ SOLID الأخرى (Relation to other SOLID Principles)
+## Benefits
 
-* **مع مبدأ المفتوح والمغلق (OCP)**: يعد مبدأ LSP الضامن الأساسي لنجاح OCP؛ فبينما يوجه OCP نحو استخدام التجريد للتوسع، يضمن LSP أن الكلاسات الجديدة التي نمد بها النظام متوافقة تمامًا ولا تفسد التجريد الأساسي.
-* **مع مبدأ فصل الواجهات (ISP)**: إذا اضطرت الكلاسات المشتقة لخرق مبدأ LSP بسبب احتواء كلاس الأب على دوال لا تحتاجها، فإن الحل يكمن في تطبيق مبدأ ISP بتقسيم الواجهة الكبيرة إلى واجهات برمجية أصغر وأكثر تحديدًا لكي يرث كل كلاس ما يناسبه فقط.
+* **Predictable Code**: Enables developers to use polymorphism safely, knowing that any subclass will behave correctly without breaking the parent class's interface contract.
+* **Interchangeability**: Allows subclasses to be swapped dynamically without modifying the consuming client code.
+* **Easier Maintenance**: Avoids runtime exceptions caused by diverging behavior in derived classes.
 
-</div>
+---
+
+## Drawbacks if Ignored
+
+* **Frequent Runtime Crashes**: Caused by calling unsupported inherited methods that throw `UnimplementedError()`.
+* **Pollution with Type Checks**: Code becomes cluttered with type-checking statements like `if (entity is Subtype)`, which indirectly violates the Open-Closed Principle (OCP).
+
+---
+
+## Relation to other SOLID Principles
+
+* **Open-Closed Principle (OCP)**: LSP is the engine that makes OCP successful. While OCP guides us to use abstraction for extending features, LSP ensures that new subclasses conform to the original abstract expectations without breaking the client logic.
+* **Interface Segregation Principle (ISP)**: When subclasses are forced to violate LSP because the parent class contains methods they do not support, the solution is to apply ISP by splitting the bloated parent interface into smaller, specialized interfaces.

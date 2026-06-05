@@ -1,45 +1,41 @@
-<div dir="rtl">
+# Revision Sheet - Liskov Substitution Principle (LSP)
 
-# ورقة المراجعة السريعة لمبدأ إحلال ليسكوف: revision-sheet.md
-
-دليل المراجعة السريعة لمبدأ إحلال ليسكوف (LSP)، مصمم للاسترجاع السريع للمفاهيم الأساسية:
+Quick revision guide for the Liskov Substitution Principle (LSP), designed for fast recall of core concepts:
 
 ---
 
-## التعريف الأساسي (Definition)
+## Core Definition
 
-يجب أن تكون الكلاسات المشتقة (Subtypes) قابلة للحلول محل الكلاسات الأساسية (Base Types) في أي موضع من البرنامج دون تغيير السلوك المتوقع للبرنامج أو إلقاء استثناءات تخل باستقرار النظام.
-
----
-
-## الخلاصة (One-Line Summary)
-
-> **"يجب على كلاس الابن الالتزام الكامل بكافة سلوكيات ووعود كلاس الأب دون التسبب في أخطاء برمجية."**
+Subtypes must be substitutable for their base types in any part of the program without altering the desirable properties of the program or throwing runtime exceptions that violate system stability.
 
 ---
 
-## فوائد التطبيق (Benefits)
+## One-Line Summary
 
-1. **كود آمن ومتوقع** في مرحلة التشغيل (Predictable Code).
-2. **الاستثمار السليم لتعدد الأشكال** (Polymorphism) دون حاجة لترقيع برمجى.
-3. **تفادي انهيار النظام** (Runtime Crashes) الناتج عن استدعاء وظائف غير مدعومة.
-4. **تسهيل الصيانة والتطوير** لكلاسات الأبناء بشكل آمن ومستقل.
+> **"Subclasses must fully honor the behavior and promises of their parent classes without causing runtime errors."**
 
 ---
 
-## العلامات التحذيرية لمخالفة المبدأ (Red Flags)
+## Key Benefits
 
-* وجود دوال في كلاس الابن تلقي استثناءات التعطيل مثل `throw UnimplementedError()`.
-* الاضطرار لكتابة جمل التحقق من النوع مثل `if (object is Subtype)` لتفادي استدعاء دوال معينة.
-* قيام كلاس الابن بتعديل حالة الأب بشكل يخل بالقواعد المنطقية أو الرياضية للمكون (مثل المربع والمستطيل).
-* قيام كلاس الابن بتعطيل وظيفة موروثة عبر إعادة تعريفها فارغة (Empty Override) مع وجوب إعادتها لقيمة.
+1. **Predictable Code**: Code is reliable and behaves consistently at runtime.
+2. **True Polymorphism**: Uses dynamic dispatch safely without programmatic patches.
+3. **Crash Prevention**: Eliminates runtime crashes caused by invoking unsupported methods.
+4. **Easier Maintenance**: Derived classes can be modified independently if they respect the parent's contract.
 
 ---
 
-## إرشادات سريعة للمقابلات الفنية (Interview Tips)
+## Red Flags
 
-* **المصطلحات المحورية**: التركيز على مفاهيم "التوافق السلوكي للأنواع الفرعية" (Behavioral Subtyping)، و"الشروط المسبقة واللاحقة" (Pre-conditions / Post-conditions).
-* **المثال النموذجي**: استخدام مثال الطالب المستمع `AuditorStudent` الذي تم تلافيه بفصل دالة المنحة في الكلاس الوسيط `ScholarshipCandidate`.
-* **اختبار البطة**: تذكر قاعدة "Duck Test" لتوضيح كيفية التحقق من سلامة التجريد المستخدم وعلاقات التوريث.
+* Subclass methods throwing exceptions like `throw UnimplementedError()` to disable inherited features.
+* Cluttering client code with type checking conditions like `if (object is Subtype)` to bypass certain method calls.
+* Subclasses mutating state in ways that break the logical or mathematical invariants of the parent class (e.g., the Square-Rectangle problem).
+* Subclasses overriding inherited methods as empty blocks when the base class requires a return value or side effect.
 
-</div>
+---
+
+## Technical Interview Tips
+
+* **Key Terminology**: Focus on "Behavioral Subtyping", "Pre-conditions & Post-conditions", and "LSP Invariants".
+* **The Go-To Example**: Describe the `AuditorStudent` that shouldn't apply for scholarships, and show how the `ScholarshipCandidate` interface acts as an intermediate class to keep types safe.
+* **The Duck Test**: Recall the "Duck Test" rule to explain how to verify if an inheritance design is correct.

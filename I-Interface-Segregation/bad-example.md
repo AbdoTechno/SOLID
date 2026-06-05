@@ -1,14 +1,12 @@
-<div dir="rtl">
+# Non-compliant Design Explanation (Bad Design)
 
-# شرح التصميم البرمجي غير المتوافق (Bad Design): bad-example.md
-
-في ملف الكود [bad.dart](code/bad.dart), يوضح هذا المثال الخلل المعماري الناتج عن تصميم الواجهات البرمجية الضخمة (Monolithic Interfaces):
+In [bad.dart](code/bad.dart), the example illustrates the architectural issues caused by designing bloated, monolithic interfaces:
 
 ---
 
-## تحليل المشكلة البرمجية في الكود
+## Core Problem Analysis
 
-قمنا بإنشاء واجهة تجريدية واحدة باسم `UniversityMember` تضم كافة المهام والوظائف الجامعية المتنوعة:
+We created a single abstract interface named `UniversityMember` containing all university actions and roles:
 ```dart
 abstract class UniversityMember {
   void attendClass();
@@ -19,23 +17,21 @@ abstract class UniversityMember {
 }
 ```
 
-يكمن الخلل هنا في عدم وجود منتسب واحد في الجامعة يؤدي كافة هذه المهام في آن واحد:
-- الطالب يحضر المحاضرات ويسلم التكليفات الدراسية، ولكنه لا يقوم بالتدريس أو تصحيح الامتحانات أو استلام رواتب التدريس.
-- المدرس يتولى التدريس وتصحيح الاختبارات واستلام الراتب، ولكنه لا يسلم التكليفات الدراسية.
+The design flaw here is that no single member of a university performs all of these actions:
+- A student attends classes and submits assignments, but they do not teach courses, grade exams, or receive monthly salaries.
+- A teacher teaches courses, grades exams, and receives a salary, but they do not submit student assignments.
 
-بسبب إجبار كلاس `Student` وكلاس `Teacher` على تنفيذ هذه الواجهة الشاملة، اضطر المطور لكتابة دوال فارغة أو دوال تعطل السلوك وتلقي استثناءات مثل `throw UnimplementedError()`.
+By forcing both `Student` and `Teacher` classes to implement this comprehensive interface, the developer is forced to write empty method bodies or throw exceptions such as `throw UnimplementedError()` to bypass unsupported operations.
 
 ---
 
-## المشكلات الناتجة وصعوبة الصيانة (Maintenance Issues)
+## Maintenance Issues
 
-1. **انهيار النظام في مرحلة التشغيل (Runtime Crash)**:
-   إذا حاول النظام استدعاء دالة التدريس `teachCourse()` على كائن من نوع `Student` اعتمادًا على كون الدالة معرفة في الواجهة المشتركة `UniversityMember`، سينهار التطبيق فورًا بمجرد الوصول لهذه الخطوة لعدم دعم الطالب لهذا السلوك الفعلي.
+1. **Runtime Crashes**:
+   If client code attempts to invoke `teachCourse()` on a `Student` reference—relying on the fact that the method is declared in the common `UniversityMember` interface—the application will crash at runtime since the student instance throws a not-implemented error.
 
-2. **تراكم الكود غير المستخدم (Bloated Code)**:
-   تمتلئ ملفات الكود البرمجي بدوال فارغة وصورية لا عمل لها، مما يؤدي إلى تشتيت الانتباه وصعوبة قراءة الشيفرة وتتبع المسؤوليات الفعلية للمكونات.
+2. **Bloated Code (Dummy Implementations)**:
+   The codebase is littered with unused, empty methods, reducing code readability and making it difficult for new developers to track actual object responsibilities.
 
-3. **تشتت التعديلات (Shotgun Surgery)**:
-   إذا قررت الجامعة إضافة دالة جديدة للواجهة `UniversityMember` باسم `scanFingerprintAtGate()` (لتسجيل الحضور عبر البصمة الإلكترونية عند البوابة)، فسنضطر لتعديل كلاس `Student` وكلاس `Teacher` وأي كلاس آخر ينفذ الواجهة لكتابة هذه الدالة داخله، حتى لو كانت فئة معينة لا تحتاج لتسجيل البصمة. هذا النمط يزيد من احتمالية حدوث أخطاء غير مقصودة في أجزاء مستقرة من الكود.
-
-</div>
+3. **Rigid Propagation of Changes**:
+   If the university decides to introduce a new action to the `UniversityMember` interface, such as `scanFingerprintAtGate()` (for biometric gate access), we are forced to open and modify the `Student` class, `Teacher` class, and any other implementing classes to add the method signature, even if students are exempt from scanning. This structure increases compile-time dependencies and risks breaking stable parts of the code.

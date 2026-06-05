@@ -1,52 +1,49 @@
-<div dir="rtl">
+# Theoretical Explanation of the Open-Closed Principle
 
-# الشرح النظري لمبدأ المفتوح والمغلق: theory.md
-
-يركز مبدأ المفتوح والمغلق (OCP) على كيفية صياغة تصميم برمجيات يسهل تمديد سلوكها مستقبلاً دون الحاجة لتغيير الكود الأساسي القائم بالفعل.
+The Open-Closed Principle (OCP) focuses on how to design software components so that their behavior can be easily extended in the future without modifying the stable, existing code.
 
 ---
 
-## النموذج العقلي والتشبيه التوضيحي (Mental Model)
+## Mental Model and Analogy
 
-لتوضيح هذا المفهوم، يمكننا النظر في بنية **إضافات المتصفح (Plugins / Extensions) في متصفح Chrome**.
+To understand this concept, look at how **Chrome browser extensions** work.
 
-عندما صممت شركة Google متصفح Chrome، قامت ببنائه بحيث يستطيع أي مطور إضافة ميزات جديدة (مثل حظر الإعلانات، أو الترجمة التلقائية) من خلال واجهة برمجية موحدة (API / Extension Interface). ولا تضطر شركة Google لتعديل كود المتصفح الأساسي وإعادة بنائه مع كل إضافة يبرمجها المطورون. متصفح Chrome هنا يعد مغلقًا أمام التعديل المباشر (Closed for Modification)، ولكنه مفتوح للتمديد (Open for Extension) عبر الواجهات البرمجية المحددة.
+When Google designed Chrome, they built it so that any developer could add new features (like ad blockers or language translators) through a standardized interface (Extension APIs). Google does not need to open the core Chrome browser codebase, modify it, and compile a new browser version every time a developer releases a new extension. Chrome is closed for direct modification of its core engine but open for extension through its API.
 
-ونموذج آخر من الواقع العملي هو **أجهزة الصيانة وأدواتها**؛ حيث تستخدم مراكز الصيانة المفكات والأجهزة القياسية المعتمدة على معايير فك وتركيب موحدة لقطع الغيار، مما يغنيها عن إعادة تصميم وتصنيع ورشة جديدة مع كل إصدار جديد من الأجهزة الإلكترونية.
-
----
-
-## دواعي ابتكار المبدأ
-
-مع زيادة حجم المشاريع البرمجية وتعقيدها، تبين أن من أكثر العمليات تكلفة واستهلاكًا للوقت هي **عمليات اختبار الجودة والتحقق (QA and Testing)**.
-
-على سبيل المثال، لو كان هناك كلاس مستقر ومستخدم لحساب الفوائد السنوية في نظام مصرفي، ثم طرأ تعديل يطلب تطبيق آلية حساب جديدة لفئة العملاء المتميزين. في حال تعديل الكلاس القائم مباشرة، سنحتاج لإعادة إجراء اختبارات الجودة على النظام بأكمله للتحقق من سلامة العمليات المصرفية للعملاء العاديين.
-أما عند تطبيق مبدأ OCP، فيتم إنشاء كلاس جديد يختص بحساب فوائد العملاء المتميزين ويمتد من الواجهة البرمجية الأساسية لحساب الفوائد، مما يضمن بقاء الكود القديم دون أي تغيير، ويسمح بتركيز جهود الاختبار على الكود الجديد فقط، وهو ما يوفر الوقت ويضمن أمان النظام.
+Another real-world example is **standardized mechanics tools**. Maintenance shops use standard screwdrivers and socket wrenches that match unified sizes and specifications. This standard allows them to repair new models of machines without redesigned tools or rebuilding the workshop for every new product release.
 
 ---
 
-## المفاهيم المغلوطة والأخطاء الشائعة (Common Mistakes)
+## Origin of the Principle
 
-1. **المبالغة في التصميم (Over-Engineering) وإنشاء واجهات برمجية دون داعٍ**:
-   يقوم بعض المطورين بإنشاء كلاسات مجردة (Abstract Classes) لكل مكون برمجي في المشروع تحسبًا لتغييرات قد تطرأ بعد سنوات. هذا الأسلوب يعقد الشيفرة البرمجية بشكل كبير ويخالف مبدأ (YAGNI - You Aren't Gonna Need It).
-   *الممارسة الصحيحة*: يُطبق مبدأ OCP في الأجزاء التي يرجح تعرضها للتغيير المستمر بناءً على متطلبات العمل، أو عند البدء بملاحظة الحاجة لتكرار التعديل في نفس الموضع البرمجي.
+As software systems grow in size and complexity, the most expensive and time-consuming phases are **quality assurance and regression testing (QA)**.
 
-2. **الخلط بين الإصلاح البرمجي والتمديد (Fixing vs. Extending)**:
-   لا يمنع المبدأ تعديل الكود القديم لإصلاح الأخطاء البرمجية (Bugs). فإصلاح العيوب هو عملية تصحيحية ضرورية للكود الحالي، بينما يتحدث المبدأ عن إضافة **ميزات جديدة (New Features)** أو إجراء تغيير جوهري في منطق العمل (Business Logic).
+For example, suppose a stable, audited class computes interest rates in a banking application. If a new business requirement emerges to calculate a custom interest rate for premium VIP clients, modifying the existing stable class directly forces QA to re-test the entire interest calculation system for regular clients to ensure no regression bugs were introduced.
+
+Under OCP, we create a new class specifically for VIP client calculations that extends the main interest calculator interface. The stable legacy code remains completely untouched. QA testing efforts can then focus exclusively on the newly added class, saving time and ensuring system security.
 
 ---
 
-## الفهم العملي للمبدأ (Practical Understanding)
+## Misconceptions and Common Mistakes
 
-تتمثل آليات تطبيق مبدأ OCP في استخدام **التجريد (Abstraction)** و **تعدد الأشكال (Polymorphism)**.
-بدلاً من تصميم كلاس يعتمد بشكل مباشر على تفاصيل كلاسات أخرى (Concrete Classes)، يتم جعل الكلاس يعتمد على واجهة مجردة (Interface/Abstract Class).
+1. **Over-Engineering (Premature Abstraction)**:
+   Some developers create abstract classes for every single component in their application "just in case" requirements change years later. This introduces unnecessary complexity and violates the YAGNI principle (You Aren't Gonna Need It).
+   *Best Practice*: Apply OCP in areas that have a proven history of change, or when you notice that you are repeatedly modifying the same method to support new business cases.
 
-*مثال للتصميم غير المتوافق*:
-كلاس معالجة عمليات الشحن يحتوي على الشروط التالية:
+2. **Confusing Bug Fixes with Extensions**:
+   The principle does not forbid modifying existing code to fix errors and defects (Bugs). Bug fixing is a corrective process to ensure the code works as originally intended. OCP specifically addresses adding **new features** or shifting business logic rules.
+
+---
+
+## Practical Understanding
+
+The primary mechanism to achieve OCP is the use of **Abstraction** and **Polymorphism**.
+Instead of designing a class that depends directly on concrete implementations (Concrete Classes), make the class depend on a abstract interface or class.
+
+*Non-compliant Design Example*:
+A shipping system class containing conditional blocks:
 `if (courier == 'Aramex') { ... } else if (courier == 'DHL') { ... }`
-في هذا التصميم، سنضطر لتعديل الكلاس عند التعاقد مع أي شركة شحن جديدة.
+Here, we must modify the class every time we partner with a new shipping courier.
 
-*التصميم الصحيح المتوافق*:
-تأسيس كلاس مجرد باسم `ShippingProvider` يحتوي على الدوال المشتركة، وتقوم كلاسات شركات الشحن المختلفة (`Aramex` و `DHL` و `FedEx`) بتنفيذ هذه الواجهة (Implementation). وبذلك، يمكن إدخال أي شركة شحن جديدة دون الحاجة لتعديل حرف واحد في كلاس المعالجة الرئيسي.
-
-</div>
+*Compliant Design Example*:
+Create an abstract class named `ShippingProvider` containing common shipping signatures. The specific courier classes (`Aramex`, `DHL`, `FedEx`) implement this interface. The main shipping processor depends exclusively on the `ShippingProvider` abstraction. We can now add any number of new shipping couriers without changing a single line of the main coordinator.

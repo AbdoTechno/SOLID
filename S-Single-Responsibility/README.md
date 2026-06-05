@@ -1,52 +1,48 @@
-<div dir="rtl">
+# Single Responsibility Principle (SRP)
 
-# مبدأ المسؤولية الواحدة: Single Responsibility Principle (SRP)
-
-يعد مبدأ المسؤولية الواحدة (SRP) حجر الأساس لكتابة كود نظيف وسهل الصيانة في هندسة البرمجيات.
+The Single Responsibility Principle (SRP) is the foundation of writing clean, maintainable code in software engineering.
 
 ---
 
-## تعريف المبدأ (What is SRP?)
+## What is SRP?
 
-ينص مبدأ المسؤولية الواحدة على ما يلي: **"يجب أن يمتلك الكلاس أو الوحدة (Module) سببًا واحدًا فقط للتغيير"** (A class should have one, and only one, reason to change).
+The Single Responsibility Principle states: **"A class or module should have one, and only one, reason to change."**
 
-وبمعنى آخر، لا ينبغي للكلاس أن يؤدي مهامًا متعددة ومتنوعة في آن واحد (كأن يعمل كأداة متعددة الأغراض تقوم بوظائف منفصلة كليًا)، بل يجب أن يتخصص في أداء وظيفة محددة واحدة بشكل صحيح وكامل.
-
----
-
-## دواعي وجود المبدأ (Why it Exists?)
-
-في المراحل الأولى لتطوير البرمجيات، يميل المطورون أحيانًا إلى تجميع وظائف متعددة داخل كلاس واحد كبير (ما يُعرف بـ God Class) بدعوى تسهيل الوصول إلى الكود وتركيزه في مكان واحد. ومع ذلك، عند توسع النظام وتغير متطلبات العمل، يتبين أن هذه الكلاسات الضخمة تمثل عائقًا كبيرًا؛ حيث يؤدي تعديل جزء بسيط (مثل طريقة حساب الرسوم) إلى خلل غير متوقع في جزء آخر تمامًا (مثل معالجة بيانات المستخدم) نتيجة الترابط الشديد غير المبرر بين الوظائف المختلفة داخل نفس الكلاس.
+In other words, a class should not perform multiple, unrelated tasks at the same time (like a Swiss Army knife). Instead, it should specialize in executing one specific function correctly and completely.
 
 ---
 
-## المشكلات التي يحلها المبدأ (Problems it Solves)
+## Why it Exists?
 
-1. **الترابط الوثيق (High Coupling)**: يمنع تداخل أجزاء الكود البرمجي بطريقة تجعل تعديل جزء ما يؤدي إلى انهيار أجزاء أخرى من النظام.
-2. **صعوبة الاختبار (Hard to Test)**: عندما يقتصر الكلاس على وظيفة واحدة، تصبح كتابة اختبارات الوحدة (Unit Tests) أبسط وأكثر فاعلية وموثوقية.
-3. **تضارب التعديلات (Merge Conflicts)**: يقلل من حدوث تضارب برمجية عند عمل مطورين متعددين على نفس الملف، لأن تقسيم المهام يوزع العمل على كلاسات مستقلة.
+In the early stages of software development, developers sometimes gather multiple functions inside a single, large class (known as a "God Class") for convenience. However, as the system grows and requirements change, these bloated classes become a major obstacle. Modifying a small part (like the fee calculation method) can cause unexpected errors in an unrelated part (like user profile processing) due to tight coupling within the same class.
 
 ---
 
-## فوائد تطبيق المبدأ (Benefits)
+## Problems it Solves
 
-* **وضوح الكود وقابليته للقراءة (Readability)**: يسهل فهم الغرض من الكلاس بمجرد الاطلاع على اسمه وبنيته.
-* **إعادة الاستخدام (Reusability)**: يتيح استخدام الكلاسات الصغيرة المتخصصة في أماكن متعددة داخل التطبيق دون الحاجة لتهيئة أجزاء غير ضرورية.
-* **سهولة الصيانة (Maintainability)**: يضمن إمكانية تعديل الكود استجابة لتغير متطلبات العمل بأمان ودون القلق من التأثير على بقية أجزاء النظام.
-
----
-
-## عواقب تجاهل المبدأ (Drawbacks if Ignored)
-
-* **صعوبة قراءة وفهم الكود (Spaghetti Code)**.
-* **الخوف من إعادة الهيكلة (Fear of Refactoring)**: صعوبة تعديل أي جزء من الكود خوفًا من إتلاف وظائف برمجية أخرى مرتبطة به.
-* **صعوبة التوسيع والتطوير**: تطلب إضافة ميزة جديدة دراسة كلاسات ضخمة تحتوي على آلاف الأسطر وفهم تفاصيلها المتشابكة.
+1. **Tight Coupling**: Prevents code components from overlapping in ways that make changing one part break others.
+2. **Hard to Test**: When a class is limited to one function, writing unit tests becomes simpler, more effective, and more reliable.
+3. **Merge Conflicts**: Reduces merge conflicts when multiple developers work on the codebase, because responsibilities are divided into independent, smaller files.
 
 ---
 
-## العلاقة بمبادئ SOLID الأخرى (Relation to other SOLID Principles)
+## Benefits
 
-* **مع مبدأ المفتوح والمغلق (OCP)**: يسهل تقسيم المسؤوليات إلى كلاسات صغيرة (SRP) تطبيق مبدأ OCP، حيث يمكن تمديد النظام بإضافة كلاسات جديدة تنفذ واجهات برمجية محددة دون الحاجة لتعديل الكود القديم.
-* **مع مبدأ فصل الواجهات (ISP)**: يكمل المبدآن بعضهما البعض؛ حيث يركز SRP على الكلاسات، بينما يركز ISP على الواجهات (Interfaces) لتفادي إجبار أي كلاس على تنفيذ وظائف لا يحتاجها.
+* **Readability**: Makes it easy to understand the purpose of a class just by looking at its name and structure.
+* **Reusability**: Specialized classes can be reused across different parts of the application without initializing unnecessary code.
+* **Maintainability**: Ensures that requirements can be safely changed without worrying about breaking other parts of the system.
 
-</div>
+---
+
+## Drawbacks if Ignored
+
+* **Spaghetti Code**: Hard-to-read, tangled logic with multiple responsibilities.
+* **Fear of Refactoring**: Refactoring becomes dangerous because any change might break dependent, unrelated features.
+* **Rigidity**: Adding new features requires wading through massive classes with thousands of lines of code.
+
+---
+
+## Relation to other SOLID Principles
+
+* **Open-Closed Principle (OCP)**: Dividing responsibilities into small classes makes it easier to extend the system by adding new classes without changing existing code.
+* **Interface Segregation Principle (ISP)**: SRP and ISP complement each other. SRP focuses on classes, while ISP focuses on interfaces to avoid forcing classes to implement methods they do not need.

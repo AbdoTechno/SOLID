@@ -1,5 +1,5 @@
-// موديول البنية التحتية للتخزين (Repositories)
-// تطبيق عملي للـ DIP وكتابة كود منفصل عن قاعدة البيانات الحقيقية
+// Storage Infrastructure Module (Repositories)
+// Concrete implementation of StudentRepository for in-memory storage (DIP)
 
 import 'interfaces.dart';
 import 'models.dart';
@@ -10,7 +10,7 @@ class InMemoryStudentRepository implements StudentRepository {
   @override
   void save(BaseStudent student) {
     _storage[student.id] = student;
-    print('[Repository] تم حفظ بيانات الطالب ${student.name} في المخزن المؤقت.');
+    print('[Repository] Student ${student.name} successfully saved to in-memory storage.');
   }
 
   @override
